@@ -1,0 +1,3 @@
+node,infrastruct,pv,wind,coal,gas,oil,bat_e,bat_in,bat_out,h2_e,h2_in,h2_out,trans
+germany,ex,32312,31827,45027,22370,7004,0,0,0,0,0,0,0
+germany,lim,1.00E+06,1.00E+06,1.00E+05,1.00E+05,1.00E+05,1.00E+06,1.00E+06,1.00E+06,1.00E+08,1.00E+06,1.00E+06,0

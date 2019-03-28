@@ -13,7 +13,7 @@ folder-name: [region]-[nodes]
 |-------|--------|
 |[some iterator]| relative value of installed capacity for renewables or absolute values for demand or so|
 |...| ...|
-    
+
 ### cap_costs.csv, fix_costs.csv, var_costs.csv
 
 | tech  |  [currency] | [LCA-Impact categories...] |
@@ -126,29 +126,29 @@ demand split up needs improvement
 California one node
 
 ### Time Series
-- solar, wind, demand: picked region with highest solar and wind installation within california (alt. mean): Ey
+- solar, wind, demand: picked region with highest solar and wind installation within california (alt. mean): Ej
 
 ### Installed CAP
 #### nodes
-- wind, pv, coal, gas, oil: Ey
+- wind, pv, coal, gas, oil: Ej
 #### lines
-- trans: Ey
+- trans: Ej
 #### limits
 - pv, wind: multiplied by 10
 
 ### Cost Data
 #### General
-- economic lifetime T: Ey
-- cost of capital (WACC), r: Ey
+- economic lifetime T: Ej
+- cost of capital (WACC), r: Ej
 #### cap_costs
-- wind, pv, coal, gas, oil, bat: Ey
+- wind, pv, coal, gas, oil, bat: Ej
 - trans: !Costs for transmission expansion are per MW*km!: "Zielkonflikte der Energiewende - Life Cycle Assessment der Dekarbonisierung Deutschlands durch sektorenübergreifende Infrastrukturoptimierung", Reinert, 2018
 - h2: "Shared Capacity and Levelized Cost with Application to Power-to-Gas Technology", Glenk, 2019
 #### fix_costs
-- wind, pv, gas, bat, h2, oil, coal: Ey
+- wind, pv, gas, bat, h2, oil, coal: Ej
 - trans: assumption no fix costs
 #### var_costs
-- pv, wind, bat, coal, gas, oil: Ey
+- pv, wind, bat, coal, gas, oil: Ej
 - h2, trans: assumption no var costs
 
 ### LCIA Recipe H Midpoint, GWP 100a
@@ -170,26 +170,26 @@ California one node
 California multiple node
 
 ### Time Series
-- solar, wind, demand: Ey
+- solar, wind, demand: Ej
 
 ### Installed CAP
 #### nodes
-- wind, pv, coal, gas, oil: Ey
+- wind, pv, coal, gas, oil: Ej
 #### lines
-- trans: Ey
+- trans: Ej
 #### limits
 - pv, wind: multiplied by 10
 
 ### Cost Data
 #### cap_costs
-- wind, pv, coal, gas, oil, bat: Ey
+- wind, pv, coal, gas, oil, bat: Ej
 - trans: !Costs for transmission expansion are per MW*km!: "Zielkonflikte der Energiewende - Life Cycle Assessment der Dekarbonisierung Deutschlands durch sektorenübergreifende Infrastrukturoptimierung", Reinert, 2018
 - h2: Glenk, "Shared Capacity and Levelized Cost with Application to Power-to-Gas Technology", Glenk, 2019
 #### fix_costs
-- wind, pv, gas, bat, h2, oil, coal: Ey
+- wind, pv, gas, bat, h2, oil, coal: Ej
 - trans: assumption no fix costs
 #### var_costs
-- pv, wind, bat, coal, gas, oil: Ey
+- pv, wind, bat, coal, gas, oil: Ej
 - trans: assumption no var costs
 - h2: "Shared Capacity and Levelized Cost with Application to Power-to-Gas Technology", Glenk, 2019
 
