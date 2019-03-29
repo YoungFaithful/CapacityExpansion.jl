@@ -33,7 +33,7 @@ function run_opt(ts_data::ClustData,
   end
   setup_opt_cep_demand!(cep, ts_data, opt_data; lost_load_cost=opt_config["lost_load_cost"])
   if "fixed_design_variables" in keys(opt_config)
-    setup_opt_cep_fix_design_variables!(cep, ts_data, opt_data; fixed_design_variables=opt_config["fixed_design_variables"])
+    setup_opt_cep_fix_design_variables!(cep, ts_data, opt_data, opt_config["fixed_design_variables"])
   end
   if opt_config["existing_infrastructure"]
       setup_opt_cep_existing_infrastructure!(cep, ts_data, opt_data)
@@ -46,7 +46,7 @@ function run_opt(ts_data::ClustData,
 end
 
 """
-     run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},fixed_design_variables::Dict{String,OptVariable},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
+     run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
 Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem)
 This problem runs the operational optimization problem only, with fixed design variables.
 provide the fixed design variables and the `opt_config` of the previous step (design run or another opterational run)
@@ -58,7 +58,7 @@ what you can add to the opt_config:
 function run_opt(ts_data::ClustData,
                     opt_data::OptDataCEP,
                     opt_config::Dict{String,Any},
-                    fixed_design_variables::Dict{String,OptVariable},
+                    fixed_design_variables::Dict{String,Any},
                     optimizer::DataType;
                     lost_el_load_cost::Number=Inf,
                     lost_CO2_emission_cost::Number=Inf)

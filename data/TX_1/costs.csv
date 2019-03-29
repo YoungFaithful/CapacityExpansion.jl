@@ -1,4 +1,4 @@
-tech,region,year,account,USD,CO2
+tech,location,year,account,USD,CO2
 pv,TX,2008,cap,5.16E+05,2403.509
 wind,TX,2008,cap,1.74E+06,551.25
 coal,TX,2008,cap,2.22E+06,623.68

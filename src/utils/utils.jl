@@ -143,7 +143,7 @@ end
 Returns all variables which types match the String of `variable_type`
 """
 function get_cep_variables(opt_result::OptResult, variable_type::String)
-  variables=Dict{String,OptVariable}()
+  variables=Dict{String,Any}()
   for (key,val) in opt_result.variables
       if val.type==variable_type
           variables[key]=val
@@ -160,7 +160,7 @@ end
     set_opt_config_cep(opt_data::OptDataCEP; kwargs...)
 kwargs can be whatever you need to run the run_opt
 it can hold
-  -  `fixed_design_variables`: Dictionary{String,OptVariable}
+  -  `fixed_design_variables`: Dictionary{String,Any}
   -  `transmission`: true or false
   -  `generation`: true or false
   -  `storage_p`: true or false
@@ -220,27 +220,14 @@ function check_opt_data_cep(opt_data::OptDataCEP)
   # Only when Data provided
   if !isempty(opt_data.lines)
     # Check existence of start and end node
-    for node in getfield.(opt_data.lines[:,:],:node_end)
-      if !(node in axes(nodes, "node"))
-        throw(@error("Node "*node*" set as ending node, but not included in nodes-Data"))
+    for tech in axes(opt_data.lines,"tech")
+      for node in getfield.(opt_data.lines[tech,:],:node_end)
+        if !(node in axes(opt_data.nodes, "node"))
+          throw(@error("Node "*node*" set as ending node, but not included in nodes-Data"))
+        end
       end
     end
   end
-end
-
-"""
-    set_clust_config(;kwargs...)
-Add kwargs to a new Dictionary with the variables as entries
-"""
-function set_clust_config(;kwargs...)
-  #Create new Dictionary
-  config=Dict{String,Any}()
-  # Loop through the kwargs and write them into Dictionary
-  for kwarg in kwargs
-    config[String(kwarg[1])]=kwarg[2]
-  end
-  # Return Directory with the information of kwargs
-  return config
 end
 
 """
@@ -327,7 +314,7 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
   nodes=opt_data.nodes
 
   met_cap_limit=Array{String,1}()
-  for tech in set["tech"]
+  for tech in set["tech_cap"]
     for node in set["nodes"]
       #Check if the limit is reached in any capacity at any node
       if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim

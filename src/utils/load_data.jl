@@ -1,22 +1,41 @@
 """
-    load_timeseriesdata!(dt::Dict{String,Array}, data_path::String; num::Int64=0)
+load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
 - Adding the information in the `*.csv` file at `data_path` to the data dictionary
 The `*.csv` files shall have the following structure and must have the same length:
 |Timestamp |[column names...]|
 |[iterator]|[values]         |
 The first column should be called `Timestamp` if it contains a time iterator
 The other columns can specify the single timeseries like specific geolocation.
+for regions:
+- `"GER_1"`: Germany 1 node
+- `"GER_18"`: Germany 18 nodes
+- `"CA_1"`: California 1 node
+- `"CA_14"`: California 14 nodes
+- `"TX_1"`: Texas 1 node
 """
-function load_timeseries_cep(application::String,
-                              region::String;
+function load_timeseries_data_provided(region::String="GER_1";
                               T::Int64=24,
                               years::Array{Int64,1}=[2016],
                               att::Array{String,1}=Array{String,1}())
     # Generate the data path based on application and region
-    data_path=normpath(joinpath(dirname(@__FILE__),"..","..","data",application,region,"TS"))
-    return load_timeseries_data(data_path; T=T, years=years, att=att)
+    data_path=normpath(joinpath(dirname(@__FILE__),"..","..","data",region,"TS"))
+    return load_timeseries_data(data_path; region=region, T=T, years=years, att=att)
 end
 
+"""
+    load_cep_data_techs(data_path::String)
+load the `techs.csv` in the folder `data_path` with the following columns:
+- `tech`: defines the sets `tech`
+- `categ`: the category of this technology (is it storage, transmission or generation)
+- `sector`: sector of the technology (electricity or heat)
+- `eff`: efficiency of this technologies conversion [-]
+- `time_series`: time_series name for availability
+- `lifetime`: product lifetime [a]
+- `financial_lifetime`: financial time to break even [a]
+- `discount_rate`: discount rate for technology [a]
+- `annuityfactor`: annuity factor, important for cap-costs [-]
+returns `techs::OptVariable`    techs[tech] - OptDataCEPTech
+"""
 function load_cep_data_techs(data_path::String)
     tab=CSV.read(joinpath(data_path,"techs.csv"),allowmissing=:none)
     #Check existance of necessary column
@@ -48,7 +67,20 @@ function load_cep_data_techs(data_path::String)
     return techs
 end
 
-function load_cep_data_nodes(data_path::String, techs::OptVariable)
+"""
+    load_cep_data_nodes(data_path::String, techs::OptVariable)
+load the `nodes.csv` in the folder `data_path` with the following columns:
+- `nodes` defines the set `nodes`
+- `infrastruct` to indicate that this row either constains `ex` `power_ex` existing capacity [MW or MWh] or `lim` `power_lim` capacity limit [MW or MWh]
+- `region`
+- `lat`
+- `lon` hold geolocation information in [°,°]
+- each `tech` and the actual capacity [MW or MWh]
+- ...
+returns `nodes::OptVariable`    nodes[tech, node] - OptDataCEPNode
+"""
+function load_cep_data_nodes(data_path::String,
+                             techs::OptVariable)
     tab=CSV.read(joinpath(data_path,"nodes.csv"),allowmissing=:none)
     # Check exisistance of columns
     check_column(tab,[:node, :infrastruct])
@@ -58,7 +90,8 @@ function load_cep_data_nodes(data_path::String, techs::OptVariable)
         for node in axes(nodes,"node")
             #value
             power_ex=tab[(:node,node)][(:infrastruct,"ex"),Symbol(tech)][1]
-            power_lim=tab[(:node,node)][(:infrastruct,"lim"),Symbol(tech)][1]
+            data=tab[(:node,node)][(:infrastruct,"lim"),Symbol(tech)]
+            power_lim= isempty(data) ? Inf : data[1]
             #region
             region=tab[(:node,node),:region][1]
             #lat and lon
@@ -69,7 +102,25 @@ function load_cep_data_nodes(data_path::String, techs::OptVariable)
     return nodes
 end
 
-function load_cep_data_lines(data_path::String, techs::OptVariable)
+"""
+    load_cep_data_lines(data_path::String, techs::OptVariable)
+load the `lines.csv` in the folder `data_path` with the following columns:
+- `tech` for each of the row
+- `line` defines the set `lines`
+- `node_start` Node where line starts
+- `node_end` Node where line ends
+- `reactance`
+- `resistance` [Ω]
+- `power_ex`: existing power limit [MW]
+- `power_lim`: limit power limit [MW]
+- `circuits` [-]
+- `voltage` [V]
+- `length` [km]
+- `eff` [-]
+returns `lines::OptVarible`     lines[tech, line] - OptDataCEPLine
+"""
+function load_cep_data_lines(data_path::String,
+                             techs::OptVariable)
     if isfile(joinpath(data_path,"lines.csv"))
         tab=CSV.read(joinpath(data_path,"lines.csv"),allowmissing=:none)
         #Check existance of necessary column
@@ -113,7 +164,11 @@ end
     get_region_data(nodes::OptVariable,tab::DataFrame,tech::String,node::String,account::String)
 Return the name of the region `region` or `"all"` that data is provided for in the `tab`
 """
-function get_location_data(nodes::OptVariable,tab::DataFrame,tech::String,node::String,account::String)
+function get_location_data(nodes::OptVariable,
+                            tab::DataFrame,
+                            tech::String,
+                            node::String,
+                            account::String)
     #determine region for this technology and node based on infromation in nodes
     region=nodes[tech,node].region
     #determine regions provided for this tech and this account in the data
@@ -130,7 +185,21 @@ function get_location_data(nodes::OptVariable,tab::DataFrame,tech::String,node::
     end
 end
 
-function load_cep_data_costs(data_path::String, techs::OptVariable, nodes::OptVariable)
+"""
+        load_cep_data_costs(data_path::String,techs::OptVariable, nodes::OptVariable)
+load the `costs.csv` in the folder `data_path` with the following columns:
+- `tech`
+- `location` - in which location is this value valid? Either `"all"`, specific region, or node
+-  `year` - in which year is this value valid?
+- `account` - `cap` - total capacity costs for the entire lifetime, `fix` - yearly fixed (maintanance) costs, `var` - variable costs per MW
+- `EUR` or `USD` or your preffered currency - the monetary cost
+- `CO2` - the environmental cost as an impact category
+- ... other impact categories
+returns `costs::OptVariable`    costs[tech,node,year,account,impact] - Number
+"""
+function load_cep_data_costs(data_path::String,
+                            techs::OptVariable,
+                            nodes::OptVariable)
     tab=CSV.read(joinpath(data_path,"costs.csv"),allowmissing=:none)
     check_column(tab,[:tech, :location, :year, :account])
     impacts=String.(names(tab)[findfirst(names(tab).==:account)+1:end])
@@ -156,7 +225,7 @@ function load_cep_data_costs(data_path::String, techs::OptVariable, nodes::OptVa
                     #Variable cost is seperate
                     account="var"
                         var_location=get_location_data(nodes,tab,tech,node,account)
-                        var_cost=tab[(:tech,tech)][(:location,fix_location)][(:account,account)][(:year,year),Symbol(impact)][1]
+                        var_cost=tab[(:tech,tech)][(:location,var_location)][(:account,account)][(:year,year),Symbol(impact)][1]
                         costs[tech,node,year,account,impact]=var_cost
                 end
             end
@@ -166,14 +235,14 @@ function load_cep_data_costs(data_path::String, techs::OptVariable, nodes::OptVa
 end
 
 """
-    load_cep_data(region::String)
-Loading from .csv files in a the folder ../ClustForOpt/data/CEP/{region}/
+    load_cep_data_provided(region::String)
+Loading from .csv files in a the folder `../CEP/data/{region}/`
 Follow instructions for the CSV-Files:
 -`region::String`: name of state or region data belongs to
--`costs::OptVariable`: costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
--`techs::OptVariable`: techs[tech] - OptDataCEPTech -
--`nodes::OptVariable`: nodes[tech,node] - OptDataCEPNode
--`lines::OptVarible`: lines[tech,line] - OptDataCEPLine
+-`costs::OptVariable`: `costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
+-`techs::OptVariable`: `techs[tech] - OptDataCEPTech`
+-`nodes::OptVariable`: `nodes[tech,node] - OptDataCEPNode`
+-`lines::OptVarible`: `lines[tech,line] - OptDataCEPLine`
 for regions:
 - `"GER_1"`: Germany 1 node
 - `"GER_18"`: Germany 18 nodes
@@ -181,8 +250,22 @@ for regions:
 - `"CA_14"`: California 14 nodes
 - `"TX_1"`: Texas 1 node
 """
-function load_cep_data(region::String)
-  data_path=normpath(joinpath(dirname(@__FILE__),"..","..","data","CEP",region))
+function load_cep_data_provided(region::String)
+  data_path=normpath(joinpath(dirname(@__FILE__),"..","..","data",region))
+  return load_cep_data(data_path;region=region)
+end
+
+"""
+    load_cep_data(data_path::String)
+Loading from .csv files in a the folder `/data_path/`
+Follow instructions for the CSV-Files:
+-`region::String`: name of state or region data belongs to
+-`costs::OptVariable`: costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
+-`techs::OptVariable`: techs[tech] - OptDataCEPTech -
+-`nodes::OptVariable`: nodes[tech,node] - OptDataCEPNode
+-`lines::OptVarible`: lines[tech,line] - OptDataCEPLine
+"""
+function load_cep_data(data_path::String;region::String="none")
   techs=load_cep_data_techs(data_path)
   nodes=load_cep_data_nodes(data_path, techs)
   lines=load_cep_data_lines(data_path, techs)

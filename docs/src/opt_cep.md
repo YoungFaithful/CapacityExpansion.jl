@@ -1,4 +1,4 @@
-# Capacity Expansion Problem
+# Optimization Capacity Expansion Problem
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -92,45 +92,52 @@ run_opt
 ### Examples
 #### Example with CO2-Limitation
 ```julia
-using ClustForOpt
+using CEP
+using Clp
+optimizer=Clp.Optimizer #select an Optimize
 state="GER_1" #select state
-ts_input_data, = load_timeseries_data("CEP", state; K=365, T=24)
-cep_data = load_cep_data(state)
+ts_input_data = load_timeseries_data_provided("CEP", state; K=365, T=24)
+cep_data = load_cep_data_provided(state)
 ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_results
-solver=CbcSolver() # select solver
 # tweak the CO2 level
-co2_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="co2",co2_limit=500)
+co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=500)
 co2_result.status
 ```
 #### Example with slack variables included
 ```julia
-slack_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="slack",lost_el_load_cost=1e6, lost_CO2_emission_cost=700)
+slack_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="slack",lost_el_load_cost=1e6, lost_CO2_emission_cost=700)
 ```
 #### Example for simple storage
 !!! note
     In simple or intradaystorage the storage level is enforced to be the same at the beginning and end of each day. The variable 'INTRASTORAGE' is tracking the storage level within each day of the representative periods.
 ```julia
-simplestor_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="simple storage",storage="simple")
+simplestor_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="simple storage",storage="simple")
 ```
 #### Example for seasonal storage
 !!! note
     In seasonalstorage the storage level is enforced to be the same at the beginning and end of the original time-series. The new variable 'INTERSTORAGE' tracks the storage level throughout the days (or periods) of the original time-series. The variable 'INTRASTORAGE' is tracking the storage level within each day of the representative periods.
 ```julia
-seasonalstor_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="seasonal storage",storage="seasonal",k_ids=run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_ids)
+seasonalstor_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="seasonal storage",storage="seasonal",k_ids=run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_ids)
+```
+#### Example for second stage operational validation step
+```julia
+design_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="design&operation", co2_limit=50)
+#the design variables (here the capacity_factors) are calculated from the first optimization
+design_variables=get_cep_design_variables(design_result)
+# Use the design variable results for the operational (dispatch problem) run
+operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_el_load_cost=1e6,lost_CO2_emission_cost=700)
 ```
 ## Get Functions
 The get functions allow an easy access to the information included in the result.
 ```@docs
 get_cep_variable_set
-get_cep_variable_value
 get_cep_slack_variables
 get_cep_design_variables
 ```
-### Examples
 #### Example plotting Capacities
 
 ```julia
-co2_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="co2",co2_limit=500) #hide
+co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=500) #hide
 using Plots
 # use the get variable set in order to get the labels: indicate the variable as "CAP" and the set-number as 1 to receive those set values
 variable=co2_result.variables["CAP"]

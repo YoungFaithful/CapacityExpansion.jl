@@ -1,4 +1,4 @@
-# Capacity Expansion Data
+# Provided Data for the Capacity Expansion Problem
 
 ## Units
 Power - MW

@@ -8,9 +8,9 @@
 module CEP
   using Reexport
   using StatsKit
-  using ClustForOpt
+  @reexport using ClustForOpt
   @reexport using JLD2
-  using FileIO
+  @reexport using FileIO
   using JuMP
 
    export OptDataCEP,
@@ -22,7 +22,8 @@ module CEP
           Scenario,
           run_opt,
           load_cep_data,
-          load_timeseries_cep,
+          load_cep_data_provided,
+          load_timeseries_data_provided,
           get_cep_variable_value,
           get_cep_variable_set,
           get_cep_slack_variables,

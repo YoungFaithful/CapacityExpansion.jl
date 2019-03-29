@@ -1,5 +1,5 @@
 # This file exemplifies the workflow from data input to optimization result generation
-using ClustForOpt
+using CEP
 using Clp
 using Plots
 
@@ -8,7 +8,7 @@ state="GER_1" # or "GER_18" or "CA_1" or "TX_1"
 # laod ts-data
 ts_input_data = load_timeseries_data("CEP", state; T=24) #CEP
 # load cep-data
-cep_data = load_cep_data(state)
+cep_data = load_cep_data_provided(state)
 
 ## CLUSTERING ##
 # run aggregation with kmeans

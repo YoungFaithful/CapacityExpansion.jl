@@ -109,9 +109,9 @@ ts_clust_result_2 = run_clust(ts_input_data; method="kmedoids", representation="
 using Clp
 solver=ClpSolver()
 # Some extra data for nodes, costs and so on:
-cep_data = load_cep_data(ts_clust_data.region)
+cep_data = load_cep_data_providedts_clust_data.region)
 # Running a simple CEP with a co2-limit of 1000 kg/MWh
-co2_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="co2",co2_limit=200)
+co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=200)
 # co2_result.
 gen_var=co2_result.variables["GEN"]
 # show axes names and axis

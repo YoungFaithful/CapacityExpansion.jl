@@ -76,8 +76,8 @@ Base.isapprox(ll1::LatLon, ll2::LatLon; atol = 1e-6, kwargs...) = isapprox(ll1.l
 
 """
      OptDataCEPNode{value::Number,lat::Number,lon::Number} <: OptData
-- `power_ex` existing capacity [MW]
-- `power_lim` capacity limit [MW]
+- `power_ex` existing capacity [MW or MWh (tech_e)]
+- `power_lim` capacity limit [MW or MWh (tech_e)]
 - `region`
 - `latlon` hold geolocation information [°,°]
 """
@@ -113,7 +113,6 @@ struct OptDataCEPLine <: OptData
   length::Number
   eff::Number
 end
-Base.show(io::IO, line::OptDataCEPLine) = print(io, "LatLon(lat=$(ll.lat)°, lon=$(ll.lon)°)")
 
 """
      OptDataCEPTech{categ::String,sector::String,eff::Number,time_series::String,lifetime::Number,financial_lifetime::Number,discount_rate::Number, annuityfactor::Number} <: OptData
