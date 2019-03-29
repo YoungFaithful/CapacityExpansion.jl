@@ -2,7 +2,7 @@
 ===
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CEP.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CEP.jl/dev)
-[![Build Status](https://travis-ci.com/holgerteichgraeber/ClustForOpt.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/ClustForOpt.jl)
+[![Build Status](https://travis-ci.com/holgerteichgraeber/ClustForOpt.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/CEP.jl)
 
 [CEP](https://github.com/YoungFaithful/CEP.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
