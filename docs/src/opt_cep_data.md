@@ -1,17 +1,17 @@
 # Provided Data for the Capacity Expansion Problem
-
 ## Units
-Power - MW
-Energy - MWh
-lengths - km
+- Power - MW
+- Energy - MWh
+- lengths - km
 
 ### Setup for each model
-folder-name: [region]-[nodes]
-  subfolder: TS - containing time-series-data
-    [dependency].csv
-|Timestamp| [nodes...]|
-|-------|--------|
-|[some iterator]| relative value of installed capacity for renewables or absolute values for demand or so|
+- folder-name: [region]-[nodes]
+-  subfolder: TS - containing time-series-data
+-    [dependency].csv
+
+| Timestamp | [nodes...] |
+|----------|------------|
+| [some iterator]| relative value of installed capacity for renewables or absolute values for demand or so |
 |...| ...|
 
 ### cap_costs.csv, fix_costs.csv, var_costs.csv
