@@ -33,8 +33,8 @@ This package runs under julia v1.0 and higher.
 Install using:
 
 ```julia
-using Pkg
-Pkg.add(https://github.com/YoungFaithful/CEP.jl.git)
+]
+add https://github.com/YoungFaithful/CEP.jl.git
 ```
 where `]` opens the julia package manager.
 
