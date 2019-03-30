@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Load Data · CEP.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><a href="../index.html"><img class="logo" src="../assets/logo.png" alt="CEP.jl logo"/></a><h1>CEP.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../">Introduction</a></li><li><a class="toctext" href="../workflow/">Workflow</a></li><li class="current"><a class="toctext" href>Load Data</a><ul class="internal"><li><a class="toctext" href="#ClustData-Time-Series-Data-1">ClustData - Time Series Data</a></li><li><a class="toctext" href="#Provided-Data-2">Provided Data</a></li><li><a class="toctext" href="#Your-Own-Data-1">Your Own Data</a></li><li><a class="toctext" href="#Examples-2">Examples</a></li></ul></li><li><a class="toctext" href="../opt_cep/">Optimization</a></li><li><a class="toctext" href="../opt_cep_data/">Provided Data</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Load Data</a></li></ul><a class="edit-page" href="https://github.com/YoungFaithful/CEP.jl/blob/master/docs/src/load_data.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Load Data</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Load-Data-1" href="#Load-Data-1">Load Data</a></h1><p>The CEP needs two types of data</p><ul><li>Time series data in the type <code>ClustData</code></li><li>Cost, node, (line), and technology data in the type <code>OptDataCEP</code></li></ul><h2><a class="nav-anchor" id="ClustData-Time-Series-Data-1" href="#ClustData-Time-Series-Data-1">ClustData - Time Series Data</a></h2><h3><a class="nav-anchor" id="Provided-Data-1" href="#Provided-Data-1">Provided Data</a></h3><p><code>load_timeseries_data_provided()</code> loads the data for a given <code>region</code> for which data is provided in this package. The optional input parameters to <code>load_timeseries_data_provided()</code> are the number of time steps per period <code>T</code> and the <code>years</code> to be imported.</p><pre><code class="language-none">load_timeseries_data_cep</code></pre><h3><a class="nav-anchor" id="Your-own-Data-1" href="#Your-own-Data-1">Your own Data</a></h3><p>For details refer to <a href="https://github.com/holgerteichgraeber/ClustForOpt.jl">ClustForOpt</a> !!! The keys of <code>{your-time-series}.data</code> have to match <code>&quot;{time_series (as declared in techs.csv)}-{node}&quot;</code></p><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="ClustForOpt.load_timeseries_data" href="#ClustForOpt.load_timeseries_data"><code>ClustForOpt.load_timeseries_data</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">load_timeseriesdata(data_path::String; T-#Segments,</code></pre><p>years::Array{Int64,1}=# years to be selected for the time series, att::Array{String,1}=# attributes to be loaded)</p><ul><li>Loading all <code>*.csv</code> files in the folder or the file <code>data_path</code></li></ul><p>The <code>*.csv</code> files shall have the following structure and must have the same length: |Timestamp |[column names...]| |[iterator]|[values]         | The first column should be called <code>Timestamp</code> if it contains a time iterator The other columns can specify the single timeseries like specific geolocation. Each column in <code>[file name].csv</code> file will be added to the ClustData.data called <code>&quot;[file name]-[column name]&quot;</code> Loads all attributes if the <code>att</code>-Array is empty or only the ones specified in it</p></div></div></section><h3><a class="nav-anchor" id="Aggregation-1" href="#Aggregation-1">Aggregation</a></h3><p>Time series aggregation can be applied to reduce the temporal dimension while (if done problem specific correctly) keeping output precise. Aggregation methods are explained in <a href="https://github.com/holgerteichgraeber/ClustForOpt.jl">ClustForOpt</a> High encouragement to run a second stage validation step if you use aggregation on your model. <a href="../opt_cep/#Example-for-second-stage-operational-validation-step-1">Example for second stage operational validation step</a></p><h3><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h3><h4><a class="nav-anchor" id="Loading-time-series-data-1" href="#Loading-time-series-data-1">Loading time series data</a></h4><div><pre><code class="language-julia">using CEP
+state=&quot;GER_1&quot;
+# laod ts-input-data
+ts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])
+using Plots
+plot(ts_input_data.data[&quot;solar-germany&quot;], legend=false, linestyle=:dot, xlabel=&quot;Time [h]&quot;, ylabel=&quot;Solar availability factor [%]&quot;)
+savefig(&quot;load_timeseries_data.svg&quot;)</code></pre><pre><code class="language-none">/home/travis/.julia/packages/GR/IVBgs/src/../deps/gr/bin/gksqt: error while loading shared libraries: libQt5Widgets.so.5: cannot open shared object file: No such file or directory
+connect: Connection refused
+GKS: can&#39;t connect to GKS socket application
+Did you start &#39;gksqt&#39;?
+
+GKS: Open failed in routine OPEN_WS
+GKS: GKS not in proper state. GKS must be either in the state WSOP or WSAC in routine ACTIVATE_WS</code></pre></div><p><img src="../load_timeseries_data.svg" alt="Plot"/></p><h4><a class="nav-anchor" id="Aggregating-time-series-data-1" href="#Aggregating-time-series-data-1">Aggregating time series data</a></h4><pre><code class="language-">using ClustForOpt
+state=&quot;GER_1&quot;
+# laod ts-input-data
+ts_input_data, = load_timeseries_data(&quot;CEP&quot;, state; K=365, T=24)
+ts_clust_data = run_clust(ts_input_data).best_results
+using Plots
+plot(ts_clust_data.data[&quot;solar-germany&quot;], legend=false, linestyle=:solid, width=3, xlabel=&quot;Time [h]&quot;, ylabel=&quot;Solar availability factor [%]&quot;)
+savefig(&quot;clust.svg&quot;)</code></pre><p><img src="clust.svg" alt="Plot"/></p><h3><a class="nav-anchor" id="OptDataCEP-1" href="#OptDataCEP-1">OptDataCEP</a></h3><h2><a class="nav-anchor" id="Provided-Data-2" href="#Provided-Data-2">Provided Data</a></h2><p><code>load_cep_data_provided</code> loads the non time-series dependent data for the <code>CEP</code> and can take the following regions:</p><ul><li><code>GER</code>: Germany</li><li><code>CA</code>: California</li><li><code>TX</code>: Texas</li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="CEP.load_cep_data_provided" href="#CEP.load_cep_data_provided"><code>CEP.load_cep_data_provided</code></a> — <span class="docstring-category">Function</span>.</div><div><div><pre><code class="language-none">load_cep_data_provided(region::String)</code></pre><p>Loading from .csv files in a the folder <code>../CEP/data/{region}/</code> Follow instructions for the CSV-Files: -<code>region::String</code>: name of state or region data belongs to -<code>costs::OptVariable</code>: <code>costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]</code> -<code>techs::OptVariable</code>: <code>techs[tech] - OptDataCEPTech</code> -<code>nodes::OptVariable</code>: <code>nodes[tech,node] - OptDataCEPNode</code> -<code>lines::OptVarible</code>: <code>lines[tech,line] - OptDataCEPLine</code> for regions:</p><ul><li><code>&quot;GER_1&quot;</code>: Germany 1 node</li><li><code>&quot;GER_18&quot;</code>: Germany 18 nodes</li><li><code>&quot;CA_1&quot;</code>: California 1 node</li><li><code>&quot;CA_14&quot;</code>: California 14 nodes</li><li><code>&quot;TX_1&quot;</code>: Texas 1 node</li></ul></div></div><a class="source-link" target="_blank" href="https://github.com/YoungFaithful/CEP.jl/blob/743522a2e21d344a7f4d5b40617c28bde9dda1c0/src/utils/load_data.jl#L237-L252">source</a></section><h2><a class="nav-anchor" id="Your-Own-Data-1" href="#Your-Own-Data-1">Your Own Data</a></h2><p>Use <code>load_cep_data</code> with <code>data_path</code> pointing to the folder with your cost, node, (line), and technology data.</p><pre><code class="language-none">load_cep_data
+load_cep_data_techs
+load_cep_data_nodes
+load_cep_data_lines
+load_cep_data_costs</code></pre><h2><a class="nav-anchor" id="Examples-2" href="#Examples-2">Examples</a></h2><h3><a class="nav-anchor" id="Example-loading-CEP-Data-1" href="#Example-loading-CEP-Data-1">Example loading CEP Data</a></h3><div><pre><code class="language-julia">using CEP
+state=&quot;GER_1&quot;
+# load ts-input-data
+cep_data = load_cep_data_provided(state)
+cep_data.costs</code></pre><pre><code class="language-none">5-dimensional OptVariable{Number,5,...} of type fv with index sets:
+    Dimension 1 - tech, [&quot;pv&quot;, &quot;wind&quot;, &quot;coal&quot;, &quot;oil&quot;, &quot;gas&quot;, &quot;bat_e&quot;, &quot;bat_in&quot;, &quot;bat_out&quot;, &quot;h2_e&quot;, &quot;h2_in&quot;, &quot;h2_out&quot;, &quot;trans&quot;]
+    Dimension 2 - node, [&quot;germany&quot;]
+    Dimension 3 - year, [2015]
+    Dimension 4 - account, [&quot;cap_fix&quot;, &quot;var&quot;]
+    Dimension 5 - impact, [&quot;EUR&quot;, &quot;CO2&quot;]
+And data, a 12×1×1×2×2 Array{Number,5}:
+[:, :, 2015, &quot;cap_fix&quot;, &quot;EUR&quot;] =
+ 136926.376
+ 168417.541
+ 153702.673
+  38429.5834
+  29964.5882
+  25653.7085
+   8961.67479
+      0.0
+     64.2184286
+ 479782.071
+      0.0
+     51.0061474
+
+[:, :, 2015, &quot;var&quot;, &quot;EUR&quot;] =
+   0.0
+   0.0
+  10.708
+ 153.586
+  86.564
+   0.0
+   0.0
+   0.0
+   0.0
+   1.9
+   0.0
+   0.0
+
+[:, :, 2015, &quot;cap_fix&quot;, &quot;CO2&quot;] =
+   160.233933
+    36.75
+    13.8595556
+     8.25
+     1.2334
+  1658.35472
+     0.0
+     0.0
+     0.0
+ 96666.6667
+     0.0
+     3.3275
+
+[:, :, 2015, &quot;var&quot;, &quot;CO2&quot;] =
+    0.0
+    0.0
+ 1217.49
+  874.6
+  728.71
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0</code></pre></div><footer><hr/><a class="previous" href="../workflow/"><span class="direction">Previous</span><span class="title">Workflow</span></a><a class="next" href="../opt_cep/"><span class="direction">Next</span><span class="title">Optimization</span></a></footer></article></body></html>
