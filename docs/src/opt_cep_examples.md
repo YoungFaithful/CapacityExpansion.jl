@@ -57,12 +57,14 @@ ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid
 co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=500) #hide
 
 using Plots
+pyplot() # hide
 # use the get variable set in order to get the labels: indicate the variable as "CAP" and the set-number as 1 to receive those set values
 variable=co2_result.variables["CAP"]
 labels=axes(variable,"tech")
 
 data=variable,[:,:,"germany"]
 # use the data provided for a simple bar-plot without a legend
-savefig(bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false), "cap_plot.svg"); nothing
+bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false)
+savefig("cap_plot.svg"); nothing # hide
 ```
 ![Plot](cap_plot.svg)

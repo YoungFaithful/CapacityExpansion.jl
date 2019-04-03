@@ -28,11 +28,14 @@ state="GER_1"
 # load ts-input-data
 ts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])
 using Plots
-savefig(plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="Time [h]", ylabel="Solar availability factor [%]"), "load_timeseries_data.svg"); nothing # hide
+pyplot() # hide
+plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="Time [h]", ylabel="Solar availability factor [%]")
+savefig("load_timeseries_data.svg"); nothing # hide
 ```
 ![Plot](load_timeseries_data.svg)
 ### Aggregating time series data
 ```@example timeseries
-savefig(plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]"), "clust.svg"); nothing # hide
+plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]")
+savefig("clust.svg"); nothing # hide
 ```
 ![Plot](clust.svg)
