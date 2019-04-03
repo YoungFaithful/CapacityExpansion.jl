@@ -1,38 +1,61 @@
-# CSV-Structure
+# Provided Data & Personal Data Setup
 ## Units
+- Timestep (input data) - h
 - Power - MW
 - Energy - MWh
-- lengths - km
+- length - km
 
-### Setup for each model
-- folder-name: [region]-[nodes]
--  subfolder: TS - containing time-series-data
--    [dependency].csv
+## Provided Data
+The package provides data for:
 
-| Timestamp| year | [nodes...] |
+| name   | nodes                                                | lines | years     | tech                                                                         |
+|--------|------------------------------------------------------|-------|-----------|------------------------------------------------------------------------------|
+| [GER-1](@ref)  | 1 – germany as single node                           | none  | 2006-2016 | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
+| [GER-18](@ref) | 18 – dena-zones within germany                       | 49    | 2006-2016 | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
+| [CA-1](@ref)   | 1 - california as single node                        | none  | 2014-2017 | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
+| [CA-14](@ref)  | 14 – multiple nodes within CA (no installed capacities currently)| 23    | 2014-2017 | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
+| [TX-1](@ref)   | 1 – single node within Texas                         | none  | 2008      | Pv, wind, coal, nuc, gas, bat-e, bat-in, bat-out                             |
+
+## Personal Data Setup
+### Folder Structure
+- costs.csv
+- nodes.csv
+- techs.csv
+- lines.csv - optional
+- TS - subfolder containing time-series-data
+- > [timeseries name].csv
+
+### Time Series data
+| `Timestamp`| `year` | [nodes...] |
 |----------|------|------|
 | [some iterator]| relative value of installed capacity for renewables or absolute values for demand or so |
 |...| ...|
 
 ### costs.csv
 
-| tech  |  year | account |[currency] | [LCA-Impact categories...] |
+| `tech`  |  `year` | `account` |[currency] | [LCA-Impact categories...] |
 |-------|-------|---------|-----------|------------|
-|[techs]| year of this price | `cap` or `fix` or `var` |Cost per unit Power(MW) or Energy (MWh) | Emissions per unit Power(MW) or Energy (MWh)...|
+|[tech]| year of this price | `cap` or `fix` or `var` |Cost per unit Power(MW) or Energy (MWh) | Emissions per unit Power(MW) or Energy (MWh)...|
 |...    | ... | ... | ... | ... |
 
 ### nodes.csv
 
-|nodes|region|infrastruct|lon | lat|[techs...] |
-|-------|--------|------------|--------|------------|--------|
-|[nodes...]|region of this node| `ex` - existing or `lim` - limiting capacity| Latitude in °| Longitude in °| installed capacity of each tech at this node|
+|`node`|`region`|`infrastruct`|`lon` | `lat`|[`techs`...] |
+|-------|--------|------------|------|------|-------------|
+|[node...]|region of this node| `ex` - existing or `lim` - limiting capacity| Latitude in °| Longitude in °| installed capacity of each tech at this node in MW or MWh|
 |...| ...| ...|...| ...|
 
 ### techs.csv
-|`tech`|`categ`|`sector`|`fuel|`eff_in`|`eff_out`|`max_gradient`|`time_series`|`lifetime`|`financial_lifetime`|`discount_rate`|
+|`tech`|`categ`|`sector`|`fuel`|`eff`|`max_gradient`|`time_series`|`lifetime`|`financial_lifetime`|`discount_rate`|
 |-------|--------|------|-----|--------|-------|-----------------|------------|----------|--------------------|---------------|
-|[techs...]| function handeling those |el for electricity|fuel dependency|efficiency in for storage|efficiency out for storage |max gradient of this technology| time-series dependency of this tech|lifetime of an installed cap|time in which you have to pay back your loan| `discount_rate`|
+|[tech...]| function handeling those |`el` for electricity|`none` or fuel dependency|efficiency |max gradient of this technology| `none` or time-series name of this tech|lifetime of an installed cap|time in which you have to pay back your loan| `discount_rate`|
+|...| ...| ...|...| ...|...| ...| ...|...| ...|
 
 ### lines.csv
-|`lines`|`node_start`|`node_end`|`reactance`|`resistance`|`power`|`voltage`|`circuits`|`length`|
-|[lines...]|node where line starts| node where line ends| reactance| resistance| max power| voltage or description| number of circuits included| length in km|
+!!! note
+    Each `node_start` and `node_end` has to be a `node` in the file `nodes.csv`.
+
+|`line`|`node_start`|`node_end`|`reactance`|`resistance`|`power_ex`|`power_lim`|`voltage`|`circuits`|`length`|
+|-------|------------|----------|-----------|------------|----------|-----------|---------|----------|--------|
+|[line...]|`node` - line starts| `node` - line ends| reactance| resistance| exisitng capacity in MW | capacity limit in MW| voltage or description| number of circuits included| length in km|
+|...| ...| ...|...| ...|...| ...| ...|...| ...|

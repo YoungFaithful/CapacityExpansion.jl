@@ -2,7 +2,7 @@
 load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
 - Adding the information in the `*.csv` file at `data_path` to the data dictionary
 The `*.csv` files shall have the following structure and must have the same length:
-|Timestamp |Year  |[column names...]|
+|`Timestamp` |`Year`  |[column names...]|
 |----------|------|-----------------|
 |[iterator]|[year]|[values]         |
 The first column should be called `Timestamp` if it contains a time iterator
@@ -45,6 +45,8 @@ function load_cep_data_techs(data_path::String)
     techs=OptVariable{OptDataCEPTech}(undef, unique(tab[:tech]); type="fv", axes_names=["tech"])
     # loop through all axes
     for tech in axes(techs,"tech")
+        #name
+        name=tech
         #categ
         categ=tab[(:tech,tech),:categ][1]
         #sector::String
@@ -63,7 +65,7 @@ function load_cep_data_techs(data_path::String)
         # annuityfactor = (1+i)^y*i/((1+i)^y-1) , i-discount_rate and y-payoff years
         annuityfactor=round((1+discount_rate)^(min(financial_lifetime,lifetime)) *discount_rate/ ((1+discount_rate) ^(min(financial_lifetime,lifetime))-1); sigdigits=9)
         # Add single data entry
-        techs[tech]=OptDataCEPTech(categ,sector,eff,time_series,lifetime,financial_lifetime,discount_rate,annuityfactor)
+        techs[tech]=OptDataCEPTech(name,categ,sector,eff,time_series,lifetime,financial_lifetime,discount_rate,annuityfactor)
     end
     return techs
 end
@@ -89,6 +91,8 @@ function load_cep_data_nodes(data_path::String,
     nodes=OptVariable{OptDataCEPNode}(undef, axes(techs,"tech"), unique(tab[:node]); type="fv", axes_names=["tech", "node"])
     for tech in axes(nodes,"tech")
         for node in axes(nodes,"node")
+            #name
+            name=node
             #value
             power_ex=tab[(:node,node)][(:infrastruct,"ex"),Symbol(tech)][1]
             data=tab[(:node,node)][(:infrastruct,"lim"),Symbol(tech)]
@@ -97,7 +101,7 @@ function load_cep_data_nodes(data_path::String,
             region=tab[(:node,node),:region][1]
             #lat and lon
             latlon=LatLon(tab[(:node,node),:lat][1],tab[(:node,node),:lon][1])
-            nodes[tech,node]=OptDataCEPNode(power_ex, power_lim, region, latlon)
+            nodes[tech,node]=OptDataCEPNode(name,power_ex, power_lim, region, latlon)
         end
     end
     return nodes
@@ -131,6 +135,8 @@ function load_cep_data_lines(data_path::String,
         lines=OptVariable{OptDataCEPLine}(undef, unique(tab[:tech]), unique(tab[:line]); type="fv", axes_names=["tech", "line"])
         for tech in axes(lines,"tech")
             for line in axes(lines,"line")
+                #name
+                name=line
                 #node_start
                 node_start=tab[(:tech,tech)][(:line,line),:node_start][1]
                 #node_end
@@ -152,7 +158,7 @@ function load_cep_data_lines(data_path::String,
                 #eff calculate the efficiency provided as eff/km in techs
                 #η=1-l_{line}⋅(1-η_{tech}) [-]
                 eff=1-length*(1-techs[tech].eff)
-                lines[tech,line]=OptDataCEPLine(node_start,node_end,reactance,resistance,power_ex,power_lim,circuits,voltage,length,eff)
+                lines[tech,line]=OptDataCEPLine(name,node_start,node_end,reactance,resistance,power_ex,power_lim,circuits,voltage,length,eff)
             end
         end
         return lines
@@ -238,7 +244,7 @@ end
 """
     load_cep_data_provided(region::String)
 Loading from .csv files in a the folder `../CEP/data/{region}/`
-Follow instructions for the CSV-Files:
+Follow instructions preparing your own data:
 -`region::String`: name of state or region data belongs to
 -`costs::OptVariable`: `costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
 -`techs::OptVariable`: `techs[tech] - OptDataCEPTech`

@@ -4,7 +4,7 @@
 The optional input parameters to `load_timeseries_data_provided()` are the number of time steps per period `T` and the `years` to be imported.
 
 ```@docs
-load_timeseries_data_cep
+load_timeseries_data_provided
 ```
 ## Your Own Data
 For details refer to [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl)
@@ -22,19 +22,17 @@ High encouragement to run a second stage validation step if you use aggregation 
 
 ## Examples
 ### Loading time series data
-```@example 1
+```@example timeseries
 using CEP
 state="GER_1"
 # load ts-input-data
 ts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])
 using Plots
-plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="Time [h]", ylabel="Solar availability factor [%]")
-savefig("load_timeseries_data.svg"); nothing # hide
+savefig(plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="Time [h]", ylabel="Solar availability factor [%]"), "load_timeseries_data.svg"); nothing # hide
 ```
 ![Plot](load_timeseries_data.svg)
 ### Aggregating time series data
-```@example 1
-plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]")
-savefig("clust.svg"); nothing # hide
+```@example timeseries
+savefig(plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]"), "clust.svg"); nothing # hide
 ```
 ![Plot](clust.svg)

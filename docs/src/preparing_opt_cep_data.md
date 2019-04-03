@@ -13,10 +13,6 @@ Use `load_cep_data` with `data_path` pointing to the folder with your cost, node
 
 ```@docs
 load_cep_data
-load_cep_data_techs
-load_cep_data_nodes
-load_cep_data_lines
-load_cep_data_costs
 ```
 
 ## Data Types

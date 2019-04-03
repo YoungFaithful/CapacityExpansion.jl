@@ -75,13 +75,15 @@ Base.show(io::IO, ll::LatLon) = print(io, "LatLon(lat=$(ll.lat)°, lon=$(ll.lon)
 Base.isapprox(ll1::LatLon, ll2::LatLon; atol = 1e-6, kwargs...) = isapprox(ll1.lat, ll2.lat; atol = 180*atol/6.371e6, kwargs...) & isapprox(ll1.lon, ll2.lon; atol = 180*atol/6.371e6, kwargs...) # atol in metres (1μm)
 
 """
-     OptDataCEPNode{value::Number,lat::Number,lon::Number} <: OptData
+     OptDataCEPNode{name::String,value::Number,lat::Number,lon::Number} <: OptData
+- `name`
 - `power_ex` existing capacity [MW or MWh (tech_e)]
 - `power_lim` capacity limit [MW or MWh (tech_e)]
 - `region`
 - `latlon` hold geolocation information [°,°]
 """
 struct OptDataCEPNode <: OptData
+  name::String
   power_ex::Number
   power_lim::Number
   region::String
@@ -89,7 +91,8 @@ struct OptDataCEPNode <: OptData
 end
 
 """
-     OptDataCEPLine{node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int64,voltage::Number,length::Number} <: OptData
+     OptDataCEPLine{name::String,node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int64,voltage::Number,length::Number} <: OptData
+- `name`
 - `node_start` Node where line starts
 - `node_end` Node where line ends
 - `reactance`
@@ -102,6 +105,7 @@ end
 - `eff` [-]
 """
 struct OptDataCEPLine <: OptData
+  name::String
   node_start::String
   node_end::String
   reactance::Number
@@ -115,7 +119,8 @@ struct OptDataCEPLine <: OptData
 end
 
 """
-     OptDataCEPTech{categ::String,sector::String,eff::Number,time_series::String,lifetime::Number,financial_lifetime::Number,discount_rate::Number, annuityfactor::Number} <: OptData
+     OptDataCEPTech{name::String,categ::String,sector::String,eff::Number,time_series::String,lifetime::Number,financial_lifetime::Number,discount_rate::Number, annuityfactor::Number} <: OptData
+- `name`
 - `categ`: the category of this technology (is it storage, transmission or generation)
 - `sector`: sector of the technology (electricity or heat)
 - `eff`: efficiency of this technologies conversion [-]
@@ -126,6 +131,7 @@ end
 - `annuityfactor`: annuity factor, important for cap-costs [-]
 """
 struct OptDataCEPTech <: OptData
+  name::String
   categ::String
   sector::String
   eff::Number

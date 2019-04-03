@@ -63,7 +63,6 @@ labels=axes(variable,"tech")
 
 data=variable,[:,:,"germany"]
 # use the data provided for a simple bar-plot without a legend
-bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false)
-savefig("cap_plot.svg"); nothing
+savefig(bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false), "cap_plot.svg"); nothing
 ```
 ![Plot](cap_plot.svg)

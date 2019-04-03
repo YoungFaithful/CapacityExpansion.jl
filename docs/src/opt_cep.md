@@ -48,23 +48,6 @@ An overview of the variables used in the CEP is provided in the table:
 | FLOW      | [sector,dir,tech,t,k,line] | MW                      | Flow over transmission line                                                          |
 | TRANS     | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines                                               |
 
-## Data
-
-The package provides data [Capacity Expansion Data](@ref) for:
-
-| name   | nodes                                                | lines | years     | tech                                                                         |
-|--------|------------------------------------------------------|-------|-----------|------------------------------------------------------------------------------|
-| GER-1  | 1 – germany as single node                           | none  | 2006-2016 | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
-| GER-18 | 18 – dena-zones within germany                       | 49    | 2015      | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
-| CA-1   | 1 - california as single node                        | none  | 2016      | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
-| CA-14 ! currently not included ! | 14 – multiple nodes within CA and neighboring states | 46    | 2016      | Pv, wind, coal, oil, gas, bat-e, bat-in, bat-out, h2-e, h2-in, h2-out, trans |
-| TX-1   | 1 – single node within Texas                         | none  | 2008      | Pv, wind, coal, nuc, gas, bat-e, bat-in, bat-out                             |
-
-### Units
-- Power - MW
-- Energy - MWh
-- lengths - km
-
 ## Running the Capacity Expansion Problem
 
 !!! note
@@ -88,14 +71,13 @@ run_opt
 ```
 ## Opt Result - A closer look
 ```@docs
-OptVariable
 OptResult
 ```
 !!! note
     The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
 
 The information of the model setup can be checked out the following way:
-```@setup opt_info
+```@setup optinfo
 using CEP
 using Clp
 optimizer=Clp.Optimizer
@@ -104,9 +86,9 @@ years=[2016]
 ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
 cep_data = load_cep_data_provided(state)
 ## CLUSTERING ##
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5) # default k-means make sure that n_init is high enough otherwise the results could
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).best_results
 ```
-```@example opt_info
-result = run_opt(ts_clust_data.best_results,cep_data,optimizer;descriptor="Model Name")
+```@example optinfo
+result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
 result.opt_info["model"]
 ```
