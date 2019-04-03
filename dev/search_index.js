@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing ClustData",
     "title": "Loading time series data",
     "category": "section",
-    "text": "using CEP\nstate=\"GER_1\"\n# load ts-input-data\nts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])\nusing Plots\nsavefig(plot(ts_input_data.data[\"solar-germany\"], legend=false, linestyle=:dot, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\"), \"load_timeseries_data.svg\"); nothing # hide(Image: Plot)"
+    "text": "using CEP\nstate=\"GER_1\"\n# load ts-input-data\nts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])\nusing Plots\npyplot() # hide\nplot(ts_input_data.data[\"solar-germany\"], legend=false, linestyle=:dot, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")\nsavefig(\"load_timeseries_data.svg\"); nothing # hide(Image: Plot)"
 },
 
 {
@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing ClustData",
     "title": "Aggregating time series data",
     "category": "section",
-    "text": "savefig(plot(ts_clust_data.data[\"solar-germany\"], legend=false, linestyle=:solid, width=3, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\"), \"clust.svg\"); nothing # hide(Image: Plot)"
+    "text": "plot(ts_clust_data.data[\"solar-germany\"], legend=false, linestyle=:solid, width=3, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")\nsavefig(\"clust.svg\"); nothing # hide(Image: Plot)"
 },
 
 {
@@ -877,7 +877,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Examples",
     "title": "Plotting Capacities",
     "category": "section",
-    "text": "using CEP\nusing Clp\noptimizer=Clp.Optimizer\n\nts_input_data = load_timeseries_data_provided(state; K=365, T=24)\ncep_data = load_cep_data_provided(state)\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=5,n_clust=5).best_resultsco2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"co2\",co2_limit=500) #hide\n\nusing Plots\n# use the get variable set in order to get the labels: indicate the variable as \"CAP\" and the set-number as 1 to receive those set values\nvariable=co2_result.variables[\"CAP\"]\nlabels=axes(variable,\"tech\")\n\ndata=variable,[:,:,\"germany\"]\n# use the data provided for a simple bar-plot without a legend\nsavefig(bar(data,title=\"Cap\", xticks=(1:length(labels),labels),legend=false), \"cap_plot.svg\"); nothing(Image: Plot)"
+    "text": "using CEP\nusing Clp\noptimizer=Clp.Optimizer\n\nts_input_data = load_timeseries_data_provided(state; K=365, T=24)\ncep_data = load_cep_data_provided(state)\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=5,n_clust=5).best_resultsco2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"co2\",co2_limit=500) #hide\n\nusing Plots\npyplot() # hide\n# use the get variable set in order to get the labels: indicate the variable as \"CAP\" and the set-number as 1 to receive those set values\nvariable=co2_result.variables[\"CAP\"]\nlabels=axes(variable,\"tech\")\n\ndata=variable,[:,:,\"germany\"]\n# use the data provided for a simple bar-plot without a legend\nbar(data,title=\"Cap\", xticks=(1:length(labels),labels),legend=false)\nsavefig(\"cap_plot.svg\"); nothing # hide(Image: Plot)"
 },
 
 ]}
