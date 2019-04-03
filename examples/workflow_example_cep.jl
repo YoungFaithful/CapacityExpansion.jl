@@ -15,9 +15,6 @@ ts_clust_data = run_clust(ts_input_data;method="hierarchical",representation="ce
 # run aggregation with kmeans and have periods segmented
 ts_seg_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=100,n_clust=5, n_seg=4) # default k-means make sure that n_init is high enough otherwise the results could be crap and drive you crazy
 
-# run no aggregation just get ts_full_data
-ts_full_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=1,n_clust=365) # default k-means
-
 ## OPTIMIZATION EXAMPLES##
 # select optimizer
 optimizer=Clp.Optimizer
@@ -52,4 +49,4 @@ design_result = run_opt(ts_clust_data.best_results,cep_data,optimizer;descriptor
 design_variables=get_cep_design_variables(design_result)
 
 # Use the design variable results for the operational run
-operation_result = run_opt(ts_full_data.best_results,cep_data,design_result.opt_config,design_variables,optimizer;lost_el_load_cost=1e6,lost_CO2_emission_cost=700)
+operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_el_load_cost=1e6,lost_CO2_emission_cost=700)

@@ -7,8 +7,8 @@ makedocs(sitename="CEP.jl",
     pages = [
         "Introduction" => "index.md",
         "Workflow" => "workflow.md",
-        "Load Data" => ["load_data.md","load_data_time.md","load_data_cep.md"],
-        "Optimization" => ["opt_cep.md","opt_cep_basics.md","opt_cep_examples.md","opt_cep_data.md"]
+        "Data Preparation" => ["preparing_clust_data.md", "preparing_opt_cep_data.md", "csv_structure.md", "README_GER_18", "README_GER_1", "README_CA_14", "README_CA_1", "README_TX_1"],
+        "Optimization" => ["opt_cep.md","opt_cep_examples.md"],
         ],
     assets = [
         "assets/clust_for_opt_text.svg",

@@ -1,5 +1,13 @@
-## Workflow
-The input data is distinguished between time series independent and time series dependent data [Load Data](@ref). They are kept separate as just the time series dependent data is used to determine representative periods (clustering).
+# Workflow
+The workflow for this package can be broken down to:
+- Data Preparation
+- Optimization
+
+## Data Preparation
+The CEP needs two types of data
+- Time series data in the type `ClustData` - [Preparing ClustData](@ref)
+- Cost, node, (line), and technology data in the type `OptDataCEP` - [Preparing OptDataCE](@ref)
+They are kept separate as just the time series dependent data is used to determine representative periods (clustering).
 
 ![Plot](assets/workflow.svg)
 

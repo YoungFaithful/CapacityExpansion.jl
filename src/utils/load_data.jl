@@ -2,8 +2,9 @@
 load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
 - Adding the information in the `*.csv` file at `data_path` to the data dictionary
 The `*.csv` files shall have the following structure and must have the same length:
-|Timestamp |[column names...]|
-|[iterator]|[values]         |
+|Timestamp |Year  |[column names...]|
+|----------|------|-----------------|
+|[iterator]|[year]|[values]         |
 The first column should be called `Timestamp` if it contains a time iterator
 The other columns can specify the single timeseries like specific geolocation.
 for regions:
@@ -202,7 +203,7 @@ function load_cep_data_costs(data_path::String,
                             nodes::OptVariable)
     tab=CSV.read(joinpath(data_path,"costs.csv"),allowmissing=:none)
     check_column(tab,[:tech, :location, :year, :account])
-    impacts=String.(names(tab)[findfirst(names(tab).==:account)+1:end])
+    impacts=String.(names(tab)[findfirst(names(tab).==Symbol("|"))+1:end])
     #Create empty OptVariable
     costs=OptVariable{Number}(undef, axes(techs,"tech"), axes(nodes,"node"), unique(tab[:year]), ["cap_fix", "var"], impacts; type="fv", axes_names=["tech", "node", "year", "account", "impact"])
     for tech in axes(costs,"tech")

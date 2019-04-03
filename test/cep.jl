@@ -36,7 +36,7 @@ using Clp
         end
     end
     #Test transmission for a multi-node scenario
-    @testset "workflow $state" for (state, years) in [["GER_18", [2015]]] begin
+    @testset "workflow $state" for (state, years) in [["GER_18", [2016]],["CA_14", [2016]]] begin
            # laod data
            ts_input_data = load_timeseries_data_provided(state; T=24, years=years) #CEP
            cep_data = load_cep_data_provided(state)
@@ -48,7 +48,7 @@ using Clp
        end
     end
     #Test exact values for each of the previously calculated scenarios by comparison with exact scenarios
-    @load normpath(joinpath(dirname(@__FILE__),"cep.jld2")) exact_scenarios
+    @load normpath(joinpath(dirname(@__FILE__),"cep_exact_data.jld2")) exact_scenarios
     @testset "exact $k" for (k,v) in scenarios begin
             #Test for each variable within this scenario
             @testset "variable $kv" for (kv,vv) in v.variables begin
