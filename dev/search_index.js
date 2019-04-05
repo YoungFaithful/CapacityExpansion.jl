@@ -197,7 +197,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing OptDataCEP",
     "title": "CEP.OptDataCEP",
     "category": "type",
-    "text": " OptDataCEP{region::String, costs::OptVariable, techs::OptVariable, nodes::OptVariable, lines::OptVariabl} <: OptData\n\n-region::String          name of state or region data belongs to -costs::OptVariable    costs[tech,node,year,account,impact] - Number -techs::OptVariable    techs[tech] - OptDataCEPTech -nodes::OptVariable    nodes[tech, node] - OptDataCEPNode -lines::OptVarible     lines[tech, line] - OptDataCEPLine instead of USD you can also use your favorite currency like EUR\n\n\n\n\n\n"
+    "text": " OptDataCEP{region::String, costs::OptVariable, techs::OptVariable, nodes::OptVariable, lines::OptVariabl} <: OptData\n\nregion::String:          name of state or region data belongs to\ncosts::OptVariable:    costs[tech,node,year,account,impact] - Number\ntechs::OptVariable:    techs[tech] - OptDataCEPTech\nnodes::OptVariable:    nodes[tech, node] - OptDataCEPNode\nlines::OptVarible:     lines[tech, line] - OptDataCEPLine\n\ninstead of USD you can also use your favorite currency like EUR\n\n\n\n\n\n"
 },
 
 {
@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Provided Data & Personal Data Setup",
     "title": "techs.csv",
     "category": "section",
-    "text": "note: Note\nA storage technology has always three componentsstorage_e: The energy part of the storage device [MWh]\nstorage_in: The power part for charging the storage device [MW]\nstorage_out: The power part for discharging the storage device [MW]If e.g. in a lithium-ion battery the storage_in should be the same as storage_out, just set the cap costs in costs.csv of either storage_in or storage_out to zero. This will add a constraint to bind their capacities.tech categ sector fuel eff max_gradient time_series lifetime financial_lifetime discount_rate\n[tech...] function handeling those el for electricity none or fuel dependency efficiency max gradient of this technology none or time-series name of this tech lifetime of an installed cap time in which you have to pay back your loan discount_rate\n... ... ... ... ... ... ... ... ... ..."
+    "text": "note: Note\nThe currently supported categ aregeneration: For generation technologies that are either dispatchable (none in column time_series) or non-dispatchable (time_series_name in column time_series)\ntransmission: For transmission technologies that have no capacity (CAP) per node, but capacities (TRANS)  per line\nstorage_e,storage_in,storage_out: For storage technology.A storage technology has always three components[storage-name]_e: The energy part of the storage device [MWh]\n[storage-name]_in: The power part for charging the storage device [MW]\n[storage-name]_out: The power part for discharging the storage device [MW]If e.g. in a lithium-ion battery the storage_in should be the same as storage_out, just set the cap costs in costs.csv of either storage_in or storage_out to zero. This will add a constraint to bind their capacities.tech categ sector fuel eff max_gradient time_series lifetime financial_lifetime discount_rate\n[tech...] function handeling those el for electricity none or fuel dependency efficiency max gradient of this technology none or time-series name of this tech lifetime of an installed cap time in which you have to pay back your loan discount_rate\n... ... ... ... ... ... ... ... ... ..."
 },
 
 {
@@ -781,7 +781,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Optimization Problem Formulation",
     "title": "CEP.OptResult",
     "category": "type",
-    "text": "OptResult\n\n\n\n\n\n"
+    "text": "  OptResult{status::Symbol,objective::Float64,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}\n\nstatus: Symbol about the solution status of the model in normal cases :OPTIMAL\nobjective: Value of the objective function\nvariables: Dictionary with each OptVariable as an entry\nsets: Dictionary with each set as an entry\nopt_config: The configuration of the model setup - for more detail see tye run_opt documentation that sets the opt_config up\nopt_info: Holds information about the model. E.g. opt_info[\"model\"] contains the exact equations used in the model. \n\n\n\n\n\n"
 },
 
 {
@@ -789,7 +789,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Optimization Problem Formulation",
     "title": "Opt Result - A closer look",
     "category": "section",
-    "text": "OptResultnote: Note\nThe model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.The information of the model setup can be checked out the following way:using CEP\nusing Clp\noptimizer=Clp.Optimizer\nstate=\"GER_1\"\nyears=[2016]\nts_input_data = load_timeseries_data_provided(state;T=24, years=years)\ncep_data = load_cep_data_provided(state)\n## CLUSTERING ##\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=10,n_clust=5).best_resultsresult = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"Model Name\")\nresult.opt_info[\"model\"]"
+    "text": "OptResultnote: Note\nThe model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.The information of the model setup can be checked out the following way:using CEP\nusing Clp\noptimizer=Clp.Optimizer\nstate=\"GER_1\"\nyears=[2016]\nts_input_data = load_timeseries_data_provided(state;T=24, years=years)\ncep_data = load_cep_data_provided(state)\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=10,n_clust=5).best_results@example 3\nresult = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"Model Name\")\nprintln.(result.opt_info[\"model\"])"
 },
 
 {
@@ -869,7 +869,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Examples",
     "title": "CEP.get_cep_design_variables",
     "category": "function",
-    "text": "get_cep_design_variables(opt_result::OptResult; capacity_factors::Dict{String,Number}=Dict{String,Number}())\n\nReturns all design variables in this opt_result matching the type \"dv\" Additionally you can add capacity factors, which scale the design variables by multiplying it with the value in the Dict\n\n\n\n\n\n"
+    "text": "get_cep_design_variables(opt_result::OptResult)\n\nReturns all design variables in this opt_result matching the type \"dv\" Additionally you can add capacity factors, which scale the design variables by multiplying it with the value in the Dict\n\n\n\n\n\n"
 },
 
 {
