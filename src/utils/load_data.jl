@@ -1,10 +1,12 @@
 """
-load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
+        load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
 - Adding the information in the `*.csv` file at `data_path` to the data dictionary
 The `*.csv` files shall have the following structure and must have the same length:
-|`Timestamp` |`Year`  |[column names...]|
-|----------|------|-----------------|
-|[iterator]|[year]|[values]         |
+
+|`Timestamp`  |`Year`  |[column names...] |
+|-------------|--------|------------------|
+|[iterator]   |[year]  |[values]          |
+
 The first column should be called `Timestamp` if it contains a time iterator
 The other columns can specify the single timeseries like specific geolocation.
 for regions:

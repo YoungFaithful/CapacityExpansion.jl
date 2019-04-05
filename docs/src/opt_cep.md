@@ -1,4 +1,4 @@
-# Optimization Capacity Expansion Problem
+# Optimization Problem Formulation
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -68,6 +68,20 @@ An overview is provided in the following table:
 They can be applied in the following way:
 ```@docs
 run_opt
+```
+
+## Solver
+The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
+- `Clp` as an open source solver
+- `Gurobi` as a proprietary solver with free academic licenses
+- `CPLEX` as an alternative proprietary solver
+
+Install the corresponding julia-package for the solver and call its `optimizer` like e.g.:
+```julia
+using Pkg
+Pkg.add("Clp")
+using Clp
+optimizer=Clp.Optimizer
 ```
 ## Opt Result - A closer look
 ```@docs

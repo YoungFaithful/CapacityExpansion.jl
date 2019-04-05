@@ -43,28 +43,16 @@ get_cep_slack_variables
 get_cep_design_variables
 ```
 ## Plotting Capacities
-
-```@setup cap_plot
-using CEP
-using Clp
-optimizer=Clp.Optimizer
-
-ts_input_data = load_timeseries_data_provided(state; K=365, T=24)
-cep_data = load_cep_data_provided(state)
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_results
-```
-```@example cap_plot
+```julia
 co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=500) #hide
 
-using Plots
-pyplot() # hide
+
 # use the get variable set in order to get the labels: indicate the variable as "CAP" and the set-number as 1 to receive those set values
 variable=co2_result.variables["CAP"]
 labels=axes(variable,"tech")
 
-data=variable,[:,:,"germany"]
+data=variable[:,:,"germany"]
 # use the data provided for a simple bar-plot without a legend
-bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false)
-savefig("cap_plot.svg"); nothing # hide
+bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false, ylabel="Capacity [MW]", xlabel="technologies", color="orange")
 ```
-![Plot](cap_plot.svg)
+![Plot](assets/opt_cep_cap_plot.svg)

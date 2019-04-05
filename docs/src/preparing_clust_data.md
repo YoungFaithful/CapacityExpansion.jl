@@ -22,20 +22,18 @@ High encouragement to run a second stage validation step if you use aggregation 
 
 ## Examples
 ### Loading time series data
-```@example timeseries
+```julia
 using CEP
 state="GER_1"
 # load ts-input-data
 ts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])
 using Plots
-pyplot() # hide
 plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="Time [h]", ylabel="Solar availability factor [%]")
-savefig("load_timeseries_data.svg"); nothing # hide
 ```
-![Plot](load_timeseries_data.svg)
+![Plot](assets/preparing_clust_data_load.svg)
 ### Aggregating time series data
-```@example timeseries
+```julia
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=50,n_clust=5).best_results
 plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]")
-savefig("clust.svg"); nothing # hide
 ```
-![Plot](clust.svg)
+![Plot](assets/preparing_clust_data_agg.svg)

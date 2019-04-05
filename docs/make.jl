@@ -17,6 +17,9 @@ makedocs(sitename="CEP.jl",
         "assets/GER_1.svg",
         "assets/GER_18.svg",
         "assets/CA_1.svg",
-        "assets/CA_14.svg"])
+        "assets/CA_14.svg",
+        "assets/opt_cep_cap_plot",
+        "assets/preparing_clust_data_load",
+        "assets/preparing_clust_data_agg"])
 
 deploydocs(repo = "github.com/YoungFaithful/CEP.jl.git", devbranch = "dev")

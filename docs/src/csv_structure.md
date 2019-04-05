@@ -46,10 +46,17 @@ The package provides data for:
 |...| ...| ...|...| ...|
 
 ### techs.csv
+!!! note
+    A storage technology has always three components
+    - `storage_e`: The energy part of the storage device [MWh]
+    - `storage_in`: The power part for charging the storage device [MW]
+    - `storage_out`: The power part for discharging the storage device [MW]
+    If e.g. in a lithium-ion battery the `storage_in` should be the same as `storage_out`, just set the `cap` costs in `costs.csv` of either `storage_in` or `storage_out` to zero. This will add a constraint to bind their capacities.
+
 |`tech`|`categ`|`sector`|`fuel`|`eff`|`max_gradient`|`time_series`|`lifetime`|`financial_lifetime`|`discount_rate`|
-|-------|--------|------|-----|--------|-------|-----------------|------------|----------|--------------------|---------------|
+|-------|--------|------|-----|--------|-------|-----------------|------------|----------|--------------------|
 |[tech...]| function handeling those |`el` for electricity|`none` or fuel dependency|efficiency |max gradient of this technology| `none` or time-series name of this tech|lifetime of an installed cap|time in which you have to pay back your loan| `discount_rate`|
-|...| ...| ...|...| ...|...| ...| ...|...| ...|
+|... |... |... |... |... |... |... |... |... |... |
 
 ### lines.csv
 !!! note

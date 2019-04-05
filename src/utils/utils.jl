@@ -243,7 +243,7 @@ function get_total_demand(cep::OptModelCEP,
   #ts_weights: k - weight of each period:
   ts_weights=ts_data.weights
   #ts_deltas:  t x k - Δt of each segment x period
-  ts_deltas=ts_data.deltas
+  ts_deltas=ts_data.delta_t
   total_demand=0
   for node in set["nodes"]
     for t in set["time_T"]
@@ -271,7 +271,7 @@ function get_cost_series(nodes::DataFrame,
   #ts_weights: k - weight of each period:
   ts_weights=clust_res.best_results.weights
   #ts_deltas:  t x k - Δt of each segment x period
-  ts_deltas=clust_res.best_results.deltas
+  ts_deltas=clust_res.best_results.delta_t
 
   #emision at each period-step
   cost_ts=zeros(length(ts_ids)+1,length(set["impact"]))
