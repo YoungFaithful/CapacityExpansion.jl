@@ -1,4 +1,4 @@
-# Capacity Expansion Problem
+# Optimization Problem Formulation
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -48,25 +48,6 @@ An overview of the variables used in the CEP is provided in the table:
 | FLOW      | [sector,dir,tech,t,k,line] | MW                      | Flow over transmission line                                                          |
 | TRANS     | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines                                               |
 
-## Data
-The package provides data [Capacity Expansion Data](@ref) for:
-
-| name   | nodes                                                | lines | years     | tech                                                                         |
-|--------|------------------------------------------------------|-------|-----------|------------------------------------------------------------------------------|
-| GER_1  | 1 – germany as single node                           | none  | 2006-2016 | Pv, wind, coal, oil, gas, bat_e, bat_in, bat_out, h2_e, h2_in, h2_out, trans |
-| GER_18 | 18 – dena-zones within germany                       | 49    | 2015      | Pv, wind, coal, oil, gas, bat_e, bat_in, bat_out, h2_e, h2_in, h2_out, trans |
-| CA_1   | 1 - california as single node                        | none  | 2016      | Pv, wind, coal, oil, gas, bat_e, bat_in, bat_out, h2_e, h2_in, h2_out, trans |
-| CA_14 ! currently not included ! | 14 – multiple nodes within CA and neighboring states | 46    | 2016      | Pv, wind, coal, oil, gas, bat_e, bat_in, bat_out, h2_e, h2_in, h2_out, trans |
-| TX_1   | 1 – single node within Texas                         | none  | 2008      | Pv, wind, coal, nuc, gas, bat_e, bat_in, bat_out                             |
-
-## Opt Types
-```@docs
-OptDataCEP
-OptResult
-OptVariable
-Scenario
-```
-
 ## Running the Capacity Expansion Problem
 
 !!! note
@@ -79,64 +60,49 @@ An overview is provided in the following table:
 | enforce a CO2-limit                                                                  | kg-CO2-eq./MW    | co2_limit               | >0                                          | ::Number       | Inf           |
 | including existing infrastructure (no extra costs)                                   | -                | existing_infrastructure | true or false                               | ::Bool         | false         |
 | type of storage implementation                                                       | -                | storage                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
-| allowing transmission                                                                | -                | transmission            | true or false                               | ::Bool         | FALSE         |
-| fixing design variables and turning capacity expansion problem into dispatch problem | -                | fixed_design_variables  | design variables from design run or nothing | ::OptVariables | nothing       |
-| allowing lost load (just necessary if design variables fixed)                        | price/MWh        | lost_el_load_cost       | >1e6                                        | ::Number       | Inf           |
-| allowing lost emission (just necessary if design variables fixed)                    | price/kg_CO2-eq. | lost_CO2_emission_cost  | >700                                        | ::Number       | Inf           |
+| allowing transmission                                                                | -                | transmission            | true or false                               | ::Bool         | false         |
+| fix. var and CEO to dispatch problem | -                | fixed_design_variables  | design variables from design run or nothing | ::OptVariables | nothing       |
+| allowing lost load (necessary for dispatch)                        | price/MWh        | lost_el_load_cost       | >1e6                                        | ::Number       | Inf           |
+| allowing lost emission (necessary for dispatch)                    | price/kg_CO2-eq. | lost_CO2_emission_cost  | >700                                        | ::Number       | Inf           |
 
 They can be applied in the following way:
 ```@docs
 run_opt
 ```
 
-### Examples
-#### Example with CO2-Limitation
-```julia
-using ClustForOpt
-state="GER_1" #select state
-ts_input_data, = load_timeseries_data("CEP", state; K=365, T=24)
-cep_data = load_cep_data(state)
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_results
-solver=CbcSolver() # select solver
-# tweak the CO2 level
-co2_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="co2",co2_limit=500)
-co2_result.status
-```
-#### Example with slack variables included
-```julia
-slack_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="slack",lost_el_load_cost=1e6, lost_CO2_emission_cost=700)
-```
-#### Example for simple storage
-!!! note
-    In simple or intradaystorage the storage level is enforced to be the same at the beginning and end of each day. The variable 'INTRASTORAGE' is tracking the storage level within each day of the representative periods.
-```julia
-simplestor_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="simple storage",storage="simple")
-```
-#### Example for seasonal storage
-!!! note
-    In seasonalstorage the storage level is enforced to be the same at the beginning and end of the original time-series. The new variable 'INTERSTORAGE' tracks the storage level throughout the days (or periods) of the original time-series. The variable 'INTRASTORAGE' is tracking the storage level within each day of the representative periods.
-```julia
-seasonalstor_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="seasonal storage",storage="seasonal",k_ids=run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_ids)
-```
-## Get Functions
-The get functions allow an easy access to the information included in the result.
-```@docs
-get_cep_variable_set
-get_cep_variable_value
-get_cep_slack_variables
-get_cep_design_variables
-```
-### Examples
-#### Example plotting Capacities
+## Solver
+The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
+- `Clp` as an open source solver
+- `Gurobi` as a proprietary solver with free academic licenses
+- `CPLEX` as an alternative proprietary solver
 
+Install the corresponding julia-package for the solver and call its `optimizer` like e.g.:
 ```julia
-co2_result = run_opt(ts_clust_data,cep_data;solver=solver,descriptor="co2",co2_limit=500) #hide
-using Plots
-# use the get variable set in order to get the labels: indicate the variable as "CAP" and the set-number as 1 to receive those set values
-variable=co2_result.variables["CAP"]
-labels=get_cep_variable_set(variable,1)
-# use the get variable value function to recieve the values of CAP[:,:,1]
-data=get_cep_variable_value(variable,[:,:,1])
-# use the data provided for a simple bar-plot without a legend
-bar(data,title="Cap", xticks=(1:length(labels),labels),legend=false)
+using Pkg
+Pkg.add("Clp")
+using Clp
+optimizer=Clp.Optimizer
+```
+## Opt Result - A closer look
+```@docs
+OptResult
+```
+!!! note
+    The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
+
+The information of the model setup can be checked out the following way:
+```@setup optinfo
+using CEP
+using Clp
+optimizer=Clp.Optimizer
+state="GER_1"
+years=[2016]
+ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
+cep_data = load_cep_data_provided(state)
+## CLUSTERING ##
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).best_results
+```
+```@example optinfo
+result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
+result.opt_info["model"]
 ```

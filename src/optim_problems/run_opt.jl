@@ -1,69 +1,91 @@
 """
-    run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any};solver::Any=CbcSolver())
-organizing the actual setup and run of the CEP-Problem
-"""
-function run_opt(ts_data::ClustData,
-                    opt_data::OptDataCEP,
-                    opt_config::Dict{String,Any};
-                    solver::Any=CbcSolver(),
-                    k_ids::Array{Int64,1}=Array{Int64,1}()
-                    )
-  #Check the consistency of the data provided
-  check_opt_data_cep(opt_data)
-  cep=setup_opt_cep_basic(ts_data, opt_data, opt_config, solver; k_ids=k_ids)
-  setup_opt_cep_basic_variables!(cep, ts_data, opt_data)
-  if opt_config["lost_load_cost"]["el"]!=Inf
-    setup_opt_cep_lost_load!(cep, ts_data, opt_data)
-  end
-  if opt_config["lost_emission_cost"]["CO2"]!=Inf
-    setup_opt_cep_lost_emission!(cep, ts_data, opt_data)
-  end
-  if opt_config["storage_p"] && opt_config["storage_e"] && opt_config["seasonalstorage"]
-    setup_opt_cep_storage!(cep, ts_data, opt_data)
-    setup_opt_cep_seasonalstorage!(cep, ts_data, opt_data, k_ids)
-  elseif opt_config["storage_p"] && opt_config["storage_e"] && !(opt_config["seasonalstorage"])
-    setup_opt_cep_storage!(cep, ts_data, opt_data)
-    setup_opt_cep_simplestorage!(cep, ts_data, opt_data)
-  end
-  if opt_config["transmission"]
-      setup_opt_cep_transmission!(cep, ts_data, opt_data)
-  end
-  setup_opt_cep_generation_el!(cep, ts_data, opt_data)
-  if opt_config["co2_limit"]!=Inf
-    setup_opt_cep_co2_limit!(cep, ts_data, opt_data, opt_config["lost_emission_cost"]; co2_limit=opt_config["co2_limit"])
-  end
-  setup_opt_cep_demand!(cep, ts_data, opt_data, opt_config["lost_load_cost"])
-  if "fixed_design_variables" in keys(opt_config)
-    setup_opt_cep_fix_design_variables!(cep, ts_data, opt_data; fixed_design_variables=opt_config["fixed_design_variables"])
-  end
-  if opt_config["existing_infrastructure"]
-      setup_opt_cep_existing_infrastructure!(cep, ts_data, opt_data)
-  end
-  if opt_config["limit_infrastructure"]
-      setup_opt_cep_limit_infrastructure!(cep, ts_data, opt_data)
-  end
-  setup_opt_cep_objective!(cep, ts_data, opt_data, opt_config["lost_load_cost"], opt_config["lost_emission_cost"])
-  return solve_opt_cep(cep, ts_data, opt_data, opt_config)
-end
-
-"""
-     run_opt(ts_data::ClustData,opt_data::OptDataCEP,fixed_design_variables::Dict{String,OptVariable};solver::Any=CbcSolver(),lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
-Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem)
-This problem runs the operational optimization problem only, with fixed design variables.
-provide the fixed design variables and the `opt_config` of the previous step (design run or another opterational run)
-what you can add to the opt_config:
-- `lost_el_load_cost`: Number indicating the lost load price/MWh (should be greater than 1e6),   give Inf for none
-- `lost_CO2_emission_cost`: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for none
-- give Inf for both lost_cost for no slack
+    run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},optimizer::DataType)
+Organizing the actual setup and run of the CEP-Problem. This function shouldn't be called by a user, but from within the other `run_opt`-functions
+Required elements are:
+- `ts_data`: The time-series data.
+- `opt_data`: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.
+- `opt_config`: This includes all the settings for the design optimization problem formulation.
+- `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
 """
 function run_opt(ts_data::ClustData,
                     opt_data::OptDataCEP,
                     opt_config::Dict{String,Any},
-                    fixed_design_variables::Dict{String,OptVariable};
-                    solver::Any=CbcSolver(),
+                    optimizer::DataType
+                    )
+  #Check the consistency of the data provided
+  check_opt_data_cep(opt_data)
+  #Setup the basic elements
+  cep=setup_opt_cep_basic(ts_data, opt_data, opt_config, optimizer, opt_config["optimizer_config"])
+  #Setup the basic variables
+  setup_opt_cep_basic_variables!(cep, ts_data, opt_data)
+  #If lost load costs aren't Inf, setup lost load (LL, SLACK)
+  if opt_config["lost_load_cost"]["el"]!=Inf
+    setup_opt_cep_lost_load!(cep, ts_data, opt_data)
+  end
+  #If lost emission costs aren't Inf, setup lost emission (LE)
+  if opt_config["lost_emission_cost"]["CO2"]!=Inf
+    setup_opt_cep_lost_emission!(cep, ts_data, opt_data)
+  end
+  #If storage and seasonalstorage, setup seasonal storage (continous)
+  if opt_config["storage_in"] && opt_config["storage_out"] && opt_config["storage_e"] && opt_config["seasonalstorage"]
+    setup_opt_cep_storage!(cep, ts_data, opt_data)
+    setup_opt_cep_seasonalstorage!(cep, ts_data, opt_data)
+  #Else if storage, but no seasonalstorage, setup intra-day storage (same level in first and last time step for each period)
+  elseif opt_config["storage_in"] && opt_config["storage_out"] && opt_config["storage_e"] && !(opt_config["seasonalstorage"])
+    setup_opt_cep_storage!(cep, ts_data, opt_data)
+    setup_opt_cep_simplestorage!(cep, ts_data, opt_data)
+  end
+  #If transmission, setup TRANS and FLOW
+  if opt_config["transmission"]
+      setup_opt_cep_transmission!(cep, ts_data, opt_data)
+  end
+  #Setup the electricity generation
+  setup_opt_cep_generation_el!(cep, ts_data, opt_data)
+  #If co2-limit isn't Inf, limit the total co2 output of the energy system
+  if opt_config["co2_limit"]!=Inf
+    setup_opt_cep_co2_limit!(cep, ts_data, opt_data; co2_limit=opt_config["co2_limit"],  lost_emission_cost=opt_config["lost_emission_cost"])
+  end
+  # Setup the energy balences to match the demand
+  setup_opt_cep_demand!(cep, ts_data, opt_data; lost_load_cost=opt_config["lost_load_cost"])
+  #If fixed_design_variables are provided, fix the installed capacities to them
+  if "fixed_design_variables" in keys(opt_config)
+    setup_opt_cep_fix_design_variables!(cep, ts_data, opt_data, opt_config["fixed_design_variables"])
+  end
+  #If existing_infrastructure, add existing infrastructure
+  if opt_config["existing_infrastructure"]
+      setup_opt_cep_existing_infrastructure!(cep, ts_data, opt_data)
+  end
+  #If limit_infrastructure, limit the infrastructure expansion
+  if opt_config["limit_infrastructure"]
+      setup_opt_cep_limit_infrastructure!(cep, ts_data, opt_data)
+  end
+  #Setup the objective
+  setup_opt_cep_objective!(cep, ts_data, opt_data; lost_load_cost=opt_config["lost_load_cost"], lost_emission_cost=opt_config["lost_emission_cost"])
+  # solve and return the CEP
+  return solve_opt_cep(cep, ts_data, opt_data, opt_config)
+end
+
+"""
+     run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
+This problem runs the operational optimization problem only, with fixed design variables.
+provide the fixed design variables and the `opt_config` of the previous step (design run or another opterational run)
+Required elements are:
+- `ts_data`: The time-series data, which should be be the original time-series data for this operational run. The `keys(ts_data.data)` need to match the `[time_series_name]-[node]`
+- `opt_data`: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines. - Should be the same as in the design run.
+- `opt_config`: This includes all the previous settings for the design optimization problem formulation and ensures that the configuration is the same.
+- `fixed_design_variables`: All the design variables that are determined by the previous design run.
+- `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
+What you can change in the `opt_config`:
+- `lost_el_load_cost`: Number indicating the lost load price/MWh (should be greater than 1e6), give a number lower than Inf for SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities). No SLACK and LL can lead to infeasibilities.
+- `lost_CO2_emission_cost`: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities). No LE can lead to a higher SLACK and LL, as the optimization is not allowed to break any emission limit then.
+"""
+function run_opt(ts_data::ClustData,
+                    opt_data::OptDataCEP,
+                    opt_config::Dict{String,Any},
+                    fixed_design_variables::Dict{String,Any},
+                    optimizer::DataType;
                     lost_el_load_cost::Number=Inf,
-                    lost_CO2_emission_cost::Number=Inf,
-                    k_ids::Array{Int64,1}=Array{Int64,1}())
+                    lost_CO2_emission_cost::Number=Inf)
   # Create dictionary for lost_load_cost of the single elements
   lost_load_cost=Dict{String,Number}("el"=>lost_el_load_cost)
   # Create dictionary for lost_emission_cost of the single elements
@@ -71,26 +93,31 @@ function run_opt(ts_data::ClustData,
   # Add the fixed_design_variables and new setting for slack costs to the existing config
   set_opt_config_cep!(opt_config;fixed_design_variables=fixed_design_variables, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
 
-  return run_opt(ts_data,opt_data,opt_config;solver=solver,k_ids=k_ids)
+  return run_opt(ts_data,opt_data,opt_config,optimizer)
 end
 
 """
-     run_opt(ts_data::ClustData,opt_data::OptDataCEP,fixed_design_variables::Dict{String,OptVariable};solver::Any=CbcSolver(),descriptor::String="",co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,intrastorage::Bool=false)
-Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem)
-options to tweak the model are:
-- `descritor`: String with the name of this paricular model like "kmeans-10-co2-500"
+     run_opt(ts_data::ClustData,opt_data::OptDataCEP,optimizer::DataTyple;co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,limit_infrastructure::Bool=false,storage::String="none",transmission::Bool=false,descriptor::String="",print_flag::Bool=true,optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),round_sigdigits::Int64=9)
+Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem).
+Required elements are:
+- `ts_data`: The time-series data, which could either be the original input data or some aggregated time-series data. The `keys(ts_data.data)` need to match the `[time_series_name]-[node]`
+- `opt_data`: The OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.
+- `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
+Options to tweak the model are:
 - `co2_limit`: A number limiting the kg.-CO2-eq./MWh (normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
-- `lost_el_load_cost`: Number indicating the lost load price/MWh (should be greater than 1e6),   give Inf for none
-- `lost_CO2_emission_cost`:
-  - Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for none
-  - give Inf for both lost_cost for no slack
+- `lost_el_load_cost`: Number indicating the lost load price/MWh (should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
+- `lost_CO2_emission_cost`: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
 - `existing_infrastructure`: true or false to include or exclude existing infrastructure to the model
 - `storage`: String "none" for no storage or "simple" to include simple (only intra-day storage) or "seasonal" to include seasonal storage (inter-day)
+Optional elements are:
+- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
+- `print_flag`: Bool to decide if a summary of the Optimization result should be printed.
+- `optimizer_config`: Each Symbol and the corresponding value in the Dictionary is passed on to the `with_optimizer` function in addition to the `optimizer`. For Gurobi an example Dictionary could look like `Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2)` more information can be found in the optimizer specific documentation.
+- `round_sigdigits`: Can be used to round the values of the result to a certain number of `sigdigits`.
 """
 function run_opt(ts_data::ClustData,
-                 opt_data::OptDataCEP;
-                 solver::Any=CbcSolver(),
-                 descriptor::String="",
+                 opt_data::OptDataCEP,
+                 optimizer::DataType;
                  co2_limit::Number=Inf,
                  lost_el_load_cost::Number=Inf,
                  lost_CO2_emission_cost::Number=Inf,
@@ -98,8 +125,10 @@ function run_opt(ts_data::ClustData,
                  limit_infrastructure::Bool=false,
                  storage::String="none",
                  transmission::Bool=false,
+                 descriptor::String="",
                  print_flag::Bool=true,
-                 k_ids::Array{Int64,1}=Array{Int64,1}())
+                 optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
+                 round_sigdigits::Int64=9)
    # Activated seasonal or simple storage corresponds with storage
    if storage=="seasonal"
        storage=true
@@ -115,171 +144,13 @@ function run_opt(ts_data::ClustData,
       seasonalstorage=false
       @warn("String indicating storage not identified as 'none', 'seasonal' or 'simple' → no storage")
    end
-   if seasonalstorage && k_ids==Array{Int64,1}()
-     throw(@error("No or empty k_ids provided"))
-   end
   # Create dictionary for lost_load_cost of the single elements
   lost_load_cost=Dict{String,Number}("el"=>lost_el_load_cost)
   # Create dictionary for lost_emission_cost of the single elements
   lost_emission_cost=Dict{String,Number}("CO2"=>lost_CO2_emission_cost)
 
   #Setup the opt_config file based on the data input and
-  opt_config=set_opt_config_cep(opt_data; descriptor=descriptor, co2_limit=co2_limit, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost, existing_infrastructure=existing_infrastructure, limit_infrastructure=limit_infrastructure, storage_e=storage, storage_p=storage, seasonalstorage=seasonalstorage, transmission=transmission, print_flag=print_flag)
-
+  opt_config=set_opt_config_cep(opt_data; descriptor=descriptor, co2_limit=co2_limit, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost, existing_infrastructure=existing_infrastructure, limit_infrastructure=limit_infrastructure, storage_e=storage, storage_in=storage, storage_out=storage, seasonalstorage=seasonalstorage, transmission=transmission, print_flag=print_flag, optimizer_config=optimizer_config, round_sigdigits=round_sigdigits)
   #Run the optimization problem
-  run_opt(ts_data, opt_data, opt_config; solver=solver, k_ids=k_ids)
+  run_opt(ts_data, opt_data, opt_config, optimizer)
 end # run_opt
-
-#TODO Rewrite battery problem
-"""
-    run_battery_opt(data::ClustData)
-
-operational battery storage optimization problem
-runs every day seperately and adds results in the end
-"""
-function run_battery_opt(data::ClustData)
-  prnt=false
-  num_periods = data.K # number of periods, 1day, one week, etc.
-  num_hours = data.T # hours per period (24 per day, 48 per 2days)
-  el_price = data.data["el_price-$(data.region)"]
-  weight = data.weights
-  # time steps
-  del_t = 1; # hour
-
-  # example battery Southern California Edison
-  P_battery = 100; # MW
-  E_battery = 400; # MWh
-  eff_Storage_in = 0.95;
-  eff_Storage_out = 0.95;
-  #Stor_init = 0.5;
-
-  # optimization
-  # Sets
-  # time
-  t_max = num_hours;
-
-  E_in_arr = zeros(num_hours,num_periods)
-  E_out_arr = zeros(num_hours,num_periods)
-  stor = zeros(num_hours +1,num_periods)
-
-  obj = zeros(num_periods);
-  m= Model(solver=ClpSolver() )
-
-  # hourly energy output
-  @variable(m, E_out[t=1:t_max] >= 0) # kWh
-  # hourly energy input
-  @variable(m, E_in[t=1:t_max] >=# optimization problems
-   0) # kWh
-  # storage level
-  @variable(m, Stor_lev[t=1:t_max+1] >= 0) # kWh
-
-  @variable(m,0 <= Stor_init <= 1) # this as a variable ensures
-
-  # maximum battery power
-  for t=1:t_max
-    @constraint(m, E_out[t] <= P_battery*del_t)
-    @constraint(m, E_in[t] <= P_battery*del_t)
-  end
-
-  # maximum storage level
-  for t=1:t_max+1
-    @constraint(m, Stor_lev[t] <= E_battery)
-  end
-
-  # battery energy balance
-  for t=1:t_max
-    @constraint(m,Stor_lev[t+1] == Stor_lev[t] + eff_Storage_in*del_t*E_in[t]-(1/eff_Storage_out)*del_t*E_out[t])
-  end
-
-  # initial storage level
-  @constraint(m,Stor_lev[1] == Stor_init*E_battery)
-  @constraint(m,Stor_lev[t_max+1] >= Stor_lev[1])
-  s=:Optimal
-  for i =1:num_periods
-    #objective
-    @objective(m, Max, sum((E_out[t] - E_in[t])*el_price[t,i] for t=1:t_max) )
-    status = solve(m)
-    if status != :Optimal
-      s=:NotSolved
-    end
-    if weight ==1
-      obj[i] = getobjectivevalue(m)
-    else
-      obj[i] = getobjectivevalue(m) * weight[i]
-    end
-    E_in_arr[:,i] = getvalue(E_in)
-    E_out_arr[:,i] = getvalue(E_out)
-    stor[:,i] = getvalue(Stor_lev)
-  end
-  vars= Dict()
-  vars["E_out"] = OptVariable(E_out_arr,"operation")
-  vars["E_in"] = OptVariable(E_in_arr,"operation")
-  vars["Stor_level"] = OptVariable(stor,"operation")
-  res = OptResult(s,sum(obj),vars,Dict())
-  return res
-end # run_battery_opt()
-
- ###
-
-"""
-    run_gas_opt(data::ClustData)
-
-operational gas turbine optimization problem
-runs every day seperately and adds results in the end
-"""
-function run_gas_opt(data::ClustData)
-
-
-  prnt=false
-  num_periods = data.K # number of periods, 1day, one week, etc.
-  num_hours = data.T # hours per period (24 per day, 48 per 2days)
-  el_price = data.data["el_price"]
-  weight = data.weights
-  # time steps
-  del_t = 1; # hour
-
-
-  # example gas turbine
-  P_gt = 100; # MW
-  eta_t = 0.6; # 40 % efficiency
-  if data.region == "GER"
-    gas_price = 24.65  # EUR/MWh    7.6$/GJ = 27.36 $/MWh=24.65EUR/MWh with 2015 conversion rate
-  elseif data.region == "CA"
-    gas_price  = 14.40   # $/MWh        4$/GJ = 14.4 $/MWh
-  end
-
-  # optimization
-  # Sets
-  # time,
-  t_max = num_hours;
-
-  E_out_arr = zeros(num_hours,num_periods)
-
-  obj = zeros(num_periods);
-  m= Model(solver=ClpSolver() )
-
-  # hourly energy output
-  @variable(m, 0 <= E_out[t=1:t_max] <= P_gt) # MWh
-
-  s=:Optimal
-  for i =1:num_periods
-    #objective
-    @objective(m, Max, sum(E_out[t]*el_price[t,i] - 1/eta_t*E_out[t]*gas_price for t=1:t_max) )
-    status = solve(m)
-    if status != :Optimal
-      s=:NotSolved
-    end
-
-    if weight ==1
-      obj[i] = getobjectivevalue(m)
-    else
-      obj[i] = getobjectivevalue(m) * weight[i]
-    end
-    E_out_arr[:,i] = getvalue(E_out)
-  end
-
-  op_vars= Dict()
-  op_vars["E_out"] = E_out_arr
-  res = OptResult(s,sum(obj),Dict(),op_vars,Dict())
-  return res
-end # run_gas_opt()
