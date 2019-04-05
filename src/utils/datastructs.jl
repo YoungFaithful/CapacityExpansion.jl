@@ -28,7 +28,15 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
     type::String
 end
 
-"OptResult"
+"""
+      OptResult{status::Symbol,objective::Float64,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
+- `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
+- `objective`: Value of the objective function
+- `variables`: Dictionary with each OptVariable as an entry
+- `sets`: Dictionary with each set as an entry
+- `opt_config`: The configuration of the model setup - for more detail see tye `run_opt` documentation that sets the `opt_config` up
+- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model. 
+"""
 struct OptResult
  status::Symbol
  objective::Float64
@@ -40,11 +48,11 @@ end
 
 """
      OptDataCEP{region::String, costs::OptVariable, techs::OptVariable, nodes::OptVariable, lines::OptVariabl} <: OptData
--`region::String`          name of state or region data belongs to
--`costs::OptVariable`    costs[tech,node,year,account,impact] - Number
--`techs::OptVariable`    techs[tech] - OptDataCEPTech
--`nodes::OptVariable`    nodes[tech, node] - OptDataCEPNode
--`lines::OptVarible`     lines[tech, line] - OptDataCEPLine
+- `region::String`:          name of state or region data belongs to
+- `costs::OptVariable`:    costs[tech,node,year,account,impact] - Number
+- `techs::OptVariable`:    techs[tech] - OptDataCEPTech
+- `nodes::OptVariable`:    nodes[tech, node] - OptDataCEPNode
+- `lines::OptVarible`:     lines[tech, line] - OptDataCEPLine
 instead of USD you can also use your favorite currency like EUR
 """
 struct OptDataCEP <: OptData

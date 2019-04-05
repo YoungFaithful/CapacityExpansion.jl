@@ -6,7 +6,7 @@ The workflow for this package can be broken down to:
 ## Data Preparation
 The CEP needs two types of data
 - Time series data in the type `ClustData` - [Preparing ClustData](@ref)
-- Cost, node, (line), and technology data in the type `OptDataCEP` - [Preparing OptDataCE](@ref)
+- Cost, node, (line), and technology data in the type `OptDataCEP` - [Preparing OptDataCEP](@ref)
 They are kept separate as just the time series dependent data is used to determine representative periods (clustering).
 
 ![Plot](assets/workflow.svg)

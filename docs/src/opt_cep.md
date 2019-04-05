@@ -91,7 +91,7 @@ OptResult
     The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
 
 The information of the model setup can be checked out the following way:
-```@setup optinfo
+```@setup 3
 using CEP
 using Clp
 optimizer=Clp.Optimizer
@@ -99,10 +99,9 @@ state="GER_1"
 years=[2016]
 ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
 cep_data = load_cep_data_provided(state)
-## CLUSTERING ##
 ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).best_results
 ```
-```@example optinfo
+```@example 3
 result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
-result.opt_info["model"]
+println.(result.opt_info["model"])
 ```
