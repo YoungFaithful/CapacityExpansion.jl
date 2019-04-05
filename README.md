@@ -1,4 +1,4 @@
-![CEP logo](assets/cep_text.svg)
+![CEP logo](docs/src/assets/cep_text.svg)
 ===
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CEP.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CEP.jl/dev)
