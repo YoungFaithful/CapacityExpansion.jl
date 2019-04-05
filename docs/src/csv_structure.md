@@ -47,10 +47,14 @@ The package provides data for:
 
 ### techs.csv
 !!! note
+    The currently supported `categ` are
+    - `generation`: For generation technologies that are either dispatchable (`none` in column `time_series`) or non-dispatchable (`time_series_name` in column `time_series`)
+    - `transmission`: For transmission technologies that have no capacity (`CAP`) per `node`, but capacities (`TRANS`)  per `line`
+    - `storage_e`,`storage_in`,`storage_out`: For storage technology.
     A storage technology has always three components
-    - `storage_e`: The energy part of the storage device [MWh]
-    - `storage_in`: The power part for charging the storage device [MW]
-    - `storage_out`: The power part for discharging the storage device [MW]
+    - `[storage-name]_e`: The energy part of the storage device [MWh]
+    - `[storage-name]_in`: The power part for charging the storage device [MW]
+    - `[storage-name]_out`: The power part for discharging the storage device [MW]
     If e.g. in a lithium-ion battery the `storage_in` should be the same as `storage_out`, just set the `cap` costs in `costs.csv` of either `storage_in` or `storage_out` to zero. This will add a constraint to bind their capacities.
 
 |`tech`|`categ`|`sector`|`fuel`|`eff`|`max_gradient`|`time_series`|`lifetime`|`financial_lifetime`|`discount_rate`|

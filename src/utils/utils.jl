@@ -121,7 +121,7 @@ function get_cep_variable_set(scenario::Scenario,
 end
 
 """
-    get_cep_design_variables(opt_result::OptResult; capacity_factors::Dict{String,Number}=Dict{String,Number}())
+    get_cep_design_variables(opt_result::OptResult)
 Returns all design variables in this opt_result matching the type "dv"
 Additionally you can add capacity factors, which scale the design variables by multiplying it with the value in the Dict
 """
