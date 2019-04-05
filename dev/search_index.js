@@ -77,7 +77,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing ClustData",
     "title": "CEP.load_timeseries_data_provided",
     "category": "function",
-    "text": "loadtimeseriesdataprovided(region::String=\"GER1\"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())\n\nAdding the information in the *.csv file at data_path to the data dictionary\n\nThe *.csv files shall have the following structure and must have the same length: |Timestamp |Year  |[column names...]| |–––––|–––|––––––––-| |[iterator]|[year]|[values]         | The first column should be called Timestamp if it contains a time iterator The other columns can specify the single timeseries like specific geolocation. for regions:\n\n\"GER_1\": Germany 1 node\n\"GER_18\": Germany 18 nodes\n\"CA_1\": California 1 node\n\"CA_14\": California 14 nodes\n\"TX_1\": Texas 1 node\n\n\n\n\n\n"
+    "text": "    load_timeseries_data_provided(region::String=\"GER_1\"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())\n\nAdding the information in the *.csv file at data_path to the data dictionary\n\nThe *.csv files shall have the following structure and must have the same length:\n\nTimestamp Year [column names...]\n[iterator] [year] [values]\n\nThe first column should be called Timestamp if it contains a time iterator The other columns can specify the single timeseries like specific geolocation. for regions:\n\n\"GER_1\": Germany 1 node\n\"GER_18\": Germany 18 nodes\n\"CA_1\": California 1 node\n\"CA_14\": California 14 nodes\n\"TX_1\": Texas 1 node\n\n\n\n\n\n"
 },
 
 {
@@ -125,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing ClustData",
     "title": "Loading time series data",
     "category": "section",
-    "text": "using CEP\nstate=\"GER_1\"\n# load ts-input-data\nts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])\nusing Plots\npyplot() # hide\nplot(ts_input_data.data[\"solar-germany\"], legend=false, linestyle=:dot, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")\nsavefig(\"load_timeseries_data.svg\"); nothing # hide(Image: Plot)"
+    "text": "using CEP\nstate=\"GER_1\"\n# load ts-input-data\nts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])\nusing Plots\nplot(ts_input_data.data[\"solar-germany\"], legend=false, linestyle=:dot, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")(Image: Plot)"
 },
 
 {
@@ -133,7 +133,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Preparing ClustData",
     "title": "Aggregating time series data",
     "category": "section",
-    "text": "plot(ts_clust_data.data[\"solar-germany\"], legend=false, linestyle=:solid, width=3, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")\nsavefig(\"clust.svg\"); nothing # hide(Image: Plot)"
+    "text": "ts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=50,n_clust=5).best_results\nplot(ts_clust_data.data[\"solar-germany\"], legend=false, linestyle=:solid, width=3, xlabel=\"Time [h]\", ylabel=\"Solar availability factor [%]\")(Image: Plot)"
 },
 
 {
@@ -333,7 +333,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Provided Data & Personal Data Setup",
     "title": "techs.csv",
     "category": "section",
-    "text": "|tech|categ|sector|fuel|eff|max_gradient|time_series|lifetime|financial_lifetime|discount_rate| |–––-|––––|–––|––-|––––|–––-|––––––––-|––––––|–––––|––––––––––|–––––––-| |[tech...]| function handeling those |el for electricity|none or fuel dependency|efficiency |max gradient of this technology| none or time-series name of this tech|lifetime of an installed cap|time in which you have to pay back your loan| discount_rate| |...| ...| ...|...| ...|...| ...| ...|...| ...|"
+    "text": "note: Note\nA storage technology has always three componentsstorage_e: The energy part of the storage device [MWh]\nstorage_in: The power part for charging the storage device [MW]\nstorage_out: The power part for discharging the storage device [MW]If e.g. in a lithium-ion battery the storage_in should be the same as storage_out, just set the cap costs in costs.csv of either storage_in or storage_out to zero. This will add a constraint to bind their capacities.tech categ sector fuel eff max_gradient time_series lifetime financial_lifetime discount_rate\n[tech...] function handeling those el for electricity none or fuel dependency efficiency max gradient of this technology none or time-series name of this tech lifetime of an installed cap time in which you have to pay back your loan discount_rate\n... ... ... ... ... ... ... ... ... ..."
 },
 
 {
@@ -722,23 +722,23 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "opt_cep/#",
-    "page": "Optimization Capacity Expansion Problem",
-    "title": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
+    "title": "Optimization Problem Formulation",
     "category": "page",
     "text": ""
 },
 
 {
-    "location": "opt_cep/#Optimization-Capacity-Expansion-Problem-1",
-    "page": "Optimization Capacity Expansion Problem",
-    "title": "Optimization Capacity Expansion Problem",
+    "location": "opt_cep/#Optimization-Problem-Formulation-1",
+    "page": "Optimization Problem Formulation",
+    "title": "Optimization Problem Formulation",
     "category": "section",
     "text": ""
 },
 
 {
     "location": "opt_cep/#General-1",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "General",
     "category": "section",
     "text": "The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language JUMP. The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.(Image: Plot)The basic idea for the energy system is to have a spacial resolution of the energy system in discrete nodes. Each node has demand, non-dispatchable generation, dispatachable generation and storage capacities of varying technologies connected to itself. The different energy system nodes are interconnected with each other by transmission lines. The model is designed to minimize social costs by minimizing the following objective function:min sum_accounttechCOST_accountEURUSDtech + sum LL cdot  cost_LL + LE cdot  cos_LE"
@@ -746,7 +746,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "opt_cep/#Variables-and-Sets-1",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "Variables and Sets",
     "category": "section",
     "text": "The models scalability is relying on the usage of sets. The elements of the sets are extracted from the input data and scale the different variables. An overview of the sets is provided in the table. Depending on the models configuration the necessary sets are initialized.name description\nlines transmission lines connecting the nodes\nnodes spacial energy system nodes\ntech fossil and renewable generation as well as storage technologies\nimpact impact categories like EUR or USD, CO 2 − eq., ...\naccount fixed costs for installation and yearly expenses, variable costs\ninfrastruct infrastructure status being either new or existing\nsector energy sector like electricity\ntime K numeration of the representative periods\ntime T numeration of the time intervals within a period\ntime T e numeration of the time steps within a period\ntime I numeration of the time invervals of the full input data periods\ntime I e numeration of the time steps of the full input data periods\ndir transmission direction of the flow uniform with or opposite to the lines directionAn overview of the variables used in the CEP is provided in the table:name dimensions unit description\nCOST [account,impact,tech] EUR/USD, LCA-categories Costs\nCAP [tech,infrastruct,node] MW Capacity\nGEN [sector,tech,t,k,node] MW Generation\nSLACK [sector,t,k,node] MW Power gap, not provided by installed CAP\nLL [sector] MWh LoastLoad Generation gap, not provided by installed CAP\nLE [impact] LCA-categories LoastEmission Amount of emissions that installed CAP crosses the Emission constraint\nINTRASTOR [sector, tech,t,k,node] MWh Storage level within a period\nINTERSTOR [sector,tech,i,node] MWh Storage level between periods of the full time series\nFLOW [sector,dir,tech,t,k,line] MW Flow over transmission line\nTRANS [tech,infrastruct,lines] MW maximum capacity of transmission lines"
@@ -754,23 +754,31 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "opt_cep/#CEP.run_opt",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "CEP.run_opt",
     "category": "function",
-    "text": "run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any};optimizer::DataType)\n\norganizing the actual setup and run of the CEP-Problem\n\n\n\n\n\n run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)\n\nWrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of opt_data - in this case OptDataCEP - so identification as CEP problem) This problem runs the operational optimization problem only, with fixed design variables. provide the fixed design variables and the opt_config of the previous step (design run or another opterational run) what you can add to the opt_config:\n\nlost_el_load_cost: Number indicating the lost load price/MWh (should be greater than 1e6),   give Inf for none\nlost_CO2_emission_cost: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for none\ngive Inf for both lost_cost for no slack\n\n\n\n\n\n run_opt(ts_data::ClustData,opt_data::OptDataCEP,optimizer::DataTyple;descriptor::String=\"\",co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,limit_infrastructure::Bool=false,storage::String=\"none\",transmission::Bool=false,print_flag::Bool=true,print_level::Int64=0)\n\nWrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of opt_data - in this case OptDataCEP - so identification as CEP problem) options to tweak the model are:\n\ndescritor: String with the name of this paricular model like \"kmeans-10-co2-500\"\nco2_limit: A number limiting the kg.-CO2-eq./MWh (normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited\nlost_el_load_cost: Number indicating the lost load price/MWh (should be greater than 1e6),   give Inf for none\nlost_CO2_emission_cost:\nNumber indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for none\ngive Inf for both lost_cost for no slack\nexisting_infrastructure: true or false to include or exclude existing infrastructure to the model\nstorage: String \"none\" for no storage or \"simple\" to include simple (only intra-day storage) or \"seasonal\" to include seasonal storage (inter-day)\n\n\n\n\n\n"
+    "text": "run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},optimizer::DataType)\n\nOrganizing the actual setup and run of the CEP-Problem. This function shouldn\'t be called by a user, but from within the other run_opt-functions Required elements are:\n\nts_data: The time-series data.\nopt_data: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.\nopt_config: This includes all the settings for the design optimization problem formulation.\noptimizer: The used optimizer, which could e.g. be Clp: using Clp optimizer=Clp.Optimizer or Gurobi: using Gurobi optimizer=Gurobi.Optimizer.\n\n\n\n\n\n run_opt(ts_data::ClustData,opt_data::OptDataCEP,opt_config::Dict{String,Any},fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)\n\nThis problem runs the operational optimization problem only, with fixed design variables. provide the fixed design variables and the opt_config of the previous step (design run or another opterational run) Required elements are:\n\nts_data: The time-series data, which should be be the original time-series data for this operational run. The keys(ts_data.data) need to match the [time_series_name]-[node]\nopt_data: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines. - Should be the same as in the design run.\nopt_config: This includes all the previous settings for the design optimization problem formulation and ensures that the configuration is the same.\nfixed_design_variables: All the design variables that are determined by the previous design run.\noptimizer: The used optimizer, which could e.g. be Clp: using Clp optimizer=Clp.Optimizer or Gurobi: using Gurobi optimizer=Gurobi.Optimizer.\n\nWhat you can change in the opt_config:\n\nlost_el_load_cost: Number indicating the lost load price/MWh (should be greater than 1e6), give a number lower than Inf for SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities). No SLACK and LL can lead to infeasibilities.\nlost_CO2_emission_cost: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities). No LE can lead to a higher SLACK and LL, as the optimization is not allowed to break any emission limit then.\n\n\n\n\n\n run_opt(ts_data::ClustData,opt_data::OptDataCEP,optimizer::DataTyple;co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,limit_infrastructure::Bool=false,storage::String=\"none\",transmission::Bool=false,descriptor::String=\"\",print_flag::Bool=true,optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),round_sigdigits::Int64=9)\n\nWrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of opt_data - in this case OptDataCEP - so identification as CEP problem). Required elements are:\n\nts_data: The time-series data, which could either be the original input data or some aggregated time-series data. The keys(ts_data.data) need to match the [time_series_name]-[node]\nopt_data: The OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.\noptimizer: The used optimizer, which could e.g. be Clp: using Clp optimizer=Clp.Optimizer or Gurobi: using Gurobi optimizer=Gurobi.Optimizer.\n\nOptions to tweak the model are:\n\nco2_limit: A number limiting the kg.-CO2-eq./MWh (normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited\nlost_el_load_cost: Number indicating the lost load price/MWh (should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)\nlost_CO2_emission_cost: Number indicating the emission price/kg-CO2 (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)\nexisting_infrastructure: true or false to include or exclude existing infrastructure to the model\nstorage: String \"none\" for no storage or \"simple\" to include simple (only intra-day storage) or \"seasonal\" to include seasonal storage (inter-day)\n\nOptional elements are:\n\ndescriptor: String with the name of this paricular model like \"kmeans-10-co2-500\"\nprint_flag: Bool to decide if a summary of the Optimization result should be printed.\noptimizer_config: Each Symbol and the corresponding value in the Dictionary is passed on to the with_optimizer function in addition to the optimizer. For Gurobi an example Dictionary could look like Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2) more information can be found in the optimizer specific documentation.\nround_sigdigits: Can be used to round the values of the result to a certain number of sigdigits.\n\n\n\n\n\n"
 },
 
 {
     "location": "opt_cep/#Running-the-Capacity-Expansion-Problem-1",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "Running the Capacity Expansion Problem",
     "category": "section",
     "text": "note: Note\nThe CEP model can be run with many configurations. The configurations themselves don\'t mess with each other though the provided input data must fulfill the ability to have e.g. lines in order for transmission to work.An overview is provided in the following table:description unit configuration values type default value\nenforce a CO2-limit kg-CO2-eq./MW co2_limit >0 ::Number Inf\nincluding existing infrastructure (no extra costs) - existing_infrastructure true or false ::Bool false\ntype of storage implementation - storage \"none\", \"simple\" or \"seasonal\" ::String \"none\"\nallowing transmission - transmission true or false ::Bool false\nfix. var and CEO to dispatch problem - fixeddesignvariables design variables from design run or nothing ::OptVariables nothing\nallowing lost load (necessary for dispatch) price/MWh lostelload_cost >1e6 ::Number Inf\nallowing lost emission (necessary for dispatch) price/kg_CO2-eq. lostCO2emission_cost >700 ::Number InfThey can be applied in the following way:run_opt"
 },
 
 {
+    "location": "opt_cep/#Solver-1",
+    "page": "Optimization Problem Formulation",
+    "title": "Solver",
+    "category": "section",
+    "text": "The package provides no optimizer and a solver has to be added separately. For the linear optimization problem suggestions are:Clp as an open source solver\nGurobi as a proprietary solver with free academic licenses\nCPLEX as an alternative proprietary solverInstall the corresponding julia-package for the solver and call its optimizer like e.g.:using Pkg\nPkg.add(\"Clp\")\nusing Clp\noptimizer=Clp.Optimizer"
+},
+
+{
     "location": "opt_cep/#CEP.OptResult",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "CEP.OptResult",
     "category": "type",
     "text": "OptResult\n\n\n\n\n\n"
@@ -778,7 +786,7 @@ var documenterSearchIndex = {"docs": [
 
 {
     "location": "opt_cep/#Opt-Result-A-closer-look-1",
-    "page": "Optimization Capacity Expansion Problem",
+    "page": "Optimization Problem Formulation",
     "title": "Opt Result - A closer look",
     "category": "section",
     "text": "OptResultnote: Note\nThe model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.The information of the model setup can be checked out the following way:using CEP\nusing Clp\noptimizer=Clp.Optimizer\nstate=\"GER_1\"\nyears=[2016]\nts_input_data = load_timeseries_data_provided(state;T=24, years=years)\ncep_data = load_cep_data_provided(state)\n## CLUSTERING ##\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=10,n_clust=5).best_resultsresult = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"Model Name\")\nresult.opt_info[\"model\"]"
@@ -877,7 +885,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Examples",
     "title": "Plotting Capacities",
     "category": "section",
-    "text": "using CEP\nusing Clp\noptimizer=Clp.Optimizer\n\nts_input_data = load_timeseries_data_provided(state; K=365, T=24)\ncep_data = load_cep_data_provided(state)\nts_clust_data = run_clust(ts_input_data;method=\"kmeans\",representation=\"centroid\",n_init=5,n_clust=5).best_resultsco2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"co2\",co2_limit=500) #hide\n\nusing Plots\npyplot() # hide\n# use the get variable set in order to get the labels: indicate the variable as \"CAP\" and the set-number as 1 to receive those set values\nvariable=co2_result.variables[\"CAP\"]\nlabels=axes(variable,\"tech\")\n\ndata=variable,[:,:,\"germany\"]\n# use the data provided for a simple bar-plot without a legend\nbar(data,title=\"Cap\", xticks=(1:length(labels),labels),legend=false)\nsavefig(\"cap_plot.svg\"); nothing # hide(Image: Plot)"
+    "text": "co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor=\"co2\",co2_limit=500) #hide\n\n\n# use the get variable set in order to get the labels: indicate the variable as \"CAP\" and the set-number as 1 to receive those set values\nvariable=co2_result.variables[\"CAP\"]\nlabels=axes(variable,\"tech\")\n\ndata=variable[:,:,\"germany\"]\n# use the data provided for a simple bar-plot without a legend\nbar(data,title=\"Cap\", xticks=(1:length(labels),labels),legend=false, ylabel=\"Capacity [MW]\", xlabel=\"technologies\", color=\"orange\")(Image: Plot)"
 },
 
 ]}
