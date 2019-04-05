@@ -22,4 +22,4 @@ makedocs(sitename="CEP.jl",
         "assets/preparing_clust_data_load",
         "assets/preparing_clust_data_agg"])
 
-deploydocs(repo = "github.com/YoungFaithful/CEP.jl.git", devbranch = "dev")
+deploydocs(repo = "github.com/YoungFaithful/CEP.jl.git")
