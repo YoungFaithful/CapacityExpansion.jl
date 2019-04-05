@@ -40,7 +40,7 @@ First install the dependencies:
 ```julia
 using Pkg
 Pkg.add(["JuMP","StatsKit","JLD2","FileIO"])
-Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl"))
+Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl", rev="dev"))
 ```
 Second install `CEP.jl`:
 ```julia
