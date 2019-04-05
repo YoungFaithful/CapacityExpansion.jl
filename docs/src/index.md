@@ -30,10 +30,19 @@ This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/y
 
 ## Installation
 This package runs under julia v1.0 and higher.
-Install using:
+First install the dependencies:
+- `JuMP.jl` - for the modeling environment
+- `StatsKit.jl` - for handling of `.csv`-Files
+- `JLD2` - for saving your result data
+- `FileIO` - for file accessing
+- `ClustForOpt.jl` - for time-series data
 
 ```julia
-]
-add https://github.com/YoungFaithful/CEP.jl.git
+using Pkg
+Pkg.add(["JuMP","StatsKit","JLD2","FileIO"])
+Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl"))
 ```
-where `]` opens the julia package manager.
+Second install `CEP.jl`:
+```julia
+Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git"))
+```
