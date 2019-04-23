@@ -19,8 +19,9 @@ California (modeling CAISO) 14-node model, no existing capacity (currently not p
 - `wind, pv, gas, bat, h2, oil, coal`: NREL
 - `trans`: assumption no fix costs
 ### `var`-costs
-- `pv, wind, bat, coal, gas, oil`: NREL
-- `h2, trans`: assumption no var costs
+- `pv, wind, coal, gas, oil`: NREL
+- `trans`: assumption no var costs
+- `bat, h2`: assumption of minimal var costs to avoid charge and discharge in same hour in case of energy excess
 
 ## LCIA Recipe H Midpoint, GWP 100a
 - `pv, wind, trans, coal, gas, oil`: Ecoinvent v3.3

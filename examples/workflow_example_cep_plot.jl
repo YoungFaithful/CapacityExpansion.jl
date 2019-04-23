@@ -12,7 +12,7 @@ cep_data = load_cep_data_provided(state)
 
 ## CLUSTERING ##
 # run aggregation with kmeans
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10000,n_clust=5) # default k-means make sure that n_init is high enough otherwise the results could be crap and drive you crazy
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=100,n_clust=5) # Increase n_init to 10000 for a "real" run
 ## OPTIMIZATION EXAMPLES##
 # select optimizer
 optimizer=Clp.Optimizer
