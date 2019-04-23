@@ -7,7 +7,9 @@
  #####################
 #using ClustForOpt
 include(joinpath("..","..","ClustForOpt","src","ClustForOpt_development.jl"))
-using StatsKit
+using CSV
+using DataFrames
+using StatsBase
 using JLD2
 using FileIO
 using JuMP

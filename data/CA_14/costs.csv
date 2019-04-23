@@ -4,7 +4,7 @@ bat_e,all,2016,fix,|,3020,0
 bat_e,all,2016,var,|,0,0
 bat_in,all,2016,cap,|,280000,0
 bat_in,all,2016,fix,|,2800,0
-bat_in,all,2016,var,|,0,0
+bat_in,all,2016,var,|,0.01,0
 bat_out,all,2016,cap,|,0,0
 bat_out,all,2016,fix,|,0,0
 bat_out,all,2016,var,|,0,0

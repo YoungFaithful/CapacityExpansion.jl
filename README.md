@@ -44,7 +44,7 @@ Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl", 
 ```
 Second install `CEP.jl`:
 ```julia
-Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git"))
+Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git", rev="dev"))
 ```
 ## Example Workflow
 ```julia
