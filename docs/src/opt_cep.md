@@ -57,13 +57,13 @@ An overview is provided in the following table:
 
 | description                                                                          |  unit            | configuration           | values                                      | type           | default value |
 |--------------------------------------------------------------------------------------|------------------|-------------------------|---------------------------------------------|----------------|---------------|
-| enforce a CO2-limit                                                                  | kg-CO2-eq./MW    | co2_limit               | >0                                          | ::Number       | Inf           |
-| including existing infrastructure (no extra costs)                                   | -                | existing_infrastructure | true or false                               | ::Bool         | false         |
-| type of storage implementation                                                       | -                | storage                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
-| allowing transmission                                                                | -                | transmission            | true or false                               | ::Bool         | false         |
-| fix. var and CEO to dispatch problem | -                | fixed_design_variables  | design variables from design run or nothing | ::OptVariables | nothing       |
-| allowing lost load (necessary for dispatch)                        | price/MWh        | lost_el_load_cost       | >1e6                                        | ::Number       | Inf           |
-| allowing lost emission (necessary for dispatch)                    | price/kg_CO2-eq. | lost_CO2_emission_cost  | >700                                        | ::Number       | Inf           |
+| enforce a CO2-limit                                                                  | kg-CO2e/MWh    | `co2_limit`               | >0                                          | ::Number       | Inf           |
+| including existing infrastructure (no extra costs)                                   | -                | `existing_infrastructure` | true or false                               | ::Bool         | false         |
+| type of storage implementation                                                       | -                | `storage`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
+| allowing transmission                                                                | -                | `transmission`            | true or false                               | ::Bool         | false         |
+| fix. var and CEO to dispatch problem | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
+| allowing lost load (necessary for dispatch)                        | price/MWh        | `lost_el_load_cost`       | >1e6                                        | ::Number       | Inf           |
+| allowing lost emission (necessary for dispatch)                    | price/kg-CO2e | `lost_CO2_emission_cost`  | >700                                        | ::Number       | Inf           |
 
 They can be applied in the following way:
 ```@docs

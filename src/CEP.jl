@@ -7,7 +7,9 @@
  #####################
 module CEP
   using Reexport
-  using StatsKit
+  using CSV
+  using DataFrames
+  @reexport using StatsBase
   @reexport using ClustForOpt
   @reexport using JLD2
   @reexport using FileIO

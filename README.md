@@ -2,7 +2,7 @@
 ===
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CEP.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CEP.jl/dev)
-[![Build Status](https://travis-ci.com/holgerteichgraeber/ClustForOpt.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/CEP.jl)
+[![Build Status](https://travis-ci.com/YoungFaithful/CEP.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CEP.jl)
 
 [CEP](https://github.com/YoungFaithful/CEP.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
@@ -32,19 +32,26 @@ This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/y
 This package runs under julia v1.0 and higher.
 First install the dependencies:
 - `JuMP.jl` - for the modeling environment
-- `StatsKit.jl` - for handling of `.csv`-Files
+- `CSV.jl` - for handling of `.csv`-Files
+- `DataFrames.jl` - for handling of tables
+- `StatsBase.jl` - for handling of basic  
 - `JLD2` - for saving your result data
 - `FileIO` - for file accessing
 - `ClustForOpt.jl` - for time-series data
 
 ```julia
 using Pkg
-Pkg.add(["JuMP","StatsKit","JLD2","FileIO"])
+Pkg.add(["JuMP","CSV","DataFrames","StatsBase","JLD2","FileIO"])
 Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl", rev="dev"))
 ```
 Second install `CEP.jl`:
+- If you like to install CEP.jl on the default master branch:
 ```julia
 Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git"))
+```
+- If you like to install CEP.jl on the development dev branch:
+```julia
+Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git", rev="dev"))
 ```
 ## Example Workflow
 ```julia
