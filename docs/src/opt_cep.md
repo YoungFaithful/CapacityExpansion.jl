@@ -92,7 +92,7 @@ OptResult
 
 The information of the model setup can be checked out the following way:
 ```@setup 3
-using CEP
+using CapacityExpansion
 using Clp
 optimizer=Clp.Optimizer
 state="GER_1"

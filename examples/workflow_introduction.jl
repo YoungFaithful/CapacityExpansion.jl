@@ -1,5 +1,5 @@
 # To use this package
-using CEP
+using CapacityExpansion
 
 #########################
 #= Load Time Series Data

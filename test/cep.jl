@@ -1,5 +1,5 @@
 using Test
-using CEP
+using CapacityExpansion
 using Clp
 
 @testset "CEP" begin

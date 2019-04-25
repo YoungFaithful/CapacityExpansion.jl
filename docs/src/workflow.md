@@ -13,7 +13,7 @@ They are kept separate as just the time series dependent data is used to determi
 
 ## Example Workflow
 ```julia
-using CEP
+using CapacityExpansion
 using Clp
 optimizer=Clp.Optimizer # select optimizer
 

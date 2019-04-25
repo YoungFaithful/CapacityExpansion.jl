@@ -23,7 +23,7 @@ High encouragement to run a second stage validation step if you use aggregation 
 ## Examples
 ### Loading time series data
 ```julia
-using CEP
+using CapacityExpansion
 state="GER_1"
 # load ts-input-data
 ts_input_data = load_timeseries_data_provided(state; T=24, years=[2016])
