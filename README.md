@@ -1,10 +1,10 @@
-![CEP logo](docs/src/assets/cep_text.svg)
+![CapacityExpansion logo](docs/src/assets/cep_text.svg)
 ===
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CEP.jl/stable)
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CEP.jl/dev)
-[![Build Status](https://travis-ci.com/holgerteichgraeber/ClustForOpt.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/CEP.jl)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
+[![Build Status](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
 
-[CEP](https://github.com/YoungFaithful/CEP.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
+[CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
@@ -30,25 +30,29 @@ This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/y
 
 ## Installation
 This package runs under julia v1.0 and higher.
-First install the dependencies:
+It depends on:
 - `JuMP.jl` - for the modeling environment
-- `StatsKit.jl` - for handling of `.csv`-Files
+- `CSV.jl` - for handling of `.csv`-Files
+- `DataFrames.jl` - for handling of tables
+- `StatsBase.jl` - for handling of basic  
 - `JLD2` - for saving your result data
 - `FileIO` - for file accessing
 - `ClustForOpt.jl` - for time-series data
 
 ```julia
 using Pkg
-Pkg.add(["JuMP","StatsKit","JLD2","FileIO"])
-Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl"))
+Pkg.add("CapacityExpansion")
 ```
-Second install `CEP.jl`:
+
+A solver is required to run an optimization as explained in section [Solver](@ref).
+Install e.g.:
 ```julia
-Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CEP.jl.git"))
+using Pkg
+Pkg.add("Clp")
 ```
 ## Example Workflow
 ```julia
-using CEP
+using CapacityExpansion
 using Clp
 optimizer=Clp.Optimizer # select optimizer
 

@@ -1,8 +1,8 @@
 using Documenter
 using Plots
-using CEP
+using CapacityExpansion
 
-makedocs(sitename="CEP.jl",
+makedocs(sitename="CapacityExpansion.jl",
     authors = "Elias Kuepper, and Holger Teichgraeber",
     pages = [
         "Introduction" => "index.md",
@@ -10,7 +10,7 @@ makedocs(sitename="CEP.jl",
         "Data" => ["preparing_clust_data.md", "preparing_opt_cep_data.md", "csv_structure.md", "README_GER_18.md", "README_GER_1.md", "README_CA_14.md", "README_CA_1.md", "README_TX_1.md"],
         "Optimization" => ["opt_cep.md","opt_cep_examples.md"],
         ],
-    assets = [
+    format = Documenter.HTML(assets = [
         "assets/clust_for_opt_text.svg",
         "assets/opt_cep.svg",
         "assets/workflow.svg",
@@ -21,5 +21,6 @@ makedocs(sitename="CEP.jl",
         "assets/opt_cep_cap_plot",
         "assets/preparing_clust_data_load",
         "assets/preparing_clust_data_agg"])
+        )
 
-deploydocs(repo = "github.com/YoungFaithful/CEP.jl.git")
+deploydocs(repo = "github.com/YoungFaithful/CapacityExpansion.jl.git", devbranch="dev")

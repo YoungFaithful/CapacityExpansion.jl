@@ -29,7 +29,7 @@ coal,GER,2015,var,|,10.708,1217.49
 oil,GER,2015,var,|,153.586,874.6
 gas,GER,2015,var,|,86.564,728.71
 bat_e,GER,2015,var,|,0,0
-bat_in,GER,2015,var,|,0,0
+bat_in,GER,2015,var,|,0.01,0
 bat_out,GER,2015,var,|,0,0
 h2_e,GER,2015,var,|,0,0
 h2_in,GER,2015,var,|,1.9,0

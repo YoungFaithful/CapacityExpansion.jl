@@ -20,8 +20,10 @@ function load_timeseries_data_provided(region::String="GER_1";
                               T::Int64=24,
                               years::Array{Int64,1}=[2016],
                               att::Array{String,1}=Array{String,1}())
+    # Check for existance of the region in data
+    region in readdir(normpath(joinpath(@__DIR__,"..","..","data"))) || throw(@error "The region $region is not found. The provided regions are: GER_1: Germany 1 node, GER_18: Germany 18 nodes, CA_1: California 1 node, CA_14: California 14 nodes, TX_1: Texas 1 node")
     # Generate the data path based on application and region
-    data_path=normpath(joinpath(dirname(@__FILE__),"..","..","data",region,"TS"))
+    data_path=normpath(joinpath(@__DIR__,"..","..","data",region,"TS"))
     return load_timeseries_data(data_path; region=region, T=T, years=years, att=att)
 end
 

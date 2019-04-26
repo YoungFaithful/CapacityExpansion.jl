@@ -25,8 +25,9 @@ Germany one node,  with existing infrastructure of year 2015, no nuclear
 - `trans`: assumption no fix costs
 ### `var`-costs
 - `coal, gas, oil`: Calculation: varcosts_th(Masterthesis Christiane Reinert)/eff(median(eff in ELMOD-DE))
-- `pv, wind, bat, trans`: assumption no var costs
+- `pv, wind, trans`: assumption no var costs
 - `h2`: Glenk, "Shared Capacity and Levelized Cost with Application to Power-to-Gas Technology", Glenk, 2019
+- `bat`: assumption of minimal var costs to avoid charge and discharge in same hour in case of energy excess
 
 ## LCIA Recipe H Midpoint, GWP 100a
 - `pv, wind, trans, coal, gas, oil`: Ecoinvent v3.3

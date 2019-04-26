@@ -1,5 +1,5 @@
 # To use this package
-using CEP
+using CapacityExpansion
 
 #########################
 #= Load Time Series Data
@@ -9,7 +9,7 @@ The data is for a Capacity Expansion Problem "CEP"
 and for the single node representation of Germany "GER_1"
 The original timeseries has 8760 entries (one for each hour of the year)
 It should be cut into K=365 periods (365 days) with T=24 timesteps per period (24h per day) =#
-ts_input_data, = load_timeseries_cep("CEP", "GER_1"; K=365, T=24)
+ts_input_data = load_timeseries_data_provided("GER_1"; T=24)
 
 #= ClustData
 How the struct is setup:
@@ -46,17 +46,17 @@ Each column in `[file name].csv` file will be added to the ClustData.data called
 - region is an additional String to specify the loaded time series data
 - K describes the number of periods in the input data
 - T describes the length of each period                             =#
-load_your_own_data=true
-#if load_your_own_data
-# Single file at the path e.g. homedir/tutorial/solar.csv
-# It will automatically call the data 'solar' within the datastruct
-my_path=joinpath(homedir(),"tutorial","solar.csv")
-your_data_1=load_timeseries_data(my_path; region="elias", K=365, T=24)
-# Multiple files in the folder e.g. homedir/tutorial/
-# Within the data struct, it will automatically call the data the names of the csv filenames
-my_path=joinpath(homedir(),"tutorial")
-your_data_2=load_timeseries_data(my_path; region="GER_18", K=365, T=24)
-#end
+load_your_own_data=false
+if load_your_own_data
+    # Single file at the path e.g. homedir/tutorial/solar.csv
+    # It will automatically call the data 'solar' within the datastruct
+    my_path=joinpath(homedir(),"tutorial","solar.csv")
+    your_data_1=load_timeseries_data(my_path; T=24)
+    # Multiple files in the folder e.g. homedir/tutorial/
+    # Within the data struct, it will automatically call the data the names of the csv filenames
+    my_path=joinpath(homedir(),"tutorial")
+    your_data_2=load_timeseries_data(my_path; T=24)
+end
 
 
 #############
@@ -107,23 +107,17 @@ ts_clust_result_2 = run_clust(ts_input_data; method="kmedoids", representation="
 ######
 # Using a Solver called Clp (if not installed run `using Pkg; Pkg.add("Clp")`):
 using Clp
-solver=ClpSolver()
+optimizer=Clp.Optimizer
 # Some extra data for nodes, costs and so on:
-cep_data = load_cep_data_providedts_clust_data.region)
+cep_data = load_cep_data_provided(ts_clust_data.region)
 # Running a simple CEP with a co2-limit of 1000 kg/MWh
 co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=200)
 # co2_result.
 gen_var=co2_result.variables["GEN"]
-# show axes names and axis
-gen_var.axes_names
-# get specific parts  of axis names
-gen_var.axes
 # get all operating decision variables (GEN)
-get_cep_variable_value(gen_var,[:,:,:,:,:])
+gen_var[:,:,:,:,:]
 
-# get specific operating decision variables (GEN) indicated with numbers
-get_cep_variable_value(gen_var,[1,:,:,:,1])
 # get specific operating decision variables (the one for the electricity sector, the coal technology at the node germany) indicated with names
-coal_gen_var=get_cep_variable_value(gen_var,["el","wind",:,:,"germany"])
+coal_gen_var=gen_var["el","wind",:,:,"germany"]
 # plot the specific operation decision variables
-plot(coal_gen_var, xlabel="Time [h]", ylabel="Wind Generation [MW]", labels="K ".*string.(get_cep_variable_set(gen_var, 4)))
+plot(axes(gen_var,"time_T"),coal_gen_var, xlabel="Time [h]", ylabel="Wind Generation [MW]", label=axes(gen_var,"time_K"), legendtitle="Period K", linewidth=2)
