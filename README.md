@@ -1,10 +1,10 @@
-![CEP logo](docs/src/assets/cep_text.svg)
+![CapacityExpansion logo](docs/src/assets/cep_text.svg)
 ===
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
 [![Build Status](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
 
-[CEP](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
+[CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
@@ -30,7 +30,7 @@ This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/y
 
 ## Installation
 This package runs under julia v1.0 and higher.
-First install the dependencies:
+It depends on:
 - `JuMP.jl` - for the modeling environment
 - `CSV.jl` - for handling of `.csv`-Files
 - `DataFrames.jl` - for handling of tables
@@ -41,17 +41,14 @@ First install the dependencies:
 
 ```julia
 using Pkg
-Pkg.add(["JuMP","CSV","DataFrames","StatsBase","JLD2","FileIO"])
-Pkg.add(PackageSpec(url="https://github.com/holgerteichgraeber/ClustForOpt.jl", rev="dev"))
+Pkg.add("CapacityExpansion")
 ```
-Second install `CapacityExpansion.jl`:
-- If you like to install CapacityExpansion.jl on the default master branch:
+
+A solver is required to run an optimization as explained in section [Solver](@ref).
+Install e.g.:
 ```julia
-Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CapacityExpansion.jl.git"))
-```
-- If you like to install CapacityExpansion.jl on the development dev branch:
-```julia
-Pkg.add(PackageSpec(url="https://github.com/YoungFaithful/CapacityExpansion.jl.git", rev="dev"))
+using Pkg
+Pkg.add("Clp")
 ```
 ## Example Workflow
 ```julia
