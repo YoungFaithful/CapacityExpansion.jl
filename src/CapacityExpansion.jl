@@ -1,11 +1,11 @@
 # Elias Kuepper, Holger Teichgraeber, 2019
 
  ######################
- # CEP
+ # CaoacityExpansion
  # Capacity Expansion Probelem formulation
  #
  #####################
-module CEP
+module CapacityExpansion
   using Reexport
   using CSV
   using DataFrames
@@ -38,4 +38,4 @@ module CEP
   include(joinpath("utils","load_data.jl"))
   include(joinpath("optim_problems","run_opt.jl"))
   include(joinpath("optim_problems","opt_cep.jl"))
-end # module CEP
+end # module CapacityExpansion

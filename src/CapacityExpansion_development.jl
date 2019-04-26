@@ -1,7 +1,7 @@
 # Elias Kuepper, Holger Teichgraeber, 2019
 
  ######################
- # CEP
+ # CapacityExpansion
  # Capacity Expansion Probelem formulation
  #
  #####################
