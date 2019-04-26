@@ -1,5 +1,5 @@
 # This file exemplifies the workflow from data input to optimization result generation
-using CEP
+using CapacityExpansion
 using Clp
 ## LOAD DATA ##
 state="GER_18" # or "GER_18" or "CA_1" or "TX_1"

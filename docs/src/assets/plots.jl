@@ -1,4 +1,4 @@
-using CEP
+using CapacityExpansion
 using Clp
 using Plots
 optimizer=Clp.Optimizer

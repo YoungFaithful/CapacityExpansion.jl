@@ -26,7 +26,7 @@ OptDataCEPLine
 ## Examples
 ### Example loading CEP Data
 ```@example 2
-using CEP
+using CapacityExpansion
 state="GER_1"
 # load ts-input-data
 cep_data = load_cep_data_provided(state)

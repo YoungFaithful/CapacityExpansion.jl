@@ -1,7 +1,7 @@
 # Examples
 ## CO2-Limitation
 ```julia
-using CEP
+using CapacityExpansion
 using Clp
 optimizer=Clp.Optimizer #select an Optimize
 state="GER_1" #select state
