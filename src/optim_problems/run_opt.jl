@@ -97,7 +97,7 @@ function run_opt(ts_data::ClustData,
 end
 
 """
-     run_opt(ts_data::ClustData,opt_data::OptDataCEP,optimizer::DataTyple;co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,limit_infrastructure::Bool=false,storage::String="none",transmission::Bool=false,descriptor::String="",print_flag::Bool=true,optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),round_sigdigits::Int64=9)
+     run_opt(ts_data::ClustData,opt_data::OptDataCEP,optimizer::DataTyple;co2_limit::Number=Inf,lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number=Inf,existing_infrastructure::Bool=false,limit_infrastructure::Bool=false,storage::String="none",transmission::Bool=false,descriptor::String="",print_flag::Bool=true,optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),round_sigdigits::Int=9)
 Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem).
 Required elements are:
 - `ts_data`: The time-series data, which could either be the original input data or some aggregated time-series data. The `keys(ts_data.data)` need to match the `[time_series_name]-[node]`
@@ -128,7 +128,7 @@ function run_opt(ts_data::ClustData,
                  descriptor::String="",
                  print_flag::Bool=true,
                  optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
-                 round_sigdigits::Int64=9)
+                 round_sigdigits::Int=9)
    # Activated seasonal or simple storage corresponds with storage
    if storage=="seasonal"
        storage=true

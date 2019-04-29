@@ -1,5 +1,5 @@
 """
-        load_timeseries_data_provided(region::String="GER_1"; T::Int64=24, years::Array{Int64,1}=[2016], att::Array{String,1}=Array{String,1}())
+        load_timeseries_data_provided(region::String="GER_1"; T::Int=24, years::Array{Int,1}=[2016], att::Array{String,1}=Array{String,1}())
 - Adding the information in the `*.csv` file at `data_path` to the data dictionary
 The `*.csv` files shall have the following structure and must have the same length:
 
@@ -17,8 +17,8 @@ for regions:
 - `"TX_1"`: Texas 1 node
 """
 function load_timeseries_data_provided(region::String="GER_1";
-                              T::Int64=24,
-                              years::Array{Int64,1}=[2016],
+                              T::Int=24,
+                              years::Array{Int,1}=[2016],
                               att::Array{String,1}=Array{String,1}())
     # Check for existance of the region in data
     region in readdir(normpath(joinpath(@__DIR__,"..","..","data"))) || throw(@error "The region $region is not found. The provided regions are: GER_1: Germany 1 node, GER_18: Germany 18 nodes, CA_1: California 1 node, CA_14: California 14 nodes, TX_1: Texas 1 node")
