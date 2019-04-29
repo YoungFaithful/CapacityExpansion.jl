@@ -29,7 +29,7 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
 end
 
 """
-      OptResult{status::Symbol,objective::Float64,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
+      OptResult{status::Symbol,objective::Float,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function
 - `variables`: Dictionary with each OptVariable as an entry
@@ -39,7 +39,7 @@ end
 """
 struct OptResult
  status::Symbol
- objective::Float64
+ objective::Float
  variables::Dict{String,Any}
  sets::Dict{String,Array}
  opt_config::Dict{String,Any}
@@ -99,7 +99,7 @@ struct OptDataCEPNode <: OptData
 end
 
 """
-     OptDataCEPLine{name::String,node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int64,voltage::Number,length::Number} <: OptData
+     OptDataCEPLine{name::String,node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int,voltage::Number,length::Number} <: OptData
 - `name`
 - `node_start` Node where line starts
 - `node_end` Node where line ends
@@ -120,7 +120,7 @@ struct OptDataCEPLine <: OptData
   resistance::Number
   power_ex::Number
   power_lim::Number
-  circuits::Int64
+  circuits::Int
   voltage::Number
   length::Number
   eff::Number
