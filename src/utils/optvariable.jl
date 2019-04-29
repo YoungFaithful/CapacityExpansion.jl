@@ -80,10 +80,10 @@ given axes.
 julia> array = OptVariable{Float}(undef, [:a, :b], 1:2);
 
 julia> fill!(array, 1.0)
-2-dimensional OptVariable{Float,2,...} with index sets:
+2-dimensional OptVariable{AbstractFloat,2,...} with index sets:
     Dimension 1, Symbol[:a, :b]
     Dimension 2, 1:2
-And data, a 2×2 Array{Float,2}:
+And data, a 2×2 Array{AbstractFloat,2}:
  1.0  1.0
  1.0  1.0
 
@@ -94,10 +94,10 @@ julia> array[:a, 2]
 5.0
 
 julia> array
-2-dimensional OptVariable{Float,2,...} with index sets:
+2-dimensional OptVariable{AbstractFloat,2,...} with index sets:
     Dimension 1, Symbol[:a, :b]
     Dimension 2, 1:2
-And data, a 2×2 Array{Float,2}:
+And data, a 2×2 Array{AbstractFloat,2}:
  1.0  5.0
  1.0  1.0
 ```
