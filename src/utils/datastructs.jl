@@ -29,17 +29,17 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
 end
 
 """
-      OptResult{status::Symbol,objective::Float,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
+      OptResult{status::Symbol,objective::Number,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function
 - `variables`: Dictionary with each OptVariable as an entry
 - `sets`: Dictionary with each set as an entry
 - `opt_config`: The configuration of the model setup - for more detail see tye `run_opt` documentation that sets the `opt_config` up
-- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model. 
+- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model.
 """
 struct OptResult
  status::Symbol
- objective::Float
+ objective::Number
  variables::Dict{String,Any}
  sets::Dict{String,Array}
  opt_config::Dict{String,Any}
