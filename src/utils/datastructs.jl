@@ -29,7 +29,7 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
 end
 
 """
-      OptResult{status::Symbol,objective::AbstractFloat,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
+      OptResult{status::Symbol,objective::Float64,variables::Dict{String,Any},sets::Dict{String,Array},opt_config::Dict{String,Any},opt_info::Dict{String,Any}}
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function
 - `variables`: Dictionary with each OptVariable as an entry
@@ -39,7 +39,7 @@ end
 """
 struct OptResult
  status::Symbol
- objective::AbstractFloat
+ objective::Float64
  variables::Dict{String,Any}
  sets::Dict{String,Array}
  opt_config::Dict{String,Any}
