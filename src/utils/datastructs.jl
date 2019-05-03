@@ -35,7 +35,7 @@ end
 - `variables`: Dictionary with each OptVariable as an entry
 - `sets`: Dictionary with each set as an entry
 - `opt_config`: The configuration of the model setup - for more detail see tye `run_opt` documentation that sets the `opt_config` up
-- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model. 
+- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model.
 """
 struct OptResult
  status::Symbol
@@ -99,7 +99,7 @@ struct OptDataCEPNode <: OptData
 end
 
 """
-     OptDataCEPLine{name::String,node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int64,voltage::Number,length::Number} <: OptData
+     OptDataCEPLine{name::String,node_start::String,node_end::String,reactance::Number,resistance::Number,power::Number,circuits::Int,voltage::Number,length::Number} <: OptData
 - `name`
 - `node_start` Node where line starts
 - `node_end` Node where line ends
@@ -120,7 +120,7 @@ struct OptDataCEPLine <: OptData
   resistance::Number
   power_ex::Number
   power_lim::Number
-  circuits::Int64
+  circuits::Int
   voltage::Number
   length::Number
   eff::Number

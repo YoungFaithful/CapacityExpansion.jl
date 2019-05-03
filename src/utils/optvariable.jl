@@ -28,7 +28,7 @@ Constructor for OptVariable taking JuMP Array and type (ov-operational variable 
 function OptVariable(cep::OptModelCEP,
                      variable::Symbol,
                      type::String;
-                     round_sigdigits::Int64=9)
+                     round_sigdigits::Int=9)
   jumparray=value.(cep.model[variable])
   axes_names=Array{String,1}()
   for axe in jumparray.axes
@@ -53,10 +53,10 @@ match `size(data)` in the corresponding dimensions.
 # Example
 ```jldoctest
 julia> array = OptVariable([1 2; 3 4], [:a, :b], 2:3)
-2-dimensional OptVariable{Int64,2,...} with index sets:
+2-dimensional OptVariable{Int,2,...} with index sets:
     Dimension 1, Symbol[:a, :b]
     Dimension 2, 2:3
-And data, a 2×2 Array{Int64,2}:
+And data, a 2×2 Array{Int,2}:
  1  2
  3  4
 
@@ -77,7 +77,7 @@ given axes.
 
 # Example
 ```jldoctest
-julia> array = OptVariable{Float64}(undef, [:a, :b], 1:2);
+julia> array = OptVariable{Float}(undef, [:a, :b], 1:2);
 
 julia> fill!(array, 1.0)
 2-dimensional OptVariable{Float64,2,...} with index sets:
