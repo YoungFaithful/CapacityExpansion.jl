@@ -165,13 +165,13 @@ end
 
 
 """
-     Scenario{descriptor::String,clust_res::ClustResult,opt_res::OptResult}
+     Scenario{descriptor::String,clust_res::AbstractClustResult,opt_res::OptResult}
 -`descriptor::String`
--`clust_res::ClustResult`
+-`clust_res::AbstractClustResult`
 -`opt_res::OptResult`
 """
 struct Scenario
  descriptor::String
- clust_res::ClustResult
+ clust_res::AbstractClustResult
  opt_res::OptResult
 end
