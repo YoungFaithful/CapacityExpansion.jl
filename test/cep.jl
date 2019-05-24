@@ -7,10 +7,8 @@ using Clp
         # load data
         ts_input_data = load_timeseries_data_provided("TX_1"; T=24, years=[2008])
         cep_input_data=load_cep_data_provided("TX_1")
-        # run clustering
-        ts_clust_res = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=1,n_clust=365) # default k-means
         # run optimization
-        model = run_opt(ts_clust_res.best_results,cep_input_data,Clp.Optimizer;optimizer_config=Dict{Symbol,Any}(:LogLevel => 0))
+        model = run_opt(ts_input_data,cep_input_data,Clp.Optimizer;optimizer_config=Dict{Symbol,Any}(:LogLevel => 0))
         # compare to exact result
         exact_res=[70540.26439790576;0.0;8498.278397905757;0.0;80132.88454450261]
         @test exact_res ≈ model.variables["CAP"].data[:,1,1] atol=1
