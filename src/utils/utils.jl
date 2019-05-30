@@ -312,6 +312,7 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
   set=cep.set
   # nodes with limits
   nodes=opt_data.nodes
+  lines=opt_data.lines
 
   met_cap_limit=Array{String,1}()
   for tech in set["tech_cap"]
@@ -320,6 +321,15 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
       if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim
         #Add this technology and node to the met_cap_limit Array
         push!(met_cap_limit,tech*"-"*node)
+      end
+    end
+  end
+  for tech in set["tech_trans"]
+    for line in set["lines"]
+      #Check if the limit is reached in any capacity at any node
+      if sum(variables["TRANS"][tech,:,line]) == lines[tech,node].power_lim
+        #Add this technology and node to the met_cap_limit Array
+        push!(met_cap_limit,tech*"-"*line)
       end
     end
   end
