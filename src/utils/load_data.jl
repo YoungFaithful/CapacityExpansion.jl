@@ -42,7 +42,7 @@ load the `techs.csv` in the folder `data_path` with the following columns:
 returns `techs::OptVariable`    techs[tech] - OptDataCEPTech
 """
 function load_cep_data_techs(data_path::String)
-    tab=CSV.read(joinpath(data_path,"techs.csv");srict=true)
+    tab=CSV.read(joinpath(data_path,"techs.csv");strict=true)
     #Check existance of necessary column
     :tech in names(tab) || throw(@error "No column called `tech` in `techs.csv`")
     #Build empty OptVariable
@@ -88,7 +88,7 @@ returns `nodes::OptVariable`    nodes[tech, node] - OptDataCEPNode
 """
 function load_cep_data_nodes(data_path::String,
                              techs::OptVariable)
-    tab=CSV.read(joinpath(data_path,"nodes.csv");srict=true)
+    tab=CSV.read(joinpath(data_path,"nodes.csv");strict=true)
     # Check exisistance of columns
     check_column(tab,[:node, :infrastruct])
     #Create empty OptVariable
@@ -131,7 +131,7 @@ returns `lines::OptVarible`     lines[tech, line] - OptDataCEPLine
 function load_cep_data_lines(data_path::String,
                              techs::OptVariable)
     if isfile(joinpath(data_path,"lines.csv"))
-        tab=CSV.read(joinpath(data_path,"lines.csv");srict=true)
+        tab=CSV.read(joinpath(data_path,"lines.csv");strict=true)
         #Check existance of necessary column
         check_column(tab, [:line])
 
@@ -211,7 +211,7 @@ returns `costs::OptVariable`    costs[tech,node,year,account,impact] - Number
 function load_cep_data_costs(data_path::String,
                             techs::OptVariable,
                             nodes::OptVariable)
-    tab=CSV.read(joinpath(data_path,"costs.csv");srict=true)
+    tab=CSV.read(joinpath(data_path,"costs.csv");strict=true)
     check_column(tab,[:tech, :location, :year, :account])
     impacts=String.(names(tab)[findfirst(names(tab).==Symbol("|"))+1:end])
     #Create empty OptVariable
