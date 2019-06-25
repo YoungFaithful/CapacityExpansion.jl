@@ -26,14 +26,14 @@ function setup_opt_cep_set(ts_data::ClustData,
     end
   end
   #Compose a set of technologies without transmission
-  set["tech_cap"]=deepcopy(set["tech"])
-  set["tech_trans"]=Array{String,1}()
+  set["tech_n"]=deepcopy(set["tech"])
+  set["tech_l"]=Array{String,1}()
   set["tech_power"]=deepcopy(set["tech"])
   set["tech_energy"]=Array{String,1}()
   for (k,v) in set
     if occursin("tech",k) && occursin("_transmission",k)
-      setdiff!(set["tech_cap"],v)
-      set["tech_trans"]=[set["tech_trans"];v]
+      setdiff!(set["tech_n"],v)
+      set["tech_l"]=[set["tech_l"];v]
     end
     if occursin("tech",k) && String(k[end-1:end])=="_e"
       setdiff!(set["tech_power"],v)
@@ -104,8 +104,8 @@ function setup_opt_cep_basic_variables!(cep::OptModelCEP,
   push!(cep.info,"Variable COST[account, impact, tech] in $(set["impact"].*" "...)") #Note that variable COST is scaled only within the model with the value scale[:COST]: Real-COST [`EUR` or `USD`] = scale[:COST] ⋅ COST (numeric variable within model)
   @variable(cep.model, COST[account=set["account"],impact=set["impact"],tech=set["tech"]])
   # Capacity
-  push!(cep.info,"Variable CAP[tech_cap, infrastruct, nodes] ≥ 0 in MW") #Note that variable CAP is scaled only within the model with the value scale[:CAP]: Real-CAP ['MW'] = scale[:CAP] ⋅ CAP (numeric variable within model)
-  @variable(cep.model, CAP[tech=set["tech_cap"],infrastruct=set["infrastruct"] ,node=set["nodes"]]>=0)
+  push!(cep.info,"Variable CAP[tech_n, infrastruct, nodes] ≥ 0 in MW") #Note that variable CAP is scaled only within the model with the value scale[:CAP]: Real-CAP ['MW'] = scale[:CAP] ⋅ CAP (numeric variable within model)
+  @variable(cep.model, CAP[tech=set["tech_n"],infrastruct=set["infrastruct"] ,node=set["nodes"]]>=0)
   # Generation #
   push!(cep.info,"Variable GEN[sector, tech_power, t, k, node] in MW") #Note that variable is scaled only within the model
   @variable(cep.model, GEN[sector=set["sector"], tech=set["tech_power"], t=set["time_T"], k=set["time_K"], node=set["nodes"]])
@@ -176,11 +176,11 @@ function setup_opt_cep_fix_design_variables!(cep::OptModelCEP,
   if "tech_transmission" in keys(set)
     trans=fixed_design_variables["TRANS"]
     push!(cep.info,"TRANS[tech, 'new', line] = existing infrastructure ∀ tech_trans, line")
-    @constraint(cep.model, [line=set["lines"], tech=set["tech_trans"]], cep.model[:TRANS][tech,"new",line]==trans[tech, "new", line]/scale[:TRANS])
+    @constraint(cep.model, [line=set["lines"], tech=set["tech_l"]], cep.model[:TRANS][tech,"new",line]==trans[tech, "new", line]/scale[:TRANS])
   end
   # Capacity
-  push!(cep.info,"CAP[tech, 'new', node] = existing infrastructure ∀ tech_cap, node")
-  @constraint(cep.model, [node=set["nodes"], tech=set["tech_cap"]], cep.model[:CAP][tech,"new",node]==cap[tech, "new", node]/scale[:CAP])
+  push!(cep.info,"CAP[tech, 'new', node] = existing infrastructure ∀ tech_n, node")
+  @constraint(cep.model, [node=set["nodes"], tech=set["tech_n"]], cep.model[:CAP][tech,"new",node]==cap[tech, "new", node]/scale[:CAP])
   return cep
 end
 
@@ -483,10 +483,10 @@ function setup_opt_cep_existing_infrastructure!(cep::OptModelCEP,
   ## ASSIGN VALUES ##
   # Assign the existing capacity from the nodes table
   push!(cep.info,"CAP[tech, 'ex', node] = existing infrastructure ∀ node, tech")
-  @constraint(cep.model, [node=set["nodes"], tech=set["tech_cap"]], cep.model[:CAP][tech,"ex",node]==nodes[tech,node].power_ex/scale[:CAP])
+  @constraint(cep.model, [node=set["nodes"], tech=set["tech_n"]], cep.model[:CAP][tech,"ex",node]==nodes[tech,node].power_ex/scale[:CAP])
   if "transmission" in keys(set)
     push!(cep.info,"TRANS[tech, 'ex', line] = existing infrastructure ∀ tech, line")
-    @constraint(cep.model, [line=set["lines"], tech=set["tech_trans"]], cep.model[:TRANS][tech,"ex",line]==lines[tech,line].power_ex/scale[:TRANS])
+    @constraint(cep.model, [line=set["lines"], tech=set["tech_l"]], cep.model[:TRANS][tech,"ex",line]==lines[tech,line].power_ex/scale[:TRANS])
   end
   return cep
 end
@@ -509,11 +509,11 @@ function setup_opt_cep_limit_infrastructure!(cep::OptModelCEP,
 
   ## ASSIGN VALUES ##
   # Limit the capacity for each tech at each node with the limit provided in nodes table in column infrastruct
-  push!(cep.info,"∑_{infrastuct} CAP[tech, infrastruct, node] <= limit infrastructure ∀ tech_cap, node")
-  @constraint(cep.model, [node=set["nodes"], tech=set["tech_cap"]], sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]) <= nodes[tech,node].power_lim/scale[:CAP])
+  push!(cep.info,"∑_{infrastuct} CAP[tech, infrastruct, node] <= limit infrastructure ∀ tech_n, node")
+  @constraint(cep.model, [node=set["nodes"], tech=set["tech_n"]], sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]) <= nodes[tech,node].power_lim/scale[:CAP])
   if "transmission" in keys(set)
     push!(cep.info,"∑_{infrastuct} TRANS[tech, infrastruct, line] <= limit infrastructure ∀ tech_trans, line")
-    @constraint(cep.model, [line=set["lines"], tech=set["tech_trans"]], sum(cep.model[:TRANS][tech,infrastruct,line] for infrastruct=set["infrastruct"]) <= lines[tech,line].power_lim/scale[:TRANS])
+    @constraint(cep.model, [line=set["lines"], tech=set["tech_l"]], sum(cep.model[:TRANS][tech,infrastruct,line] for infrastruct=set["infrastruct"]) <= lines[tech,line].power_lim/scale[:TRANS])
   end
   return cep
 end
