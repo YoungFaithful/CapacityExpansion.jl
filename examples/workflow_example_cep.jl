@@ -50,3 +50,11 @@ design_variables=get_cep_design_variables(design_result)
 
 # Use the design variable results for the operational run
 operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_el_load_cost=1e6,lost_CO2_emission_cost=700)
+
+# Change scaling parameters
+# Changing the scaling parameters is useful if the data you use represents a much smaller or bigger energy system than the ones representing Germany and California provided in this package
+# Determine the right scaling parameters by checking the "real" values of COST, CAP, GEN... (real-VAR) in a solution using your data. Select the scaling parameters to match the following:
+#   0.01 ≤ VAR  ≤ 100,     real-VAR = scale[:VAR] ⋅ VAR
+# ⇔ 0.01 ≤ real-VAR / scale[:VAR] ≤ 100
+scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
+co2_result = run_opt(ts_clust_data.best_results,cep_data,optimizer;scale=scale, co2_limit=50)

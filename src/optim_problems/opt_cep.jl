@@ -101,10 +101,10 @@ function setup_opt_cep_basic_variables!(cep::OptModelCEP,
 
   ## VARIABLES ##
   # Cost
-  push!(cep.info,"Variable COST[account, impact, tech] in $(set["impact"].*" "...)") #Note that variable COST is scaled only within the model with the value scale[:COST]
+  push!(cep.info,"Variable COST[account, impact, tech] in $(set["impact"].*" "...)") #Note that variable COST is scaled only within the model with the value scale[:COST]: Real-COST [`EUR` or `USD`] = scale[:COST] ⋅ COST (numeric variable within model)
   @variable(cep.model, COST[account=set["account"],impact=set["impact"],tech=set["tech"]])
   # Capacity
-  push!(cep.info,"Variable CAP[tech_cap, infrastruct, nodes] ≥ 0 in MW") #Note that variable CAP is scaled only within the model with the value scale[:CAP]
+  push!(cep.info,"Variable CAP[tech_cap, infrastruct, nodes] ≥ 0 in MW") #Note that variable CAP is scaled only within the model with the value scale[:CAP]: Real-CAP ['MW'] = scale[:CAP] ⋅ CAP (numeric variable within model)
   @variable(cep.model, CAP[tech=set["tech_cap"],infrastruct=set["infrastruct"] ,node=set["nodes"]]>=0)
   # Generation #
   push!(cep.info,"Variable GEN[sector, tech_power, t, k, node] in MW") #Note that variable is scaled only within the model

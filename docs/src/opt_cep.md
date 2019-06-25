@@ -83,6 +83,34 @@ Pkg.add("Clp")
 using Clp
 optimizer=Clp.Optimizer
 ```
+
+## Scaling
+The package features the scaling of variables and equations. Scaling variables, which are used in the numerical model, to `0.01 ≤ x ≤ 100` and scaling equations to `3⋅x = 1` instead of `3000⋅x = 1000` improves the shape of the optimization space and significantly reduces the computational time used to solve the numerical model.
+
+The values are only scaled within the numerical model formulation, where we call the variable `VAR`, but the values are unscaled in the solution, which we call `real-VAR`. The following logic is used to scale the variables:
+`real-VAR [EUR, USD, MW, or MWh] = scale[:VAR] ⋅ VAR`
+`  0.01 ≤ VAR  ≤ 100`
+`⇔ 0.01 ≤ real-VAR / scale[:VAR] ≤ 100`
+
+The equations are scaled with the scaling parameter of the first variable, which is `scale[:COST]` in the following example:
+`  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP`
+`⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP`
+
+### Change scaling parameters
+Changing the scaling parameters is useful if the data you use represents a much smaller or bigger energy system than the ones representing Germany and California provided in this package Determine the right scaling parameters by checking the real-values of COST, CAP, GEN... (real-VAR) in a solution using your data. Select the scaling parameters to match the following:
+`0.01 ≤ real-VAR / scale[:VAR] ≤ 100`
+Create a dictionary with the new scaling parameters for EACH variable and include it as the optional `scale` input to overwrite the default scale in `run_opt`:
+```julia
+scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
+scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
+```
+
+### Adding another variable
+- Extend the default `scale`-dictionary in the `src/optim_problems/run_opt`-file to include the new variable as well.
+- Include the new variable in the problem formulation in the `src/optim_problems/opt_cep`-file. Reformulate the equations by dividing them by the scaling parameter of the first variable, which is `scale[:COST]` in the following example:
+`  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP                  + 100`
+`⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP   + 100/scale[:COST]`
+
 ## Opt Result - A closer look
 ```@docs
 OptResult
