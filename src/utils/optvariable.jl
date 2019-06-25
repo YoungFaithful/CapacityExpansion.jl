@@ -27,8 +27,9 @@ Constructor for OptVariable taking JuMP Array and type (ov-operational variable 
 """
 function OptVariable(cep::OptModelCEP,
                      variable::Symbol,
-                     type::String;
-                     round_sigdigits::Int=9)
+                     type::String,
+                     scale::Dict{Symbol,Int};
+                     round_sigdigits::Int=8)
   jumparray=value.(cep.model[variable])
   axes_names=Array{String,1}()
   for axe in jumparray.axes
@@ -39,7 +40,8 @@ function OptVariable(cep::OptModelCEP,
       end
     end
   end
-  OptVariable(round.(jumparray.data;digits=round_sigdigits),jumparray.axes...; axes_names=axes_names, type=type)
+  unscaled_data=jumparray.data*scale[variable] #Unscale the jumparray data based on the scaling parameters in Dictionary scale
+  OptVariable(round.(unscaled_data;digits=round_sigdigits),jumparray.axes...; axes_names=axes_names, type=type)
 end
 
 
