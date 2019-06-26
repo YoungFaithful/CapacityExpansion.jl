@@ -18,7 +18,7 @@ ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid
 optimizer=Clp.Optimizer
 
 # Optimize the capacity expansion problem with a co2_limit of 1000
-cep = run_opt(ts_clust_data.best_results,cep_data,optimizer;co2_limit=1000)
+cep = run_opt(ts_clust_data.clust_data,cep_data,optimizer;co2_limit=1000)
 
 # Extract the CAP-Variable
 cap=cep.variables["CAP"]

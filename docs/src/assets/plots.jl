@@ -9,7 +9,7 @@ plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="
 savefig(joinpath(dirname(@__FILE__),"preparing_clust_data_load.svg"))
 
 
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=50,n_clust=5).best_results
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=50,n_clust=5).clust_data
 plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]")
 savefig(joinpath(dirname(@__FILE__),"preparing_clust_data_agg.svg"))
 
