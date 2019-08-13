@@ -18,5 +18,5 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 julia = "^1.0"
-JuMP = "^0.19"
-ClustForOpt = "^0.3.4"
+JuMP = "^0.19.2"
+ClustForOpt = "^0.4"

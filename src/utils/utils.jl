@@ -257,21 +257,21 @@ function get_total_demand(cep::OptModelCEP,
 end
 
 """
-    get_cost_series(cep_data::OptDataCEP,clust_res::ClustResultBest, opt_res::OptResult)
+    get_cost_series(cep_data::OptDataCEP,clust_res::ClustResultAll, opt_res::OptResult)
 Return an array for the time series of costs in all the impact dimensions and the set of impacts
 """
 function get_cost_series(nodes::DataFrame,
                         var_costs::DataFrame,
-                       clust_res::ClustResultBest,
+                       clust_res::ClustResultAll,
                        set::Dict{String,Array},
                        variables::Dict{String,OptVariable})
   ## DATA ##
   # ts_ids:   n_clustered periods
-  ts_ids=clust_res.best_ids
+  ts_ids=clust_res.clustids_all
   #ts_weights: k - weight of each period:
-  ts_weights=clust_res.best_results.weights
+  ts_weights=clust_res.clust_data.weights
   #ts_deltas:  t x k - Δt of each segment x period
-  ts_deltas=clust_res.best_results.delta_t
+  ts_deltas=clust_res.clust_data.delta_t
 
   #emision at each period-step
   cost_ts=zeros(length(ts_ids)+1,length(set["impact"]))
