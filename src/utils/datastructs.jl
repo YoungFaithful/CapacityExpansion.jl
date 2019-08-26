@@ -10,7 +10,7 @@ abstract type OptData <: InputData end
 struct OptModelCEP
   model::JuMP.Model
   info::Array{String}
-  set::Dict{String,Array}
+  set::Dict{String,Any}
 end
 
 """
@@ -140,14 +140,16 @@ end
 """
 struct OptDataCEPTech <: OptData
   name::String
-  categ::String
-  sector::String
-  eff::Number
-  time_series::String
-  lifetime::Number
+  tech_group::Array{String,1}
+  unit::String
+  structure::String
+  plant_lifetime::Number
   financial_lifetime::Number
   discount_rate::Number
   annuityfactor::Number
+  input::Dict
+  output::Dict
+  constraints::Dict
 end
 
 """

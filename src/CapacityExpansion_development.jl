@@ -5,9 +5,9 @@
  # Capacity Expansion Probelem formulation
  #
  #####################
-#using ClustForOpt
-include(joinpath("..","..","ClustForOpt","src","ClustForOpt_development.jl"))
+using ClustForOpt
 using CSV
+using YAML
 using DataFrames
 using StatsBase
 using JLD2

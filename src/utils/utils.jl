@@ -173,11 +173,11 @@ Returning Dictionary with the variables as entries
 """
 function set_opt_config_cep(opt_data::OptDataCEP
                             ;kwargs...)
-  # Create new Dictionary and set possible unique categories to false to later check wrong setting
-  config=Dict{String,Any}("transmission"=>false, "storage_e"=>false, "storage_p"=>false, "generation"=>false)
-  # Check the existence of the categ (like generation or storage - see techs.csv) and write it into Dictionary
-  for categ in unique(getfield.(opt_data.techs[:], :categ))
-    config[categ]=true
+  # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
+  config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "generation"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
+  # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
+  for tech_group in unique(vcat(getfield.(cep_data.techs[:], :tech_group)...))
+    config[tech_group]=true
   end
   # Loop through the kwargs and write them into Dictionary
   for kwarg in kwargs
@@ -246,9 +246,9 @@ function get_total_demand(cep::OptModelCEP,
   ts_deltas=ts_data.delta_t
   total_demand=0
   for node in set["nodes"]
-    for t in set["time_T"]
+    for t in set["time_T_period"]
       for k in set["time_K"]
-        total_demand+=ts["el_demand-"*node][t,k]*ts_deltas[t,k]*ts_weights[k]
+        total_demand+=ts["demand_electricity-"*node][t,k]*ts_deltas[t,k]*ts_weights[k]
       end
     end
   end
@@ -340,4 +340,84 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
     throw( @error "Limit is reached for techs $met_cap_limit")
   end
   return met_cap_limit
+end
+
+#="""
+  get_elements(techs::OptDataCEPTech, category::String)
+
+Get the elements from the technologies that are defined as category `category`
+"""
+function get_elements(techs::OptVariable, category::String)
+  #Get all elements defined in techs as inputs and outputs
+  elements=get_elements(techs)
+  #Filter the elements that are are defined as category `category`
+  return String.(keys(filter((k, v) -> v == category, elements)))
+end
+
+"""
+  get_elements(techs::OptDataCEPTech)
+
+Get all elements from the technologies. Elements can have categories like:
+- carrier (which implies an EB for this carrier at each node)
+- fuel (which is an input or output)
+- timeseries (which is depending on a timeseries defined in the folder `TS`)
+"""
+function get_elements(techs::OptVariable)
+  #Get all Dictionaries with inputs
+  inputs=getfield.(techs[:],:input)
+  #Get all Dictionaries with outputs
+  outputs=getfield.(techs[:],:output)
+  #Get all unique elements
+  inputs_outputs=unique([inputs;outputs])
+  #Merge the Dictionaries to one dictionary
+  elements=merge(unique(inputs_outputs)...)
+  #Check unique category for each element as either carrier, timeserie, or fuel
+  check_elements(elements, inputs_outputs)
+  return elements
+end
+
+"""
+    check_elements(elements::Dict{Any,Any}, inputs_outputs::Array{Dict{Any,Any}})
+
+Check that each element in inputs and outputs is only defined in one category as either carrier, timeseries, or fuel
+"""
+function check_elements(elements::Dict{Any,Any}, inputs_outputs::Array{Dict{Any,Any}})
+  #Check that each input and output is only defined as either carrier, timeseries, or fuel
+  for dict in inputs_outputs
+    for (k,v) in dict
+      elements[k].==v || error("The element $k is once defined as $v and once as $(elements[k]) in `techs.yml`")
+    end
+  end
+end=#
+
+import Base.push!
+"""
+  push!(set::Dict{String,Array},key::String,value::Any)
+
+Push a `value` into the Array of `set[key]`. If no Array `set[key]` exists, setup new Array
+"""
+function push!(set::Dict{String,Array},key::String,value::Any)
+  if key in keys(set)
+    #If value not already in set[key]
+    if !(value in set[key])
+      push!(set[key],value)
+    end
+  else
+    set[key]=[value]
+  end
+end
+
+"""
+    get_limit_dir(limit::Dict{String,Number})
+The limit_dir is organized as two dictionaries in each other: limit_dir[impact][carrier]='impact/carrier' The first dictionary has the keys of the impacts, the second level dictionary has the keys of the carriers and value of the limit per carrier
+"""
+function get_limit_dir(limit::Dict{String,Number})
+    limit_dir=Dict{String,Dict}()
+    for (impact, carrier) in split.(keys(limit),"/")
+        if !haskey(limit_dir, impact)
+            limit_dir[impact]=Dict{String,Number}()
+        end
+        limit_dir[impact][String(carrier)]=limit[join([impact carrier], "/")]
+    end
+    return limit_dir
 end

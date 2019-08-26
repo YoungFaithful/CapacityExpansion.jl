@@ -1,0 +1,169 @@
+tech_groups:
+    demand:
+        structure: node
+        unit: power
+    generation:
+        structure: node
+        unit: power
+    dispatchable_generation:
+        tech_group: generation
+    non_dispatchable_generation:
+        tech_group: generation
+    storage:
+        structure: node
+        unit: energy
+    conversion:
+        structure: node
+        unit: power
+    transmission:
+        structure: line
+        unit: power
+
+
+techs:
+    demand:
+        name: Electricity demand
+        plant_lifetime: 15
+        financial_lifetime: 30
+        discount_rate: 0.04
+        tech_group: demand
+        input:
+            carrier: electricity
+        output:
+            timeseries: demand_electricity
+    pv:
+        name: Photo Voltaic
+        tech_group: non_dispatchable_generation
+        plant_lifetime: 15
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            timeseries: solar
+        output:
+            carrier: electricity
+    wind:
+        name: Onshore Wind
+        tech_group: non_dispatchable_generation
+        plant_lifetime: 15
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            timeseries: wind
+        output:
+            carrier: electricity
+    coal:
+        name: Coal Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 45
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            fuel: coal
+        output:
+            carrier: electricity
+    oil:
+        name: Oil Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 40
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            fuel: oil
+        output:
+            carrier: electricity
+    gas:
+        name: Gas Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 50
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            fuel: gas
+        output:
+            carrier: electricity
+    bat_in:
+        name: Battery Charge
+        tech_group: conversion
+        plant_lifetime: 25
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: electricity
+        output:
+            carrier: electricity_bat
+        constraints:
+            efficiency: 0.97
+    bat_out:
+        name: Battery Discharge
+        tech_group: conversion
+        plant_lifetime: 25
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: electricity_bat
+        output:
+            carrier: electricity
+        constraints:
+            efficiency: 0.97
+            cap_eq: bat_in
+    bat_e:
+        name: Battery Storage
+        tech_group: storage
+        plant_lifetime: 25
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: electricity_bat
+        output:
+            carrier: electricity_bat
+        constraints:
+            efficiency: 0.93
+    h2_in:
+        name: Hydrogen Storage Charge
+        tech_group: conversion
+        plant_lifetime: 15
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: electricity
+        output:
+            carrier: hydrogen
+        constraints:
+            efficiency: 0.83
+    h2_out:
+        name: Hydrogen Storage Discharge
+        tech_group: conversion
+        plant_lifetime: 40
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: hydrogen
+        output:
+            carrier: electricity
+        constraints:
+            efficiency: 0.53
+    h2_e:
+        name: Hydrogen Storage
+        tech_group: storage
+        plant_lifetime: 25
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: hydrogen
+        output:
+            carrier: hydrogen
+        constraints:
+            efficiency: 0.99
+
+    trans:
+        name: Transmission Line
+        tech_group: transmission
+        plant_lifetime: 80
+        financial_lifetime: 30
+        discount_rate: 0.04
+        input:
+            carrier: electricity
+        output:
+            carrier: electricity
+        constraints:
+            efficiency_per_km: 0.9995

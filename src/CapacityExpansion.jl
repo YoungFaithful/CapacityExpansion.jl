@@ -8,6 +8,7 @@
 module CapacityExpansion
   using Reexport
   using CSV
+  using YAML
   using DataFrames
   @reexport using StatsBase
   @reexport using ClustForOpt
