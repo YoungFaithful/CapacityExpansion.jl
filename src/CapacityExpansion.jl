@@ -11,7 +11,7 @@ module CapacityExpansion
   using YAML
   using DataFrames
   @reexport using StatsBase
-  @reexport using ClustForOpt
+  @reexport using TimeSeriesClustering
   @reexport using JLD2
   @reexport using FileIO
   using JuMP
@@ -38,5 +38,6 @@ module CapacityExpansion
   include(joinpath("utils","utils.jl"))
   include(joinpath("utils","load_data.jl"))
   include(joinpath("optim_problems","run_opt.jl"))
-  include(joinpath("optim_problems","opt_cep.jl"))
+  include(joinpath("optim_problems","set.jl"))
+  include(joinpath("optim_problems","opt.jl"))
 end # module CapacityExpansion

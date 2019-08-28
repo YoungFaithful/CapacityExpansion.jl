@@ -1,4 +1,7 @@
-# Preparing ClustData
+Preparing ClustData
+=========
+Here, we first describe how to load provided time-series input data or your own time-series input data as `ClustData`. We second describe how to aggregate the loaded time-sereis input data.
+
 ## Provided Data
 `load_timeseries_data_provided()` loads the data for a given `region` for which data is provided in this package.
 The optional input parameters to `load_timeseries_data_provided()` are the number of time steps per period `T` and the `years` to be imported.
@@ -7,7 +10,7 @@ The optional input parameters to `load_timeseries_data_provided()` are the numbe
 load_timeseries_data_provided
 ```
 ## Your Own Data
-For details refer to [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl)
+For details refer to [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl)
 
 !!! note
     The keys of `{your-time-series}.data` have to match `"{time_series (as declared in techs.csv)}-{node}"`
@@ -17,7 +20,7 @@ load_timeseries_data
 ```
 ## Aggregation
 Time series aggregation can be applied to reduce the temporal dimension while (if done problem specific correctly) keeping output precise.
-Aggregation methods are explained in [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl)
+Aggregation methods are explained in [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl)
 High encouragement to run a second stage validation step if you use aggregation on your model. [Second stage operational validation step](@ref)
 
 ## Examples

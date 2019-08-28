@@ -34,7 +34,7 @@ plot_input_solar=plot(ts_input_data.data["solar-germany"], legend=false, linesty
 
 # How to load your own data:
 # put your data into your homedirectory into a folder called tutorial
-# The data should have the following structure: see ClustForOpt/data folder
+# The data should have the following structure: see TimeSeriesClustering/data folder
 #=
 - Loading all `*.csv` files in the folder or the file `data_path`
 The `*.csv` files shall have the following structure and must have the same length:
@@ -111,13 +111,13 @@ optimizer=Clp.Optimizer
 # Some extra data for nodes, costs and so on:
 cep_data = load_cep_data_provided(ts_clust_data.region)
 # Running a simple CEP with a co2-limit of 1000 kg/MWh
-co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=200)
+co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",limit_emission=Dict{String,Number}("CO2/electricity"=>200))
 # co2_result.
 gen_var=co2_result.variables["GEN"]
 # get all operating decision variables (GEN)
 gen_var[:,:,:,:,:]
 
 # get specific operating decision variables (the one for the electricity sector, the coal technology at the node germany) indicated with names
-coal_gen_var=gen_var["el","wind",:,:,"germany"]
+coal_gen_var=gen_var["wind","electricity",:,:,"germany"]
 # plot the specific operation decision variables
 plot(axes(gen_var,"time_T"),coal_gen_var, xlabel="Time [h]", ylabel="Wind Generation [MW]", label=axes(gen_var,"time_K"), legendtitle="Period K", linewidth=2)

@@ -10,7 +10,7 @@ abstract type OptData <: InputData end
 struct OptModelCEP
   model::JuMP.Model
   info::Array{String}
-  set::Dict{String,Any}
+  set::Dict{String,Dict{String,Array}}
 end
 
 """
@@ -41,7 +41,7 @@ struct OptResult
  status::Symbol
  objective::Float64
  variables::Dict{String,Any}
- sets::Dict{String,Array}
+ sets::Dict{String,Dict{String,Array}}
  opt_config::Dict{String,Any}
  opt_info::Dict{String,Any}
 end

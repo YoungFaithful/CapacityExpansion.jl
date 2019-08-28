@@ -24,7 +24,7 @@
 |Network coverage 	  | transmission, DCOPF load flow                                   								   |
 
 
-The package uses [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl) as a basis for it's time-series aggregation.
+The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for it's time-series aggregation.
 
 This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/youngfaithful) and Holger Teichgraeber [@holgerteichgraeber](https://github.com/holgerteichgraeber).
 
@@ -37,7 +37,7 @@ It depends on:
 - `StatsBase.jl` - for handling of basic  
 - `JLD2` - for saving your result data
 - `FileIO` - for file accessing
-- `ClustForOpt.jl` - for time-series data
+- `TimeSeriesClustering.jl` - for time-series data
 
 ```julia
 using Pkg

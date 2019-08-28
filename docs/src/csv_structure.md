@@ -20,7 +20,7 @@ The package provides data for:
 ### Folder Structure
 - costs.csv
 - nodes.csv
-- techs.csv
+- techs.yml
 - lines.csv - optional
 - TS - subfolder containing time-series-data
 - > [timeseries name].csv
@@ -50,17 +50,21 @@ The package provides data for:
     The currently supported `categ` are
     - `generation`: For generation technologies that are either dispatchable (`none` in column `time_series`) or non-dispatchable (`time_series_name` in column `time_series`)
     - `transmission`: For transmission technologies that have no capacity (`CAP`) per `node`, but capacities (`TRANS`)  per `line`
-    - `storage_e`,`storage_in`,`storage_out`: For storage technology.
-    A storage technology has always three components
-    - `[storage-name]_e`: The energy part of the storage device [MWh]
-    - `[storage-name]_in`: The power part for charging the storage device [MW]
-    - `[storage-name]_out`: The power part for discharging the storage device [MW]
-    If e.g. in a lithium-ion battery the `storage_in` should be the same as `storage_out`, just set the `cap` costs in `costs.csv` of either `storage_in` or `storage_out` to zero. This will add a constraint to bind their capacities.
 
-|`tech`|`categ`|`sector`|`fuel`|`eff`|`max_gradient`|`time_series`|`lifetime`|`financial_lifetime`|`discount_rate`|
-|-------|--------|------|-----|--------|-------|-----------------|------------|----------|--------------------|
-|[tech...]| function handeling those |`el` for electricity|`none` or fuel dependency|efficiency |max gradient of this technology| `none` or time-series name of this tech|lifetime of an installed cap|time in which you have to pay back your loan| `discount_rate`|
-|... |... |... |... |... |... |... |... |... |... |
+`techs.yml` needs to have the following structure:
+- `tech_groups`: defines parent groups for techs or other tech_groups
+- `techs`: defines the technologies, the elements are used to declare the dimension `tech`
+The information of the single techs is combined with the information provided within parent tech_groups. One technology can have multiple tech_groups, if the parant has a parant. The combined information must contain:
+- `name`: A detailed name of the technology
+- `tech_group`: a technology-group that the technology belongs to. Groups can be: `all`, `demand`, `generation`, `dispatchable_generation`, `non_dispatchable_generation`, `storage`, `conversion`, `transmission`
+- `plant_lifetime`: the lifetime of this technologies plant [a]
+- `financial_lifetime`: financial time to break even [a]
+- `discount_rate`: discount rate for technology [a]
+- `structure`: `node` or `line` depending on the structure of the technology
+- `unit`: the unit that the capacity of the technology scales with. It can be `power`[MW] or `energy`[MWh]
+- `input`: the input can be a `carrier` like e.g. electricity `carrier: electricity, a `timeseries` like e.g. `timeseries: demand_electricity`, or a `fuel` like e.g. `fuel: gas`
+The information can conatin:
+- `constraints`: like an `efficiency` like e.g. `efficiency: 0.53` or `cap_eq` (e.g. discharge capacity is same as charge capacity) `cap_eq: bat_in`
 
 ### lines.csv
 !!! note

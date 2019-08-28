@@ -1,12 +1,13 @@
 tech_groups:
     all:
-        financial_lifetime: 30
-        discount_rate: 0.04
+        discount_rate: 0.0555649
     demand:
+        financial_lifetime: 20
         structure: node
         unit: power
         tech_group: all
     generation:
+        financial_lifetime: 15
         structure: node
         unit: power
         tech_group: all
@@ -15,15 +16,13 @@ tech_groups:
     non_dispatchable_generation:
         tech_group: generation
     storage:
+        financial_lifetime: 20
         structure: node
         unit: energy
         tech_group: all
     conversion:
+        financial_lifetime: 20
         structure: node
-        unit: power
-        tech_group: all
-    transmission:
-        structure: line
         unit: power
         tech_group: all
 
@@ -61,12 +60,12 @@ techs:
             fuel: coal
         output:
             carrier: electricity
-    oil:
-        name: Oil Plant
+    nuc:
+        name: Nuclear Plant
         tech_group: dispatchable_generation
         plant_lifetime: 40
         input:
-            fuel: oil
+            fuel: nuclear
         output:
             carrier: electricity
     gas:
@@ -97,7 +96,7 @@ techs:
             carrier: electricity
         constraints:
             efficiency: 0.97
-            cap_eq: bat_in # Discharge capacity is same as charge capacity
+            cap_eq: bat_in
     bat_e:
         name: Battery Storage
         tech_group: storage
@@ -107,46 +106,4 @@ techs:
         output:
             carrier: electricity_bat
         constraints:
-            efficiency: 0.93
-    h2_in:
-        name: Hydrogen Storage Charge
-        tech_group: conversion
-        plant_lifetime: 15
-        input:
-            carrier: electricity
-        output:
-            carrier: hydrogen
-        constraints:
-            efficiency: 0.83
-    h2_out:
-        name: Hydrogen Storage Discharge
-        tech_group: conversion
-        plant_lifetime: 40
-        input:
-            carrier: hydrogen
-        output:
-            carrier: electricity
-        constraints:
-            efficiency: 0.53
-            cap_eq: h2_in # Discharge capacity is same as charge capacity
-    h2_e:
-        name: Hydrogen Storage
-        tech_group: storage
-        plant_lifetime: 25
-        input:
-            carrier: hydrogen
-        output:
-            carrier: hydrogen
-        constraints:
-            efficiency: 0.99
-
-    trans:
-        name: Transmission Line
-        tech_group: transmission
-        plant_lifetime: 80
-        input:
-            carrier: electricity
-        output:
-            carrier: electricity
-        constraints:
-            efficiency: 0.9995 #_per_km
+            efficiency: 1

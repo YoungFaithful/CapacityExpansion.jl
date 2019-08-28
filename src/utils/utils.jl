@@ -176,7 +176,7 @@ function set_opt_config_cep(opt_data::OptDataCEP
   # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
   config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "generation"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
   # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
-  for tech_group in unique(vcat(getfield.(cep_data.techs[:], :tech_group)...))
+  for tech_group in unique(vcat(getfield.(opt_data.techs[:], :tech_group)...))
     config[tech_group]=true
   end
   # Loop through the kwargs and write them into Dictionary
@@ -245,9 +245,9 @@ function get_total_demand(cep::OptModelCEP,
   #ts_deltas:  t x k - Δt of each segment x period
   ts_deltas=ts_data.delta_t
   total_demand=0
-  for node in set["nodes"]
-    for t in set["time_T_period"]
-      for k in set["time_K"]
+  for node in set["nodes"]["all"]
+    for t in set["time_T_period"]["all"]
+      for k in set["time_K"]["all"]
         total_demand+=ts["demand_electricity-"*node][t,k]*ts_deltas[t,k]*ts_weights[k]
       end
     end
@@ -257,7 +257,11 @@ function get_total_demand(cep::OptModelCEP,
 end
 
 """
-    get_cost_series(cep_data::OptDataCEP,clust_res::ClustResult, opt_res::OptResult)
+        get_cost_series(nodes::DataFrame,
+                        var_costs::DataFrame,
+                       clust_res::ClustResult,
+                       set::Dict{String,Array},
+                       variables::Dict{String,OptVariable})
 Return an array for the time series of costs in all the impact dimensions and the set of impacts
 """
 function get_cost_series(nodes::DataFrame,
@@ -283,7 +287,7 @@ function get_cost_series(nodes::DataFrame,
         i=1
         for impact in set["impact"]
           for tech in set["tech"]
-            for node in set["nodes"]
+            for node in set["nodes"]["all"]
               var_cost[i] += find_cost_in_df(var_costs,nodes,tech,node,impact)*  sum(get_cep_variable_value(variables["GEN"],["el",tech,:,ts_ids[n],node])' * ts_deltas[:,ts_ids[n]])
             end
           end
@@ -295,11 +299,11 @@ function get_cost_series(nodes::DataFrame,
 end
 
 """
-    get_cost_series(cep_data::OptDataCEP,scenario::Scenario)
+    get_cost_series(opt_data::OptDataCEP,scenario::Scenario)
 Return an array for the time series of costs in all the impact dimensions and the set of impacts
 """
-function get_cost_series(cep_data::OptDataCEP,scenario::Scenario)
-  return get_cost_series(cep_data.nodes,cep_data.var_costs,scenario.clust_res, scenario.opt_res.model_set,scenario.opt_res.variables)
+function get_cost_series(opt_data::OptDataCEP,scenario::Scenario)
+  return get_cost_series(opt_data.nodes,opt_data.var_costs,scenario.clust_res, scenario.opt_res.model_set,scenario.opt_res.variables)
 end
 
 """
@@ -316,28 +320,32 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
 
   met_cap_limit=Array{String,1}()
   # For all
-  for tech in set["tech_n"]
-    for node in set["nodes"]
-      #Check if the limit is reached in any capacity at any node
-      if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim
-        #Add this technology and node to the met_cap_limit Array
-        push!(met_cap_limit,tech*"-"*node)
+  if haskey(set["tech"],"node")
+    for tech in set["tech"]["node"]
+      for node in set["nodes"]["all"]
+        #Check if the limit is reached in any capacity at any node
+        if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim
+          #Add this technology and node to the met_cap_limit Array
+          push!(met_cap_limit,tech*"-"*node)
+        end
       end
     end
   end
-  for tech in set["tech_l"]
-    for line in set["lines"]
-      #Check if the limit is reached in any capacity at any line
-      if sum(variables["TRANS"][tech,:,line]) == lines[tech,line].power_lim
-        #Add this technology and line to the met_cap_limit Array
-        push!(met_cap_limit,tech*"-"*line)
+  if haskey(set["tech"],"line")
+    for tech in set["tech"]["line"]
+      for line in set["lines"]["all"]
+        #Check if the limit is reached in any capacity at any line
+        if sum(variables["TRANS"][tech,:,line]) == lines[tech,line].power_lim
+          #Add this technology and line to the met_cap_limit Array
+          push!(met_cap_limit,tech*"-"*line)
+        end
       end
     end
   end
   # If the array isn't empty throw an error (as limits are only for numerical speedup)
   if !isempty(met_cap_limit)
     #TODO change to warning
-    throw( @error "Limit is reached for techs $met_cap_limit")
+    @warn("Limit is reached for techs $met_cap_limit")
   end
   return met_cap_limit
 end
@@ -420,4 +428,18 @@ function get_limit_dir(limit::Dict{String,Number})
         limit_dir[impact][String(carrier)]=limit[join([impact carrier], "/")]
     end
     return limit_dir
+end
+
+"""
+    text_limit_emission(limit_emission::Dict{String,Dict{String,Number}})
+Return text with the information of the `limit_emission` as a text
+"""
+function text_limit_emission(limit_emission::Dict{String,Dict})
+  text_limit=""
+  for (emission,carriers) in limit_emission
+    for (carrier,value) in carriers
+      text_limit*="$emission-Emission ≤ $value [kg-$emission-eq. per MWh-$carrier],"
+    end
+  end
+  return text_limit
 end

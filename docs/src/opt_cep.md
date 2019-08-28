@@ -1,4 +1,6 @@
-# Optimization Problem Formulation
+Optimization Problem Formulation
+=========
+Here, we describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the datatypes within the `OptDataCEP` and how to access it.
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -19,16 +21,17 @@ The models scalability is relying on the usage of sets. The elements of the sets
 |------------------|-----------------------------------------------------------------------|
 | lines            | transmission lines connecting the nodes                               |
 | nodes            | spacial energy system nodes                                           |
-| tech             | fossil and renewable generation as well as storage technologies       |
+| tech             | generation, conversion, storage, and transmission technologies        |
+| carrier          | carrier that an energy balance is calculated for `electricity`, `hydrogen`...|
 | impact           | impact categories like EUR or USD, CO 2 − eq., ...                    |
 | account          | fixed costs for installation and yearly expenses, variable costs      |
 | infrastruct      | infrastructure status being either new or existing                    |
 | sector           | energy sector like electricity                                        |
 | time K           | numeration of the representative periods                              |
-| time T           | numeration of the time intervals within a period                      |
-| time T e         | numeration of the time steps within a period                          |
-| time I           | numeration of the time invervals of the full input data periods       |
-| time I e         | numeration of the time steps of the full input data periods           |
+| time T period    | numeration of the time intervals within a period                      |
+| time T point     | numeration of the time points within a period                          |
+| time I period    | numeration of the time invervals of the full input data periods       |
+| time I point     | numeration of the time points of the full input data periods           |
 | dir transmission | direction of the flow uniform with or opposite to the lines direction |
 
 
@@ -55,15 +58,19 @@ An overview of the variables used in the CEP is provided in the table:
 
 An overview is provided in the following table:
 
-| description                                                                          |  unit            | configuration           | values                                      | type           | default value |
+| description                                        |  unit            | configuration           | values                                      | type           | default value |
 |--------------------------------------------------------------------------------------|------------------|-------------------------|---------------------------------------------|----------------|---------------|
-| enforce a CO2-limit                                                                  | kg-CO2e/MWh    | `co2_limit`               | >0                                          | ::Number       | Inf           |
-| including existing infrastructure (no extra costs)                                   | -                | `existing_infrastructure` | true or false                               | ::Bool         | false         |
-| type of storage implementation                                                       | -                | `storage`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
-| allowing transmission                                                                | -                | `transmission`            | true or false                               | ::Bool         | false         |
-| fix. var and CEO to dispatch problem | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
-| allowing lost load (necessary for dispatch)                        | price/MWh        | `lost_el_load_cost`       | >1e6                                        | ::Number       | Inf           |
-| allowing lost emission (necessary for dispatch)                    | price/kg-CO2e | `lost_CO2_emission_cost`  | >700                                        | ::Number       | Inf           |
+| enforce an emission-limit                          | kg-impact/MWh-carrier | `limit_emission`               | Dict{String,Number}(impact/carrier=>value)                                      | ::Dict{String,Number}       | Dict{String,Number}()           |
+| including existing infrastructure (no extra costs) and limit infrastructure   | -                | `infrastructure`| Dict{String,Array}("existing"=>[tech-groups...], "limit"=>[tech-groups...])                             | ::Dict{String,Array}       | Dict{String,Array}("existing"=>["demand"])         |
+| type of storage implementation                     | -                | `storage_type`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
+| allowing conversion (necessary for storage)        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
+| allowing demand                                    | -                | `demand`            | `true` or `false`                               | ::Bool         | true         |
+| allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | false         |
+| allowing non dispatchable generation               | -                | `non_dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
+| allowing transmission                              | -                | `transmission`            | `true` or `false`                               | ::Bool         | false         |
+| fix. var and CEO to dispatch problem               | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
+| allowing lost load (necessary for dispatch)        | price/MWh-carrier| `lost_load_cost`       | Dict{String,Number}(carrier=>value)            | ::Dict{String,Number}      | Dict{String,Number}()           |
+| allowing lost emission (necessary for dispatch)    | price/kg-impact  | `lost_emission_cost`  | Dict{String,Number}(impact=>value)              | ::Dict{String,Number}       | Dict{String,Number}()          |
 
 They can be applied in the following way:
 ```@docs

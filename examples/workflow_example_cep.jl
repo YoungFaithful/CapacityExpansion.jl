@@ -20,36 +20,36 @@ ts_seg_data = run_clust(ts_input_data;method="kmeans",representation="centroid",
 optimizer=Clp.Optimizer
 
 # tweak the CO2 level
-co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;co2_limit=50) #generally values between 1250 and 10 are interesting
+co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emission=Dict{String,Number}("CO2/electricity"=>50)) #generally values between 1250 and 10 are interesting
 
 # Include a Slack-Variable
-slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_el_load_cost=1e6, lost_CO2_emission_cost=700)
+slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
 
 
 # Include existing infrastructure at no COST
-ex_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;existing_infrastructure=true)
+ex_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;infrastructure=Dict{String,Array}("existing"=>["all"]))
 
 # Intraday storage (just within each period, same storage level at beginning and end)
-simplestor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage="simple")
+simplestor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="simple",conversion=true)
 
 # Interday storage (within each period & between the periods)
-seasonalstor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage="seasonal")
+seasonalstor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="seasonal",conversion=true)
 
-# Transmission
-transmission_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;transmission=true)
+# Transmission: use "GER_18 to use transmission"
+# transmission_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;transmission=true)
 
 # Segmentation
 seg_result = run_opt(ts_seg_data.clust_data,cep_data,optimizer)
 
 # Desing with clusered data and operation with ts_full_data
 # First solve the clustered case
-design_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;co2_limit=50)
+design_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emission=Dict{String,Number}("CO2/electricity"=>50))
 
 #capacity_factors
 design_variables=get_cep_design_variables(design_result)
 
 # Use the design variable results for the operational run
-operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_el_load_cost=1e6,lost_CO2_emission_cost=700)
+operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6),lost_emission_cost=Dict{String,Number}("CO2"=>700))
 
 # Change scaling parameters
 # Changing the scaling parameters is useful if the data you use represents a much smaller or bigger energy system than the ones representing Germany and California provided in this package
@@ -57,4 +57,4 @@ operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,desig
 #   0.01 ≤ VAR  ≤ 100,     real-VAR = scale[:VAR] ⋅ VAR
 # ⇔ 0.01 ≤ real-VAR / scale[:VAR] ≤ 100
 scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
-co2_result = run_opt(ts_clust_data.best_results,cep_data,optimizer;scale=scale, co2_limit=50)
+co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;scale=scale, limit_emission=Dict{String,Number}("CO2/electricity"=>50))
