@@ -6,12 +6,17 @@
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
+The package has three main purposes:
+1) Provide a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
+2) Provide a model configuration, a modular model setup and model optimization.
+3) Provide an interface between the optimization result and further analysis.
+
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
 |Model class          |	Capacity Expansion Problem                                                        |
-|Model type						| Optimization, Linear optimization model input-data depending energy system 				|
-|Sectors              | (currently) Electricity                                                           |
-|Technologies         |	dispathable and non-dispathable Generation, Storage (seasonal), Transmission      |
+|Model type						 | Optimization, Linear optimization model input-data depending energy system 				|
+|Carriers         | Electricity, Hydrogen, ...                                                           |
+|Technologies         |	dispathable and non-dispathable Generation, Conversion, Storage (seasonal), Transmission      |
 |Decisions 	          | investment and dispatch                                                           |
 |Objective						| Total system cost																																	|
 |Variables 						| Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions									|
@@ -22,7 +27,6 @@
 |Geographic Resolution| aggregated regions        					                            									 |
 |Time resolution 	    | hourly                                                          									 |
 |Network coverage 	  | transmission, DCOPF load flow                                   								   |
-
 
 The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for it's time-series aggregation.
 
