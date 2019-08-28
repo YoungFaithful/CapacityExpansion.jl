@@ -1,5 +1,5 @@
 # CA-14
-California (modeling CAISO) 14-node model, no existing capacity (currently not published)
+California (modeling CAISO) 10-node model, no existing capacity (currently not published)
 ![Plot](assets/CA_14.svg)
 ## Time Series
 - `el_demand`: http://www.caiso.com/planning/Pages/ReliabilityRequirements/Default.aspx#Historical

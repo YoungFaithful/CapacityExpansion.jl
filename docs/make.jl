@@ -9,7 +9,7 @@ makedocs(sitename="CapacityExpansion.jl",
         "Quickstart" => "quickstart.md",
         "Workflow" => "workflow.md",
         "Data" => ["preparing_clust_data.md", "preparing_opt_cep_data.md", "csv_structure.md", "README_GER_18.md", "README_GER_1.md", "README_CA_14.md", "README_CA_1.md", "README_TX_1.md"],
-        "Optimization" => ["opt_cep.md","opt_cep_examples.md"],
+        "Optimization" => ["opt_cep.md","results_opt.md", "opt_cep_examples.md"],
         ],
     format = Documenter.HTML(assets = [
         "assets/clust_for_opt_text.svg",

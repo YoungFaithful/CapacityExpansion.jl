@@ -92,16 +92,16 @@ match `size(data)` in the corresponding dimensions.
 
 # Example
 ```jldoctest
-julia> array = OptVariable([1 2; 3 4], [:a, :b], 2:3)
-2-dimensional OptVariable{Int,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 2:3
-And data, a 2×2 Array{Int,2}:
+julia> cap = OptVariable([1 2; 3 4],["pv", "wind"], 1:2; axes_names=["tech","time"],type="dv")
+2-dimensional OptVariable{Int64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
+And data, a 2×2 Array{Int64,2}:
  1  2
  3  4
 
-julia> array[:b, 3]
-4
+julia> cap["pv", 2]
+2
 ```
 """
 function OptVariable(data::Array{T,N}, axs...;axes_names::Array=repeat([""],N), type="") where {T,N}
@@ -117,29 +117,29 @@ given axes.
 
 # Example
 ```jldoctest
-julia> array = OptVariable{Float}(undef, [:a, :b], 1:2);
+julia> cap = OptVariable{Float64}(undef,["pv", "wind"], 1:2; axes_names=["tech","time"],type="dv");
 
-julia> fill!(array, 1.0)
-2-dimensional OptVariable{Float64,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 1:2
+julia> fill!(cap, 1.0)
+2-dimensional OptVariable{Float64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
 And data, a 2×2 Array{Float64,2}:
  1.0  1.0
  1.0  1.0
 
-julia> array[:a, 2] = 5.0
+julia> cap["wind", 2] = 5.0
 5.0
 
-julia> array[:a, 2]
+julia> cap["wind", 2]
 5.0
 
-julia> array
-2-dimensional OptVariable{Float64,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 1:2
+julia> cap
+2-dimensional OptVariable{Float64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
 And data, a 2×2 Array{Float64,2}:
+ 1.0  1.0
  1.0  5.0
- 1.0  1.0
 ```
 """
 function OptVariable{T}(::UndefInitializer, axs...; axes_names::Array{String,1}=repeat([""],length(axs)), type="") where T

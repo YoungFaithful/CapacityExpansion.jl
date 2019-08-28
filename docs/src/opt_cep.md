@@ -14,8 +14,13 @@ The model is designed to minimize social costs by minimizing the following objec
 min \sum_{account,tech}COST_{account,'EUR/USD',tech} + \sum LL \cdot  cost_{LL} + LE \cdot  cos_{LE}
 ```
 
-## Variables and Sets
+## Sets
 The models scalability is relying on the usage of sets. The elements of the sets are extracted from the input data and scale the different variables. An overview of the sets is provided in the table. Depending on the models configuration the necessary sets are initialized.
+
+The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=[elements...]`, where:
+- `tech_name` is the name of the dimension like e.g. `tech`, or `node`
+- `tech_group` is the name of a group of elements within each dimension like e.g. `["all", "generation"]`. The group `'all'` always contains all elements of the dimension
+- `[elements...]` is the Array with the different elements like `["pv", "wind", "gas"]`
 
 | name             | description                                                           |
 |------------------|-----------------------------------------------------------------------|
@@ -26,7 +31,6 @@ The models scalability is relying on the usage of sets. The elements of the sets
 | impact           | impact categories like EUR or USD, CO 2 − eq., ...                    |
 | account          | fixed costs for installation and yearly expenses, variable costs      |
 | infrastruct      | infrastructure status being either new or existing                    |
-| sector           | energy sector like electricity                                        |
 | time K           | numeration of the representative periods                              |
 | time T period    | numeration of the time intervals within a period                      |
 | time T point     | numeration of the time points within a period                          |
@@ -34,22 +38,26 @@ The models scalability is relying on the usage of sets. The elements of the sets
 | time I point     | numeration of the time points of the full input data periods           |
 | dir transmission | direction of the flow uniform with or opposite to the lines direction |
 
-
-
+## Variables
+The variables can have different types:
+- `cv`: cost variable - information of the costs
+- `dv`: design variable - information of the energy system design
+- `ov`: operation variable - information of the energy system operation
+- `sv`: slack variable - information of unmet demands or exceeded emission limits
 An overview of the variables used in the CEP is provided in the table:
 
-| name      | dimensions                 | unit                    | description                                                                          |
-|-----------|----------------------------|-------------------------|--------------------------------------------------------------------------------------|
-| COST      | [account,impact,tech]      | EUR/USD, LCA-categories | Costs                                                                                |
-| CAP       | [tech,infrastruct,node]    | MW                      | Capacity                                                                             |
-| GEN       | [sector,tech,t,k,node]     | MW                      | Generation                                                                           |
-| SLACK     | [sector,t,k,node]          | MW                      | Power gap, not provided by installed CAP                                             |
-| LL        | [sector]                   | MWh                     | LoastLoad Generation gap, not provided by installed CAP                              |
-| LE        | [impact]                   | LCA-categories          | LoastEmission Amount of emissions that installed CAP crosses the Emission constraint |
-| INTRASTOR | [sector, tech,t,k,node]    | MWh                     | Storage level within a period                                                        |
-| INTERSTOR | [sector,tech,i,node]       | MWh                     | Storage level between periods of the full time series                                |
-| FLOW      | [sector,dir,tech,t,k,line] | MW                      | Flow over transmission line                                                          |
-| TRANS     | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines                                               |
+| name      | type | dimensions                 | unit                    | description                                                                          |
+|---------|--|----------------------------|-------------------------|--------------------------------------------------------------------------------------|
+| COST   | `cv` | [account,impact,tech]      | EUR/USD, LCA-categories | Costs                                                                                |
+| CAP    | `dv` | [tech,infrastruct,node]    | MW                      | Capacity                                                                             |
+| GEN    | `ov`  | [tech,carrier,t,k,node]     | MW                      | Generation                                                                           |
+| SLACK   | `sv`  | [carrier,t,k,node]          | MW                      | Power gap, not provided by installed CAP                                             |
+| LL     | `sv`  | [carrier]                   | MWh                     | LoastLoad Generation gap, not provided by installed CAP                              |
+| LE      | `sv`  | [impact]                   | LCA-categories          | LoastEmission Amount of emissions that installed CAP crosses the Emission constraint |
+| INTRASTOR | `ov` | [tech,carrier,t,k,node]    | MWh                     | Storage level within a period                                                        |
+| INTERSTOR | `ov` | [tech,carrier,i,node]       | MWh                     | Storage level between periods of the full time series                                |
+| FLOW    | `ov`  | [tech,carrier,dir,t,k,line] | MW                      | Flow over transmission line                                                          |
+| TRANS  | `ov`   | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines                                               |
 
 ## Running the Capacity Expansion Problem
 
@@ -76,11 +84,17 @@ They can be applied in the following way:
 ```@docs
 run_opt
 ```
+## Transmission
+A CapacityExpansion model can be run with or without the technology transmission.
+!!! note
+    If the technology `transmission` is not modeled (`transmission=false`), the transmission between nodes is not restricted, which is equivalent to a copperplate assumption.
 
+!!! note
+    Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission` and limit the total transmission `TRANS` to the values defined in the `lines.csv` file. If no new transmission should be setup, use the same values for existing transmission and the limit.
 ## Solver
 The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
 - `Clp` as an open source solver
-- `Gurobi` as a proprietary solver with free academic licenses
+- `Gurobi` as a proprietary solver with free academic licenses. Gurobi is faster than Clp and we prefer it in the academic setting.
 - `CPLEX` as an alternative proprietary solver
 
 Install the corresponding julia-package for the solver and call its `optimizer` like e.g.:
@@ -90,6 +104,15 @@ Pkg.add("Clp")
 using Clp
 optimizer=Clp.Optimizer
 ```
+
+## Solver Configuration
+Depending on the Solver different solver configurations are possible. The information is always provided as `Dict{Symbol,Any}`. The keys of the dictionary are the parameters and the values of the dictionary are the values passed to the solver.
+
+For example the `Gurobi` solver can be configured to have no OutputFlag and run on two threads (per julia thread) the following way:
+```julia
+optimizer_config=Dict{Symbol,Any}(:OutputFlag => 0, :Threads => 2)
+```
+Further information on possible keys for Gurobi can be found at [Gurobi parameter description](https://www.gurobi.com/documentation/8.1/refman/parameter_descriptions.html).
 
 ## Scaling
 The package features the scaling of variables and equations. Scaling variables, which are used in the numerical model, to `0.01 ≤ x ≤ 100` and scaling equations to `3⋅x = 1` instead of `3000⋅x = 1000` improves the shape of the optimization space and significantly reduces the computational time used to solve the numerical model.
@@ -117,26 +140,3 @@ scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
 - Include the new variable in the problem formulation in the `src/optim_problems/opt_cep`-file. Reformulate the equations by dividing them by the scaling parameter of the first variable, which is `scale[:COST]` in the following example:
 `  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP                  + 100`
 `⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP   + 100/scale[:COST]`
-
-## Opt Result - A closer look
-```@docs
-OptResult
-```
-!!! note
-    The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
-
-The information of the model setup can be checked out the following way:
-```@setup 3
-using CapacityExpansion
-using Clp
-optimizer=Clp.Optimizer
-state="GER_1"
-years=[2016]
-ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
-cep_data = load_cep_data_provided(state)
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).best_results
-```
-```@example 3
-result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
-println.(result.opt_info["model"])
-```

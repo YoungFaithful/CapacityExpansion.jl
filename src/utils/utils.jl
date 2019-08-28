@@ -1,40 +1,4 @@
 """
-    find_val_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,value_to_return::Symbol)
-Take DataFrame(df) Look in Column (column_of_reference) for the reference value (reference) and return in same row the value in column (value_to_return)
-"""
-function find_val_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    value_to_return::Symbol
-                    )
-                    @warn "find_val_in_df deprecated"
-    return df[findfirst(df[column_of_reference].==reference),value_to_return]
-end
-
-"""
-    find_val_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,value_to_return::String)
-Take DataFrame(df) Look in Column (column_of_reference) for the reference value (reference) and return corresponding value in column (value_to_return)
-"""
-function find_val_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    value_to_return::String
-                    )
-                    @warn "find_val_in_df deprecated"
-    return find_val_in_df(df,column_of_reference,reference,Symbol(value_to_return))
-end
-
-#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found
-function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any})
-    return df[findall(df[col_and_val[1]].==col_and_val[2]), :]
-end
-
-#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found and the column `colon_ind`
-function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any}, colon_ind::Symbol)
-    return df[findall(df[col_and_val[1]].==col_and_val[2]), colon_ind]
-end
-
-"""
     check_column(df::DataFrame, names_array::Array{Symbol,1})
 check if the columns provided in `names_array` exist in the DataFrame `df`
 throw an error if they don't
@@ -46,78 +10,14 @@ function check_column(df::DataFrame, names_array::Array{Symbol,1})
     end
 end
 
-"""
-     map_set_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,set_to_return::Symbol)
-  Take DataFrame(`df`) Look in Column (`column_of_reference`) for all cases that match the reference value (`reference`) and return the corresponding sets in Column (`set_to_return`)
-"""
-function map_set_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    set_to_return::Symbol
-                    )
-                    @warn "mat_set_in_df deprecated"
-    return df[df[column_of_reference].==reference,set_to_return]
+#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found
+function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any})
+    return df[findall(df[!,col_and_val[1]].==col_and_val[2]), :]
 end
 
-"""
-    getindex(variable::OptVariable,index_set::Array)
-Get the variable data from the specific Scenario by indicating the `var_name` e.g. "COST" and the `index_set` like `[:;"EUR";"pv"]`
-"""
-function get_cep_variable_value(variable::OptVariable,
-                                index_set::Array
-                                )
-                                @warn "get_cep_variable_value deprecated"
-    index_num=[]
-    for i in  1:length(index_set)
-        if index_set[i]==Colon()
-            push!(index_num,Colon())
-        elseif typeof(index_set[i])==Int || typeof(index_set[i])==UnitRange{Int}
-            push!(index_num,index_set[i])
-        else
-            new_index_num=findfirst(variable.axes[i].==index_set[i])
-            if new_index_num==[]
-                throw(@error("$(index_set[i]) not in indexset #$i of Variable $var_name"))
-            else
-                push!(index_num,new_index_num)
-            end
-        end
-    end
-    return getindex(variable.data,Tuple(index_num)...)
-end
-
-"""
-    get_cep_variable_value(scenario::Scenario,var_name::String,index_set::Array)
-Get the variable data from the specific Scenario by indicating the `var_name` e.g. "COST" and the `index_set` like `[:;"EUR";"pv"]`
-"""
-function get_cep_variable_value(scenario::Scenario,
-                                var_name::String,
-                                index_set::Array
-                                )
-                                @warn "get_cep_variable_value deprecated"
-    return get_cep_variable_value(scenario.opt_res.variables[var_name], index_set)
-end
-
-"""
-    get_cep_variable_set(variable::OptVariable,num_index_set::Int)
-Get the variable set from the specific variable and the `num_index_set` like 1
-"""
-function get_cep_variable_set(variable::OptVariable,
-                              num_index_set::Int
-                              )
-                              @warn "get_cep_variable_set deprecated"
-    return variable.axes[num_index_set]
-end
-
-"""
-    get_cep_variable_set(scenario::Scenario,var_name::String,num_index_set::Int)
-Get the variable set from the specific Scenario by indicating the `var_name` e.g. "COST" and the `num_index_set` like 1
-"""
-function get_cep_variable_set(scenario::Scenario,
-                              var_name::String,
-                              num_index_set::Int
-                              )
-                              @warn "get_cep_variable_set deprecated"
-    return  get_cep_variable_set(scenario.opt_res.variables[var_name], num_index_set)
+#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found and the column `colon_ind`
+function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any}, colon_ind::Symbol)
+    return df[findall(df[!,col_and_val[1]].==col_and_val[2]), colon_ind]
 end
 
 """
@@ -140,7 +40,8 @@ end
 
 """
     get_cep_variables(opt_result::OptResult, variable_type::String)
-Returns all variables which types match the String of `variable_type`
+The variables can be of different type. The different groups of variables can be extracted from the `OptResult` based on the `variable_type`:
+Returns all variables which types match the String `variable_type`
 """
 function get_cep_variables(opt_result::OptResult, variable_type::String)
   variables=Dict{String,Any}()
@@ -174,7 +75,7 @@ Returning Dictionary with the variables as entries
 function set_opt_config_cep(opt_data::OptDataCEP
                             ;kwargs...)
   # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
-  config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "generation"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
+  config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
   # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
   for tech_group in unique(vcat(getfield.(opt_data.techs[:], :tech_group)...))
     config[tech_group]=true

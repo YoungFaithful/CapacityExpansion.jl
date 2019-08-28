@@ -38,13 +38,6 @@ design_variables=get_cep_design_variables(design_result)
 # Use the design variable results for the operational (dispatch problem) run
 operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
 ```
-## Get Functions
-The get functions allow an easy access to the information included in the result.
-```@docs
-get_cep_variable_set
-get_cep_slack_variables
-get_cep_design_variables
-```
 ## Plotting Capacities
 ```julia
 co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",limit_emission=Dict{String,Number}("CO2/electricity"=>500)) #hide
