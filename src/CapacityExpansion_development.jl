@@ -5,8 +5,8 @@
  # Capacity Expansion Probelem formulation
  #
  #####################
-#using ClustForOpt
-include(joinpath("..","..","ClustForOpt","src","ClustForOpt_development.jl"))
+#using TimeSeriesClustering
+include(joinpath("..","..","TimeSeriesClustering","src","TimeSeriesClustering_development.jl"))
 using CSV
 using DataFrames
 using StatsBase

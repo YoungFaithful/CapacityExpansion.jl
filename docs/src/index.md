@@ -2,7 +2,7 @@
 ===
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
-[![Build Status](https://travis-ci.com/holgerteichgraeber/ClustForOpt.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
+[![Build Status](https://travis-ci.com/holgerteichgraeber/TimeSeriesClustering.jl.svg?token=HRFemjSxM1NBCsbHGNDG&branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
@@ -24,7 +24,7 @@
 |Network coverage 	  | transmission, DCOPF load flow                                   								   |
 
 
-The package uses [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl) as a basis for it's time-series aggregation.
+The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for it's time-series aggregation.
 
 This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/youngfaithful) and Holger Teichgraeber [@holgerteichgraeber](https://github.com/holgerteichgraeber).
 
@@ -37,7 +37,7 @@ It depends on:
 - `StatsBase.jl` - for handling of basic  
 - `JLD2` - for saving your result data
 - `FileIO` - for file accessing
-- `ClustForOpt.jl` - for time-series data
+- `TimeSeriesClustering.jl` - for time-series data
 
 ```julia
 using Pkg
