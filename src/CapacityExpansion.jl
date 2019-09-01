@@ -10,7 +10,7 @@ module CapacityExpansion
   using CSV
   using DataFrames
   @reexport using StatsBase
-  @reexport using ClustForOpt
+  @reexport using TimeSeriesClustering
   @reexport using JLD2
   @reexport using FileIO
   using JuMP

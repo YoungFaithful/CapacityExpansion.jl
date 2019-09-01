@@ -7,7 +7,7 @@ optimizer=Clp.Optimizer #select an Optimize
 state="GER_1" #select state
 ts_input_data = load_timeseries_data_provided(state; K=365, T=24)
 cep_data = load_cep_data_provided(state)
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).best_results
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=5,n_clust=5).clust_data
 # tweak the CO2 level
 co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",co2_limit=500)
 ```

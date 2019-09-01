@@ -7,7 +7,7 @@ The optional input parameters to `load_timeseries_data_provided()` are the numbe
 load_timeseries_data_provided
 ```
 ## Your Own Data
-For details refer to [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl)
+For details refer to [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl)
 
 !!! note
     The keys of `{your-time-series}.data` have to match `"{time_series (as declared in techs.csv)}-{node}"`
@@ -17,7 +17,7 @@ load_timeseries_data
 ```
 ## Aggregation
 Time series aggregation can be applied to reduce the temporal dimension while (if done problem specific correctly) keeping output precise.
-Aggregation methods are explained in [ClustForOpt](https://github.com/holgerteichgraeber/ClustForOpt.jl)
+Aggregation methods are explained in [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl)
 High encouragement to run a second stage validation step if you use aggregation on your model. [Second stage operational validation step](@ref)
 
 ## Examples
@@ -33,7 +33,7 @@ plot(ts_input_data.data["solar-germany"], legend=false, linestyle=:dot, xlabel="
 ![Plot](assets/preparing_clust_data_load.svg)
 ### Aggregating time series data
 ```julia
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=50,n_clust=5).best_results
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=50,n_clust=5).clust_data
 plot(ts_clust_data.data["solar-germany"], legend=false, linestyle=:solid, width=3, xlabel="Time [h]", ylabel="Solar availability factor [%]")
 ```
 ![Plot](assets/preparing_clust_data_agg.svg)
