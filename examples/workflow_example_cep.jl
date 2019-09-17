@@ -49,7 +49,7 @@ design_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emissi
 design_variables=get_cep_design_variables(design_result)
 
 # Use the design variable results for the operational run
-operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6),lost_emission_cost=Dict{String,Number}("CO2"=>700))
+operation_result = run_opt(ts_input_data,cep_data,design_result.config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6),lost_emission_cost=Dict{String,Number}("CO2"=>700))
 
 # Change scaling parameters
 # Changing the scaling parameters is useful if the data you use represents a much smaller or bigger energy system than the ones representing Germany and California provided in this package

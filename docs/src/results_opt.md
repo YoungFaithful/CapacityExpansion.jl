@@ -23,7 +23,7 @@ ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid
 ```
 ```@example 3
 result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
-println.(result.opt_info["model"])
+println.(result.info["model"])
 ```
 ## Variables in Result
 All variables are provided as dense `OptVariable` structs and can be indexed:

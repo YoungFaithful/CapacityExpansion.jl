@@ -31,7 +31,7 @@ using Clp
             scenarios["$state-$years-simple"] = run_opt(ts_clust_data.clust_data,cep_data,optimizer;descriptor="simple storage",storage_type="simple",conversion=true,optimizer_config=optimizer_config)
             scenarios["$state-$years-seasonal"] = run_opt(ts_clust_data.clust_data,cep_data,optimizer;descriptor="seasonal storage",storage_type="seasonal",conversion=true,optimizer_config=optimizer_config)
             design_result=run_opt(ts_clust_data.clust_data,cep_data,optimizer;descriptor="des&op",optimizer_config=optimizer_config)
-            scenarios["$state-$years-des&op"] = run_opt(ts_full_data.clust_data,cep_data,design_result.opt_config,get_cep_design_variables(design_result),optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
+            scenarios["$state-$years-des&op"] = run_opt(ts_full_data.clust_data,cep_data,design_result.config,get_cep_design_variables(design_result),optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
         end
     end
     #Test transmission for a multi-node scenario

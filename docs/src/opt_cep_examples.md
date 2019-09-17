@@ -36,7 +36,7 @@ design_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="design&oper
 #the design variables (here the capacity_factors) are calculated from the first optimization
 design_variables=get_cep_design_variables(design_result)
 # Use the design variable results for the operational (dispatch problem) run
-operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
+operation_result = run_opt(ts_input_data,cep_data,design_result.config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
 ```
 ## Plotting Capacities
 ```julia

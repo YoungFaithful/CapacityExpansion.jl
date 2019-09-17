@@ -44,10 +44,10 @@ result = run_opt(ts_input_data,cep_data,optimizer)
 
 The `result` is a `OptResult` data struct and contains the information of the optimization result.
 ```@repl workflow
-result.opt_info["model"] # the equations of the setup model
+result.info["model"] # the equations of the setup model
 result.status # the status of the optimization
 result.objective # the value of the objective
 result.variables["CAP"] # the newly installed and existing capacities of the different technologies along the nodes. Other options are "COST" (the costs) and "GEN" (the generation)
 result.sets["tech"]["generation"] # a `"tech"` (dimension) set of all `"generation"` (tech-group) within the model
-result.opt_config["generation"] # Detailed model configuration
+result.config["generation"] # Detailed model configuration
 ```
