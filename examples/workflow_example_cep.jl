@@ -20,14 +20,14 @@ ts_seg_data = run_clust(ts_input_data;method="kmeans",representation="centroid",
 optimizer=Clp.Optimizer
 
 # tweak the CO2 level
-co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emission=Dict{String,Number}("CO2/electricity"=>50)) #generally values between 1250 and 10 are interesting
+co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emission=Dict{String,Number}("CO2/electricity"=>50)) #Within the example we limit the emitted carbon dioxide (in kg-CO2e) per electric energy consumed (in MWh). Generally values between 1250 kg-CO2e/MWh and 10 kg-CO2e/MWh are interesting
 
 # Include a Slack-Variable
-slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700))
+slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700)) #We set costs for lost electric load of 1,000,000 EUR per MWh and costs for emissions exceeding our emissions limit of 700 EUR per kg-CO2e
 
 
 # Include existing infrastructure at no COST
-ex_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;infrastructure=Dict{String,Array}("existing"=>["all"]))
+ex_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;infrastructure=Dict{String,Array}("existing"=>["all"])) #We add the existing infrastructure of all technologies (no greenfield any more)
 
 # Intraday storage (just within each period, same storage level at beginning and end)
 simplestor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="simple",conversion=true)

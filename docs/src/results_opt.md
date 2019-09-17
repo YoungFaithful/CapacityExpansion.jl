@@ -37,3 +37,10 @@ get_cep_slack_variables
 get_cep_design_variables
 ```
 The extraction of design variables is e.g. necessary for a [Second stage operational validation step](@ref), which validates the energy system design on a different time series.
+
+## Printing information about the result
+The function `text_limit_emission` allows to print an information about all the emission limits applied:
+
+```@docs
+text_limit_emission
+```

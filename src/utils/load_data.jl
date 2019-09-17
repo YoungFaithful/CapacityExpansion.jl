@@ -48,7 +48,7 @@ returns `techs::OptVariable`    techs[tech] - OptDataCEPTech
 function load_cep_data_techs(data_path::String)
     techs_dict=YAML.load_file(joinpath(data_path,"techs.yml"))
     #Check existance of necessary column
-    "techs" in keys(techs_dict) || throw(error("No column called `tech` in `techs.csv`"))
+    "techs" in keys(techs_dict) || throw(error("No group called `tech` in `techs.yml`"))
     #Build empty OptVariable
     techs=OptVariable{OptDataCEPTech}(undef, unique(keys(techs_dict["techs"])); type="fv", axes_names=["tech"])
     # loop through all axes

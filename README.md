@@ -6,10 +6,10 @@
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
 
-The package has three main purposes:
-1) Provide a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
-2) Provide a model configuration, a modular model setup and model optimization.
-3) Provide an interface between the optimization result and further analysis.
+The main purpose of the package is providing an extensible, simple-to-use generation and transmission capacity extension model that allows to address a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
+1) Providing a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
+2) Providing a model configuration, a modular model setup and model optimization.
+3) Providing an interface between the optimization result and further analysis.
 
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
@@ -28,7 +28,7 @@ The package has three main purposes:
 |Time resolution 	    | hourly                                                          									 |
 |Network coverage 	  | transmission, DCOPF load flow                                   								   |
 
-The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for it's time-series aggregation.
+The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for its time-series aggregation.
 
 This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/youngfaithful) and Holger Teichgraeber [@holgerteichgraeber](https://github.com/holgerteichgraeber).
 

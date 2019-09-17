@@ -41,7 +41,7 @@ end
       OptResult{status::Symbol,
                 objective::Float64,
                 variables::Dict{String,Any},
-                sets::Dict{String,Array},
+                sets::Dict{String,Dict{String,Array}},
                 opt_config::Dict{String,Any},
                 opt_info::Dict{String,Any}}
 The result of an optimized model is organized as an `OptResult` struct:
