@@ -53,7 +53,9 @@ function setup_opt_set_tech!(set::Dict{String,Dict{String,Array}},
         end
       end
       # Test if demand exists
-      empty(intersect(set["tech"]["demand"], set["tech"]["exist_inf"])) && @warn "No existing demand is provided - Ensure that `run_opt` option `infrastructure` is correct and looks like:  `Dict{String,Array}(\"existing\"=>[\"demand\", ...])` or `Dict{String,Array}(\"existing\"=>[\"all\"])`"
+      if empty(intersect(set["tech"]["demand"], set["tech"]["exist_inf"]))
+        @warn "No existing demand is provided - Ensure that `run_opt` option `infrastructure` is correct and looks like:  `Dict{String,Array}(\"existing\"=>[\"demand\", ...])` or `Dict{String,Array}(\"existing\"=>[\"all\"])`"
+      end
       return set
 end
 
