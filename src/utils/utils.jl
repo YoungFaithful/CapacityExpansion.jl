@@ -58,7 +58,7 @@ function get_cep_variables(opt_result::OptResult, variable_type::String)
 end
 
 """
-    set_opt_config_cep(opt_data::OptDataCEP; kwargs...)
+    set_config_cep(opt_data::OptDataCEP; kwargs...)
 kwargs can be whatever you need to run the run_opt
 it can hold
   -  `fixed_design_variables`: Dictionary{String,Any}
@@ -72,7 +72,7 @@ it can hold
 The function also checks if the provided data matches your kwargs options (e.g. it let's you know if you asked for transmission, but you have no tech with it in your data)
 Returning Dictionary with the variables as entries
 """
-function set_opt_config_cep(opt_data::OptDataCEP
+function set_config_cep(opt_data::OptDataCEP
                             ;kwargs...)
   # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
   config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
@@ -96,12 +96,12 @@ function set_opt_config_cep(opt_data::OptDataCEP
 end
 
 """
-    set_opt_config_cep!(config::Dict{String,Any}; kwargs...)
+    set_config_cep!(config::Dict{String,Any}; kwargs...)
 add or replace items to an existing config:
 - `fixed_design_variables`: `Dict{String,OptVariable}``
 - `slack_cost`: Number
 """
-function set_opt_config_cep!(config::Dict{String,Any}
+function set_config_cep!(config::Dict{String,Any}
                             ;kwargs...)
   # Loop through the kwargs and add them to Dictionary
   for kwarg in kwargs

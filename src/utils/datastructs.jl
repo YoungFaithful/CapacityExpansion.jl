@@ -49,16 +49,52 @@ The result of an optimized model is organized as an `OptResult` struct:
 - `objective`: Value of the objective function
 - `variables`: Dictionary with each variables in form of `OptVariable` structs as entries. For details on indexing the `OptVariables` see the `OptVariable` documentation
 - `sets`: Dictionary with each set as an entry
-- `opt_config`: The configuration of the model setup - for more detail see tye `run_opt` documentation that sets the `opt_config` up
-- `opt_info`: Holds information about the model. E.g. `opt_info["model"]` contains the exact equations used in the model.
+- `config`: The configuration of the model setup - for more detail see tye `run_opt` documentation that sets the `config` up
+- `info`: Holds information about the model. E.g. `info["model"]` contains the exact equations used in the model.
+
+## Sets
+The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=[elements...]`, where:
+- `tech_name` is the name of the dimension like e.g. `tech`, or `node`
+- `tech_group` is the name of a group of elements within each dimension like e.g. `["all", "generation"]`. The group `'all'` always contains all elements of the dimension
+- `[elements...]` is the Array with the different elements like `["pv", "wind", "gas"]`
+
+| name             | description                                                           |
+|------------------|-----------------------------------------------------------------------|
+| lines            | transmission lines connecting the nodes                               |
+| nodes            | spacial energy system nodes                                           |
+| tech             | generation, conversion, storage, and transmission technologies        |
+| carrier          | carrier that an energy balance is calculated for `electricity`, `hydrogen`...|
+| impact           | impact categories like EUR or USD, CO 2 − eq., ...                    |
+| account          | fixed costs for installation and yearly expenses, variable costs      |
+| infrastruct      | infrastructure status being either new or existing                    |
+| time K           | numeration of the representative periods                              |
+| time T period    | numeration of the time intervals within a period                      |
+| time T point     | numeration of the time points within a period                          |
+| time I period    | numeration of the time invervals of the full input data periods       |
+| time I point     | numeration of the time points of the full input data periods           |
+| dir transmission | direction of the flow uniform with or opposite to the lines direction |
+
+## Variables
+| name      | type | dimensions                 | unit                    | description |
+|-----------|------|----------------------------|-------------------------|------------|
+| COST      | `cv` | [account,impact,tech]      | EUR/USD, LCA-categories | Costs      |
+| CAP       | `dv` | [tech,infrastruct,node]    | MW                      | Capacity   |
+| GEN       | `ov` | [tech,carrier,t,k,node]    | MW                      | Generation |
+| SLACK     | `sv` | [carrier,t,k,node]         | MW                      | Power gap, not provided by installed CAP |
+| LL        | `sv` | [carrier]                  | MWh                     | LoastLoad Generation gap, not provided by installed CAP |
+| LE        | `sv` | [impact]                   | LCA-categories          | LoastEmission Amount of emissions that installed CAP crosses the Emission constraint |
+| INTRASTOR | `ov` | [tech,carrier,t,k,node]    | MWh                     | Storage level within a period |
+| INTERSTOR | `ov` | [tech,carrier,i,node]      | MWh                     | Storage level between periods of the full time series |
+| FLOW      | `ov` | [tech,carrier,dir,t,k,line]| MW                      | Flow over transmission line |
+| TRANS     | `ov` | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines |
 """
 struct OptResult
  status::Symbol
  objective::Float64
  variables::Dict{String,Any}
  sets::Dict{String,Dict{String,Array}}
- opt_config::Dict{String,Any}
- opt_info::Dict{String,Any}
+ config::Dict{String,Any}
+ info::Dict{String,Any}
 end
 
 """
@@ -72,7 +108,7 @@ All not timeseries depending data for the CapacityExpansionProblem is stored in 
 - `costs::OptVariable`:    costs[tech,node,year,account,impact] - `Number`
 - `techs::OptVariable`:    techs[tech] - `OptDataCEPTech`
 - `nodes::OptVariable`:    nodes[tech, node] - `OptDataCEPNode`
-- `lines::OptVarible`:     lines[tech, line] - `OptDataCEPLine`
+- `lines::OptVariable`:     lines[tech, line] - `OptDataCEPLine`
 """
 struct OptDataCEP <: OptData
    region::String

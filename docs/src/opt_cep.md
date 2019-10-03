@@ -46,18 +46,18 @@ The variables can have different types:
 - `sv`: slack variable - information of unmet demands or exceeded emission limits
 An overview of the variables used in the CEP is provided in the table:
 
-| name      | type | dimensions                 | unit                    | description                                                                          |
-|---------|--|----------------------------|-------------------------|--------------------------------------------------------------------------------------|
-| COST   | `cv` | [account,impact,tech]      | EUR/USD, LCA-categories | Costs                                                                                |
-| CAP    | `dv` | [tech,infrastruct,node]    | MW                      | Capacity                                                                             |
-| GEN    | `ov`  | [tech,carrier,t,k,node]     | MW                      | Generation                                                                           |
-| SLACK   | `sv`  | [carrier,t,k,node]          | MW                      | Power gap, not provided by installed CAP                                             |
-| LL     | `sv`  | [carrier]                   | MWh                     | LoastLoad Generation gap, not provided by installed CAP                              |
-| LE      | `sv`  | [impact]                   | LCA-categories          | LoastEmission Amount of emissions that installed CAP crosses the Emission constraint |
-| INTRASTOR | `ov` | [tech,carrier,t,k,node]    | MWh                     | Storage level within a period                                                        |
-| INTERSTOR | `ov` | [tech,carrier,i,node]       | MWh                     | Storage level between periods of the full time series                                |
-| FLOW    | `ov`  | [tech,carrier,dir,t,k,line] | MW                      | Flow over transmission line                                                          |
-| TRANS  | `ov`   | [tech,infrastruct,lines]   | MW                      | maximum capacity of transmission lines                                               |
+| name      | type | dimensions                 | unit                       | description   |
+|-----------|------|----------------------------|----------------------------|------------------|
+| COST      | `cv` | [account,impact,tech]      | EUR or USD, LCA-categories | Costs            |
+| CAP       | `dv` | [tech,infrastruct,node]    | MW                         | Capacity         |
+| GEN       | `ov`  | [tech,carrier,t,k,node]   | MW                         | Generation     |
+| SLACK     | `sv`  | [carrier,t,k,node]        | MW                         | Power gap, not provided by installed CAP  |
+| LL        | `sv`  | [carrier]                 | MWh                        | LoastLoad Generation gap, not provided by installed CAP  |
+| LE        | `sv`  | [impact]                  | LCA-categories             | LoastEmission Amount of emissions that installed CAP crosses the Emission constraint |
+| INTRASTOR | `ov` | [tech,carrier,t,k,node]    | MWh                        | Storage level within a period     |
+| INTERSTOR | `ov` | [tech,carrier,i,node]      | MWh                        | Storage level between periods of the full time series  |
+| FLOW      | `ov` | [tech,carrier,dir,t,k,line]| MW                         | Flow over transmission line   |
+| TRANS     | `ov` | [tech,infrastruct,lines]   | MW                         | maximum capacity of transmission lines    |
 
 ## Running the Capacity Expansion Problem
 
@@ -138,28 +138,5 @@ scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
 ### Adding another variable
 - Extend the default `scale`-dictionary in the `src/optim_problems/run_opt`-file to include the new variable as well.
 - Include the new variable in the problem formulation in the `src/optim_problems/opt_cep`-file. Reformulate the equations by dividing them by the scaling parameter of the first variable, which is `scale[:COST]` in the following example:
-`  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP                  + 100`
-`⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP   + 100/scale[:COST]`
-
-## Opt Result - A closer look
-```@docs
-OptResult
-```
-!!! note
-    The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
-
-The information of the model setup can be checked out the following way:
-```@setup 3
-using CapacityExpansion
-using Clp
-optimizer=Clp.Optimizer
-state="GER_1"
-years=[2016]
-ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
-cep_data = load_cep_data_provided(state)
-ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).clust_data
-```
-```@example 3
-result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
-println.(result.opt_info["model"])
-```
+- `  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP                  + 100`
+- `⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP   + 100/scale[:COST]`

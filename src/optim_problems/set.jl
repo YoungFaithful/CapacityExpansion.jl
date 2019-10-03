@@ -1,19 +1,19 @@
 #Functions to setup the set-dictionary
 """
-    setup_opt_set_tech!(ts_data::ClustData,opt_data::CEPData,opt_config::Dict{String,Any})
+    setup_opt_set_tech!(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any})
 Add the entry set["tech"]
 """
 function setup_opt_set_tech!(set::Dict{String,Dict{String,Array}},
                             opt_data::OptDataCEP,
-                            opt_config::Dict{String,Any})
+                            config::Dict{String,Any})
       #`techs::OptVariable`: techs[tech] - OptDataCEPTech
       techs = opt_data.techs
 
       set["tech"]["limit"]=Array{String,1}()
       #Loop through all techs
       for tech in axes(techs,"tech")
-        #Check if the primary tech-group (first entry within the Array of tech-groups) is in opt_config
-        if opt_config[techs[tech].tech_group[1]]
+        #Check if the primary tech-group (first entry within the Array of tech-groups) is in config
+        if config[techs[tech].tech_group[1]]
           #Add the technology to the set of all techs
           push!(set["tech"],"all", tech)
           #Loop through all tech_groups for this technology
@@ -21,17 +21,17 @@ function setup_opt_set_tech!(set::Dict{String,Dict{String,Array}},
             #Push this tech to the set: `set[tech_group_name]`
             push!(set["tech"],tech_group_name,tech)
             #Existing infrastructure
-            if haskey(opt_config["infrastructure"],"existing")
+            if haskey(config["infrastructure"],"existing")
               #Add this tech to the tech-group "existing_infra" or "no_existing_infra" depending if the tech_group is a key within the dictionary `techgroups_exis_inf`
-              if in(tech_group_name,opt_config["infrastructure"]["existing"])
+              if in(tech_group_name,config["infrastructure"]["existing"])
                 push!(set["tech"],"exist_inf",tech)
               else
                 push!(set["tech"],"no_exist_inf",tech)
               end
             end
             #Add this tech to the tech-group "limit", if the tech_group is a key within the dictionary `techgroups_limit_inf`
-            if haskey(opt_config["infrastructure"],"limit")
-              if in(tech_group_name,opt_config["infrastructure"]["limit"])
+            if haskey(config["infrastructure"],"limit")
+              if in(tech_group_name,config["infrastructure"]["limit"])
                 push!(set["tech"],"limit",tech)
               end
             end
@@ -52,16 +52,20 @@ function setup_opt_set_tech!(set::Dict{String,Dict{String,Array}},
           end
         end
       end
+      # Test if demand exists
+      if intersect(set["tech"]["demand"], set["tech"]["exist_inf"])==Array{String,1}()
+        @warn "No existing demand is provided - Ensure that `run_opt` option `infrastructure` is correct and looks like:  `Dict{String,Array}(\"existing\"=>[\"demand\", ...])` or `Dict{String,Array}(\"existing\"=>[\"all\"])`"
+      end
       return set
 end
 
 """
-    setup_opt_set_carrier!(ts_data::ClustData,opt_data::CEPData,opt_config::Dict{String,Any})
+    setup_opt_set_carrier!(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any})
 Add the entry set["carrier"]
 """
 function setup_opt_set_carrier!(set::Dict{String,Dict{String,Array}},
                             opt_data::OptDataCEP,
-                            opt_config::Dict{String,Any})
+                            config::Dict{String,Any})
       #`techs::OptVariable`: techs[tech] - OptDataCEPTech
       techs = opt_data.techs
       #Loop through all `tech`s to determine the input and output carriers for each `tech`
@@ -78,7 +82,7 @@ function setup_opt_set_carrier!(set::Dict{String,Dict{String,Array}},
       # Add an element containing all carriers
       set["carrier"]["all"]=unique(vcat(values(set["carrier"])...))
       # Add `carrier` to the tech-group `lost_load` if the carrier is a key within `lost_load_cost`
-      set["carrier"]["lost_load"]=intersect(set["carrier"]["all"],keys(opt_config["lost_load_cost"]))
+      set["carrier"]["lost_load"]=intersect(set["carrier"]["all"],keys(config["lost_load_cost"]))
       # Add groups same to the tech_groups to the carriers
       for (k,v) in set["tech"]
         for tech in v
@@ -91,12 +95,12 @@ function setup_opt_set_carrier!(set::Dict{String,Dict{String,Array}},
 end
 
 """
-    setup_cep_opt_set_impact!(ts_data::ClustData,opt_data::CEPData,opt_config::Dict{String,Any})
+    setup_cep_opt_set_impact!(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any})
 Add the entry set["impact"]
 """
 function setup_opt_set_impact!(set::Dict{String,Dict{String,Array}},
                             opt_data::OptDataCEP,
-                            opt_config::Dict{String,Any})
+                            config::Dict{String,Any})
       #`costs::OptVariable`: costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
       costs = opt_data.costs
 
@@ -116,11 +120,11 @@ function setup_opt_set_impact!(set::Dict{String,Dict{String,Array}},
           push!(set["impact"],"env",impact)
         end
         #Add impact to tech-group `limit` if impact is a key within the `limit_emission`
-        if haskey(opt_config["limit_emission"],impact)
+        if haskey(config["limit_emission"],impact)
           push!(set["impact"],"limit",impact)
         end
         # Add impact to tech-group `lost_emission` if impact is a key within the `lost_emission_cost`
-        if haskey(opt_config["lost_emission_cost"],impact)
+        if haskey(config["lost_emission_cost"],impact)
           push!(set["impact"],"lost_emission",impact)
         end
       end
@@ -128,19 +132,19 @@ function setup_opt_set_impact!(set::Dict{String,Dict{String,Array}},
 end
 
 """
-    get_opt_set_impact!(ts_data::ClustData,opt_data::CEPData,opt_config::Dict{String,Any})
+    get_opt_set_impact!(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any})
 Add the entry set["impact"]
 """
-function get_opt_set_names(opt_config::Dict{String,Any})
+function get_opt_set_names(config::Dict{String,Any})
 
       #Define all set-names that are always included
       set_names=["nodes", "carrier", "tech", "impact", "year", "account", "infrastruct", "time_K", "time_T_point", "time_T_period"]
       #Add set-names that are specific for certain configurations
-      if opt_config["transmission"]
+      if config["transmission"]
         push!(set_names,"lines")
         push!(set_names,"dir_transmission")
       end
-      if opt_config["seasonalstorage"]
+      if config["seasonalstorage"]
         push!(set_names,"time_I_point")
         push!(set_names,"time_I_period")
       end
@@ -148,7 +152,7 @@ function get_opt_set_names(opt_config::Dict{String,Any})
 end
 
 """
-    setup_opt_sets(ts_data::ClustData,opt_data::CEPData,opt_config::Dict{String,Any})
+    setup_opt_sets(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any})
 fetching sets from the time series (ts_data) and capacity expansion model data (opt_data) and returning dictionary `set`
 The dictionary is organized as:
 - `set[tech_name][tech_group]=[elements...]`
@@ -158,7 +162,7 @@ The dictionary is organized as:
 """
 function setup_opt_set(ts_data::ClustData,
                             opt_data::OptDataCEP,
-                            opt_config::Dict{String,Any})
+                            config::Dict{String,Any})
   #`costs::OptVariable`: costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
   costs = opt_data.costs
   #`techs::OptVariable`: techs[tech] - OptDataCEPTech
@@ -170,22 +174,22 @@ function setup_opt_set(ts_data::ClustData,
 
   #Create dictionaries for each set_name
   set=Dict{String,Dict{String,Array}}()
-  for set_name in get_opt_set_names(opt_config)
+  for set_name in get_opt_set_names(config)
     set[set_name]=Dict{String,Array}()
   end
   # tech - dimension of elements that can do generate, transmit, store, or demand
-  setup_opt_set_tech!(set,opt_data,opt_config)
+  setup_opt_set_tech!(set,opt_data,config)
   # carrier - dimension of energy-carriers like `electricity`, `hydrogen`
-  setup_opt_set_carrier!(set,opt_data,opt_config)
+  setup_opt_set_carrier!(set,opt_data,config)
   # impact - dimension of impact categories (first is monetary)
-  setup_opt_set_impact!(set,opt_data,opt_config)
+  setup_opt_set_impact!(set,opt_data,config)
   # node - dimension of spacial resolution for elements with nodal resolution
   set["nodes"]["all"]=axes(nodes,"node")
   # year - annual time dimension
   set["year"]["all"]=axes(costs,"year")
   # account - dimension of cost calculation: capacity&fixed costs that do not vary with the generated power or variable costs that do vary with generated power
   set["account"]["all"]=axes(costs,"account")
-  if opt_config["transmission"]
+  if config["transmission"]
     # lines - dimension of spacial resolution for elements along lines
     set["lines"]["all"]=axes(opt_data.lines,"line")
     # dir_transmission - dimension of directions along a transmission line
@@ -201,7 +205,7 @@ function setup_opt_set(ts_data::ClustData,
   set["time_T_period"]["all"]=1:ts_data.T
   # or the number of the points in time    <0>---<1>---<2>...
   set["time_T_point"]["all"]=0:ts_data.T
-  if opt_config["seasonalstorage"]
+  if config["seasonalstorage"]
     # time_I - dimension of time within the original timeseries throughout original periods
     # either the number of periods
     set["time_I_period"]["all"]=1:length(ts_data.k_ids)

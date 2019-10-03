@@ -5,12 +5,7 @@
  # Capacity Expansion Probelem formulation
  #
  #####################
-<<<<<<< HEAD
 using TimeSeriesClustering
-=======
-#using TimeSeriesClustering
-include(joinpath("..","..","TimeSeriesClustering","src","TimeSeriesClustering_development.jl"))
->>>>>>> dev
 using CSV
 using YAML
 using DataFrames
