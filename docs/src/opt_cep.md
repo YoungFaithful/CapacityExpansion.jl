@@ -140,3 +140,26 @@ scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
 - Include the new variable in the problem formulation in the `src/optim_problems/opt_cep`-file. Reformulate the equations by dividing them by the scaling parameter of the first variable, which is `scale[:COST]` in the following example:
 `  scale[:COST]⋅COST = 10⋅scale[:CAP]⋅CAP                  + 100`
 `⇔              COST = 10⋅(scale[:CAP]/scale[:COST])⋅CAP   + 100/scale[:COST]`
+
+## Opt Result - A closer look
+```@docs
+OptResult
+```
+!!! note
+    The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
+
+The information of the model setup can be checked out the following way:
+```@setup 3
+using CapacityExpansion
+using Clp
+optimizer=Clp.Optimizer
+state="GER_1"
+years=[2016]
+ts_input_data = load_timeseries_data_provided(state;T=24, years=years)
+cep_data = load_cep_data_provided(state)
+ts_clust_data = run_clust(ts_input_data;method="kmeans",representation="centroid",n_init=10,n_clust=5).clust_data
+```
+```@example 3
+result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="Model Name")
+println.(result.opt_info["model"])
+```

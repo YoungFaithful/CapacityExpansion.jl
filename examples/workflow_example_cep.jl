@@ -57,4 +57,8 @@ operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,desig
 #   0.01 ≤ VAR  ≤ 100,     real-VAR = scale[:VAR] ⋅ VAR
 # ⇔ 0.01 ≤ real-VAR / scale[:VAR] ≤ 100
 scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
+<<<<<<< HEAD
 co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;scale=scale, limit_emission=Dict{String,Number}("CO2/electricity"=>50))
+=======
+co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;scale=scale, co2_limit=50)
+>>>>>>> dev
