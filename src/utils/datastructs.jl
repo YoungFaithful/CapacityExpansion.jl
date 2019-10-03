@@ -108,7 +108,7 @@ All not timeseries depending data for the CapacityExpansionProblem is stored in 
 - `costs::OptVariable`:    costs[tech,node,year,account,impact] - `Number`
 - `techs::OptVariable`:    techs[tech] - `OptDataCEPTech`
 - `nodes::OptVariable`:    nodes[tech, node] - `OptDataCEPNode`
-- `lines::OptVarible`:     lines[tech, line] - `OptDataCEPLine`
+- `lines::OptVariable`:     lines[tech, line] - `OptDataCEPLine`
 """
 struct OptDataCEP <: OptData
    region::String
