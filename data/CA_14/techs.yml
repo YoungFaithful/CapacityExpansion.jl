@@ -1,6 +1,6 @@
 tech_groups:
     all:
-        discount_rate: 0.07
+        discount_rate: 0.07 #[-]
     demand:
         structure: node
         unit: power
@@ -30,8 +30,8 @@ tech_groups:
 techs:
     demand:
         name: Electricity demand
-        plant_lifetime: 30
-        financial_lifetime: 30
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
         tech_group: demand
         input:
             carrier: electricity
@@ -40,8 +40,8 @@ techs:
     pv:
         name: Photo Voltaic
         tech_group: non_dispatchable_generation
-        plant_lifetime: 25
-        financial_lifetime: 25
+        plant_lifetime: 25 #[a]
+        financial_lifetime: 25 #[a]
         input:
             timeseries: solar
         output:
@@ -49,8 +49,8 @@ techs:
     wind:
         name: Onshore Wind
         tech_group: non_dispatchable_generation
-        plant_lifetime: 25
-        financial_lifetime: 25
+        plant_lifetime: 25 #[a]
+        financial_lifetime: 25 #[a]
         input:
             timeseries: wind
         output:
@@ -58,19 +58,19 @@ techs:
     coal:
         name: Coal Plant
         tech_group: dispatchable_generation
-        plant_lifetime: 40
-        financial_lifetime: 40
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 40 #[a]
         input:
             fuel: coal
         output:
             carrier: electricity
         constraints:
-            max_gradient: 0.6 #not yet funcional
+            max_gradient: 0.6 #1/h not yet funcional
     oil:
         name: Oil Plant
         tech_group: dispatchable_generation
-        plant_lifetime: 30
-        financial_lifetime: 30
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
         input:
             fuel: oil
         output:
@@ -80,91 +80,91 @@ techs:
     gas:
         name: Gas Plant
         tech_group: dispatchable_generation
-        plant_lifetime: 30
-        financial_lifetime: 30
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
         input:
             fuel: gas
         output:
             carrier: electricity
         constraints:
-            max_gradient: 4.8 #not yet funcional
+            max_gradient: 4.8 #[1/h] not yet funcional
     bat_in:
         name: Battery Charge
         tech_group: conversion
-        plant_lifetime: 10
-        financial_lifetime: 10
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
         input:
             carrier: electricity
         output:
             carrier: electricity_bat
         constraints:
-            efficiency: 0.93
+            efficiency: 0.93 #[-]
     bat_out:
         name: Battery Discharge
         tech_group: conversion
-        plant_lifetime: 10
-        financial_lifetime: 10
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
         input:
             carrier: electricity_bat
         output:
             carrier: electricity
         constraints:
-            efficiency: 0.93
+            efficiency: 0.93 #[-]
             cap_eq: bat_in # Discharge capacity is same as charge capacity
     bat_e:
         name: Battery Storage
         tech_group: storage
-        plant_lifetime: 10
-        financial_lifetime: 10
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
         input:
             carrier: electricity_bat
         output:
             carrier: electricity_bat
         constraints:
-            efficiency: 0.93
+            efficiency: 0.93 #[-]
     h2_in:
         name: Hydrogen Storage Charge
         tech_group: conversion
-        plant_lifetime: 15
-        financial_lifetime: 20
+        plant_lifetime: 15 #[a]
+        financial_lifetime: 20 #[a]
         input:
             carrier: electricity
         output:
             carrier: hydrogen
         constraints:
-            efficiency: 0.83
+            efficiency: 0.83 #[-]
     h2_out:
         name: Hydrogen Storage Discharge
         tech_group: conversion
-        plant_lifetime: 40
-        financial_lifetime: 20
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 20 #[a]
         input:
             carrier: hydrogen
         output:
             carrier: electricity
         constraints:
-            efficiency: 0.53
+            efficiency: 0.53 #[-]
             cap_eq: h2_in # Discharge capacity is same as charge capacity
     h2_e:
         name: Hydrogen Storage
         tech_group: storage
-        plant_lifetime: 40
-        financial_lifetime: 20
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 20 #[a]
         input:
             carrier: hydrogen
         output:
             carrier: hydrogen
         constraints:
-            efficiency: 0.99
+            efficiency: 0.99 #[-]
 
     trans:
         name: Transmission Line
         tech_group: transmission
-        plant_lifetime: 40
-        financial_lifetime: 40
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 40 #[a]
         input:
             carrier: electricity
         output:
             carrier: electricity
         constraints:
-            efficiency: 0.9995 #_per_km
+            efficiency: 0.9995 #[1/km]

@@ -76,7 +76,7 @@ An overview is provided in the following table:
 | allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | false         |
 | allowing non dispatchable generation               | -                | `non_dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing transmission                              | -                | `transmission`            | `true` or `false`                               | ::Bool         | false         |
-| fix. var and CEO to dispatch problem               | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
+| fix. installed capacities to dispatch problem               | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
 | allowing lost load (necessary for dispatch)        | price/MWh-carrier| `lost_load_cost`       | Dict{String,Number}(carrier=>value)            | ::Dict{String,Number}      | Dict{String,Number}()           |
 | allowing lost emission (necessary for dispatch)    | price/kg-impact  | `lost_emission_cost`  | Dict{String,Number}(impact=>value)              | ::Dict{String,Number}       | Dict{String,Number}()          |
 

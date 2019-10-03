@@ -41,9 +41,9 @@ end
       OptResult{status::Symbol,
                 objective::Float64,
                 variables::Dict{String,Any},
-                sets::Dict{String,Array},
-                config::Dict{String,Any},
-                info::Dict{String,Any}}
+                sets::Dict{String,Dict{String,Array}},
+                opt_config::Dict{String,Any},
+                opt_info::Dict{String,Any}}
 The result of an optimized model is organized as an `OptResult` struct:
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function

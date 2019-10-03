@@ -251,54 +251,6 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
   return met_cap_limit
 end
 
-#="""
-  get_elements(techs::OptDataCEPTech, category::String)
-
-Get the elements from the technologies that are defined as category `category`
-"""
-function get_elements(techs::OptVariable, category::String)
-  #Get all elements defined in techs as inputs and outputs
-  elements=get_elements(techs)
-  #Filter the elements that are are defined as category `category`
-  return String.(keys(filter((k, v) -> v == category, elements)))
-end
-
-"""
-  get_elements(techs::OptDataCEPTech)
-
-Get all elements from the technologies. Elements can have categories like:
-- carrier (which implies an EB for this carrier at each node)
-- fuel (which is an input or output)
-- timeseries (which is depending on a timeseries defined in the folder `TS`)
-"""
-function get_elements(techs::OptVariable)
-  #Get all Dictionaries with inputs
-  inputs=getfield.(techs[:],:input)
-  #Get all Dictionaries with outputs
-  outputs=getfield.(techs[:],:output)
-  #Get all unique elements
-  inputs_outputs=unique([inputs;outputs])
-  #Merge the Dictionaries to one dictionary
-  elements=merge(unique(inputs_outputs)...)
-  #Check unique category for each element as either carrier, timeserie, or fuel
-  check_elements(elements, inputs_outputs)
-  return elements
-end
-
-"""
-    check_elements(elements::Dict{Any,Any}, inputs_outputs::Array{Dict{Any,Any}})
-
-Check that each element in inputs and outputs is only defined in one category as either carrier, timeseries, or fuel
-"""
-function check_elements(elements::Dict{Any,Any}, inputs_outputs::Array{Dict{Any,Any}})
-  #Check that each input and output is only defined as either carrier, timeseries, or fuel
-  for dict in inputs_outputs
-    for (k,v) in dict
-      elements[k].==v || error("The element $k is once defined as $v and once as $(elements[k]) in `techs.yml`")
-    end
-  end
-end=#
-
 import Base.push!
 """
   push!(set::Dict{String,Array},key::String,value::Any)
