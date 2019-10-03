@@ -1,6 +1,9 @@
 # Homework: Modeling Exercise
 Copyright 2019, Patricia Levi, Elias Kuepper, and contributors
 
+!!! note
+    The corresponding files can be found in the folder `.../CapacityExpansion/teaching/`
+
 MS&E 394 Spring 2019
 
 Advanced Methods in Modeling for Climate and Energy Policy at Stanford University
