@@ -71,3 +71,6 @@ wind,MX,2016,fix,|,44846,0
 wind,NW,2016,fix,|,45821,0
 wind,SW,2016,fix,|,44846,0
 wind,all,2016,var,|,0,0
+demand,all,2016,cap,|,0,0
+demand,all,2016,fix,|,0,0
+demand,all,2016,var,|,0,0

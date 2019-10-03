@@ -1,4 +1,7 @@
-# Workflow
+Workflow
+=========
+Here, we describe the general workflow in more detail.
+
 The workflow for this package can be broken down to:
 - Data Preparation
 - Optimization

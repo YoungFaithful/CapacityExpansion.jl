@@ -1,4 +1,7 @@
-# Preparing ClustData
+Preparing ClustData
+=========
+Here, we first describe how to load provided time-series input data or your own time-series input data as `ClustData`. We second describe how to aggregate the loaded time-sereis input data.
+
 ## Provided Data
 `load_timeseries_data_provided()` loads the data for a given `region` for which data is provided in this package.
 The optional input parameters to `load_timeseries_data_provided()` are the number of time steps per period `T` and the `years` to be imported.

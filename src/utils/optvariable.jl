@@ -31,19 +31,57 @@ function OptVariable(cep::OptModelCEP,
                      scale::Dict{Symbol,Int};
                      round_sigdigits::Int=8)
   jumparray=value.(cep.model[variable])
-  axes_names=Array{String,1}()
-  for axe in jumparray.axes
-    for (name, val) in cep.set
-      if axe==val
-        push!(axes_names, name)
-        break
-      end
-    end
-  end
-  unscaled_data=jumparray.data*scale[variable] #Unscale the jumparray data based on the scaling parameters in Dictionary scale
-  OptVariable(round.(unscaled_data;digits=round_sigdigits),jumparray.axes...; axes_names=axes_names, type=type)
+  #Get the scaled optvar from model and turn DenseAxisArray and SparseAxisArray into Dense OptVariable
+  scaled_optvar=OptVariable(jumparray,type,cep.set)
+  #Unscale the data based on the scaling parameters in Dictionary scaleend
+  unscaled_data=scaled_optvar.data*scale[variable]
+  #Return Optvariable with the unscaled data
+  return OptVariable(round.(unscaled_data;sigdigits=round_sigdigits), scaled_optvar.axes... ;axes_names=scaled_optvar.axes_names ,type=scaled_optvar.type)
 end
 
+function OptVariable(jumparray::JuMP.Containers.SparseAxisArray,
+                    type::String,
+                    set::Dict{String,Dict{String,Array}})
+    axes_number=length(first(keys(jumparray.data)))
+    axes_names=Array{String,1}()
+    for axe_number in 1:axes_number
+        #Get the unique values in each dimension of the indexing tuple
+        v=unique(getfield.(keys(jumparray.data),axe_number))
+        push!(axes_names, get_axes_name(set,v))
+    end
+    #Get the axes for the optVariable
+    axs=get_axes(set, axes_names)
+    #Create an OptVariable with zeros
+    optvar=OptVariable(zeros(length.(axs)...), axs...; axes_names=axes_names, type=type)
+    #Fill data from spare jumparray into dense array
+    for idx in eachindex(jumparray)
+        #Find corresponding index of dense array
+        dense_idx=Array{Any,1}()
+        for i in 1:length(idx)
+            push!(dense_idx,findfirst(optvar.axes[i].==idx[i]))
+        end
+        #Overwrite the
+        optvar.data[dense_idx...] = jumparray[idx]
+    end
+    return optvar
+end
+
+function OptVariable(jumparray::JuMP.Containers.DenseAxisArray,
+                    type::String,
+                    set::Dict{String,Dict{String,Array}})
+    axes_names=Array{String,1}()
+    for axe in jumparray.axes
+      for (name, val) in set
+          for (n,v) in val
+            if axe==v
+              push!(axes_names, name)
+              break
+            end
+        end
+      end
+    end
+    return OptVariable(jumparray.data, jumparray.axes...; axes_names=axes_names, type=type)
+end
 
 """
     OptVariable(data::Array{T, N}, axes...) where {T, N}
@@ -54,19 +92,19 @@ match `size(data)` in the corresponding dimensions.
 
 # Example
 ```jldoctest
-julia> array = OptVariable([1 2; 3 4], [:a, :b], 2:3)
-2-dimensional OptVariable{Int,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 2:3
-And data, a 2×2 Array{Int,2}:
+julia> cap = OptVariable([1 2; 3 4],["pv", "wind"], 1:2; axes_names=["tech","time"],type="dv")
+2-dimensional OptVariable{Int64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
+And data, a 2×2 Array{Int64,2}:
  1  2
  3  4
 
-julia> array[:b, 3]
-4
+julia> cap["pv", 2]
+2
 ```
 """
-function OptVariable(data::Array{T,N}, axs...;axes_names=repeat([""],N), type="") where {T,N}
+function OptVariable(data::Array{T,N}, axs...;axes_names::Array=repeat([""],N), type="") where {T,N}
     @assert length(axs) == N
     return OptVariable(data, axs, build_lookup.(axs), axes_names, type)
 end
@@ -79,29 +117,29 @@ given axes.
 
 # Example
 ```jldoctest
-julia> array = OptVariable{Float}(undef, [:a, :b], 1:2);
+julia> cap = OptVariable{Float64}(undef,["pv", "wind"], 1:2; axes_names=["tech","time"],type="dv");
 
-julia> fill!(array, 1.0)
-2-dimensional OptVariable{Float64,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 1:2
+julia> fill!(cap, 1.0)
+2-dimensional OptVariable{Float64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
 And data, a 2×2 Array{Float64,2}:
  1.0  1.0
  1.0  1.0
 
-julia> array[:a, 2] = 5.0
+julia> cap["wind", 2] = 5.0
 5.0
 
-julia> array[:a, 2]
+julia> cap["wind", 2]
 5.0
 
-julia> array
-2-dimensional OptVariable{Float64,2,...} with index sets:
-    Dimension 1, Symbol[:a, :b]
-    Dimension 2, 1:2
+julia> cap
+2-dimensional OptVariable{Float64,2,...} of type dv with index sets:
+    Dimension 1 - tech, ["pv", "wind"]
+    Dimension 2 - time, 1:2
 And data, a 2×2 Array{Float64,2}:
+ 1.0  1.0
  1.0  5.0
- 1.0  1.0
 ```
 """
 function OptVariable{T}(::UndefInitializer, axs...; axes_names::Array{String,1}=repeat([""],length(axs)), type="") where T
@@ -316,4 +354,58 @@ function Base.show(io::IO, array::OptVariable)
     isempty(array) && return
     println(io, ":")
     Base.print_array(io, array)
+end
+
+###################
+# Sparse to Dense #
+###################
+
+"""
+    get_axes(set::Dict{String,Dict{String,Array}}, axes_names::Array{String,1})
+
+
+get the axes defined by the `axes_names` from the `set`
+"""
+function get_axes(set::Dict{String,Dict{String,Array}}, axes_names::Array{String,1})
+    axes=Array{Array,1}()
+    for axes_name in axes_names
+        push!(axes,set[axes_name]["all"])
+    end
+    return axes
+end
+
+"""
+    get_axes_name(set::Dict{String,Any},values::Array)
+
+Figure out the set within the dictionary `set`, which has equivalent elements to the provided `values`.
+The `set` has to be organized as follows: Each entry `set[set_name]` can either be:
+- a set-element itself, which is an Array or UnitRange
+- or a dictionary with set-subgroups for this set. The set-subgroup has to have a set element called `set[set_name]["all"]`, which contains an Array or UnitRange containing all values for the set_name
+"""
+function get_axes_name(set::Dict{String,Dict{String,Array}},values::Array)
+    for (k,v) in set
+        #Check the group `all` first
+        if get_axes_name(v["all"],values)==true
+            return k
+        end
+        #Check the subsets second
+        for (kk,vv) in v
+            if get_axes_name(vv,values)==true
+                return k
+            end
+        end
+    end
+    return error("The values $values were not found in set $set")
+end
+
+function get_axes_name(set_element::Array,values::Array)
+    if sort(set_element)==sort(values)
+        return true
+    end
+end
+
+function get_axes_name(set_element::UnitRange,values::Array)
+    if collect(set_element)==sort(values)
+        return true
+    end
 end

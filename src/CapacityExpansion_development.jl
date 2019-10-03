@@ -5,9 +5,14 @@
  # Capacity Expansion Probelem formulation
  #
  #####################
+<<<<<<< HEAD
+using TimeSeriesClustering
+=======
 #using TimeSeriesClustering
 include(joinpath("..","..","TimeSeriesClustering","src","TimeSeriesClustering_development.jl"))
+>>>>>>> dev
 using CSV
+using YAML
 using DataFrames
 using StatsBase
 using JLD2
@@ -20,4 +25,5 @@ include(joinpath("utils","optvariable.jl"))
 include(joinpath("utils","utils.jl"))
 include(joinpath("utils","load_data.jl"))
 include(joinpath("optim_problems","run_opt.jl"))
-include(joinpath("optim_problems","opt_cep.jl"))
+include(joinpath("optim_problems","set.jl"))
+include(joinpath("optim_problems","opt.jl"))

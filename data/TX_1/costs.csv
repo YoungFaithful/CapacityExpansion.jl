@@ -7,6 +7,7 @@ gas,TX,2008,cap,|,968000,61.67
 bat_e,TX,2008,cap,|,580000,41458.868
 bat_in,TX,2008,cap,|,180000,0
 bat_out,TX,2008,cap,|,0,0
+demand,TX,2008,cap,|,0,0
 pv,TX,2008,fix,|,2388,0
 wind,TX,2008,fix,|,30980,0
 coal,TX,2008,fix,|,28150,0
@@ -15,6 +16,7 @@ gas,TX,2008,fix,|,11960,0
 bat_e,TX,2008,fix,|,5810,0
 bat_in,TX,2008,fix,|,0,0
 bat_out,TX,2008,fix,|,0,0
+demand,TX,2008,fix,|,0,0
 pv,TX,2008,var,|,0.0005,0
 wind,TX,2008,var,|,0.0005,0
 coal,TX,2008,var,|,23,1217.49
@@ -23,3 +25,4 @@ gas,TX,2008,var,|,41.5,728.71
 bat_e,TX,2008,var,|,0,0
 bat_in,TX,2008,var,|,0,0
 bat_out,TX,2008,var,|,0,0
+demand,TX,2008,var,|,0,0
