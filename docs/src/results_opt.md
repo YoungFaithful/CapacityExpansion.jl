@@ -41,5 +41,5 @@ The extraction of design variables is e.g. necessary for a [Second stage operati
 The function `text_limit_emission` allows to print an information about all the emission limits applied:
 
 ```@docs
-text_limit_emission
+CapacityExpansion.text_limit_emission
 ```
