@@ -141,7 +141,7 @@ function setup_opt_cost_var!(cep::OptModelCEP,
 
     ## COST ##
     # Calculate Variable Costs
-    push!(cep.info,"COST['var',impact,tech] = ($sign_generation) ⋅ Σ_{t,k,node}GEN[carrier_$dir_main_carrier,t,k,node]⋅ ts_weights[k] ⋅ ts_deltas[t,k]⋅ var_costs[tech,impact] ∀ impact, tech_$tech_group")
+    push!(cep.info,"COST['var',impact,tech] = ($sign_generation) ⋅ Σ_{t,k,node}GEN[tech, carrier_$dir_main_carrier, t, k, node]⋅ ts_weights[k] ⋅ ts_deltas[t,k]⋅ var_costs[tech,impact] ∀ impact, tech_$tech_group")
     @constraint(cep.model, [impact=set["impact"]["all"], tech=set["tech"][tech_group]], cep.model[:COST]["var",impact,tech]==sign_generation*sum(cep.model[:GEN][tech,getfield(techs[tech],dir_main_carrier)["carrier"],t,k,node]*ts_weights[k]*ts_deltas[t,k]*costs[tech,node,set["year"]["all"][1],"var",impact] for node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"])*scale[:GEN]/scale[:COST])
     return cep
   end
@@ -227,7 +227,7 @@ function setup_opt_demand!(cep::OptModelCEP,
 
     ## DEMAND GENERATION ##
     # Fix the demand
-    push!(cep.info,"GEN[tech, carrier t, k, node] = (-1) ⋅ Σ_{infrastruct} CAP[tech,infrastruct,node] * ts[tech-node,t,k] ∀ node, tech_demand, t, k")
+    push!(cep.info,"GEN[tech, carrier, t, k, node] = (-1) ⋅ Σ_{infrastruct} CAP[tech,infrastruct,node] * ts[tech-node,t,k] ∀ node, tech_demand, t, k")
     @constraint(cep.model, [tech=set["tech"]["demand"], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], cep.model[:GEN][tech,techs[tech].input["carrier"],t,k,node] == (-1) * sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]["all"])*ts[techs[tech].output["timeseries"]*"-"*node][t,k]*scale[:CAP]/scale[:GEN])
     return cep
 end
@@ -263,7 +263,7 @@ function setup_opt_dispatchable_generation!(cep::OptModelCEP,
 
     ## DISPATCHABLE GENERATION ##
     # Limit the generation of dispathables to the infrastructing capacity of dispachable power plants
-    push!(cep.info,"0 ≤ GEN[tech, carrier t, k, node] ≤ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_dispatchable_generation, t, k")
+    push!(cep.info,"0 ≤ GEN[tech, carrier, t, k, node] ≤ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_dispatchable_generation, t, k")
     # Limit the generation of dispathables to the infrastructing capacity of dispachable power plants
     @constraint(cep.model, [tech=set["tech"]["dispatchable_generation"], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], 0 <=cep.model[:GEN][tech, techs[tech].output["carrier"], t, k, node])
     @constraint(cep.model, [tech=set["tech"]["dispatchable_generation"], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]],     cep.model[:GEN][tech, techs[tech].output["carrier"], t, k, node] <=sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]["all"])*scale[:CAP]/scale[:GEN])
@@ -297,7 +297,7 @@ function setup_opt_non_dispatchable_generation!(cep::OptModelCEP,
 
     ## GENERATION ELECTRICITY ##
     # Limit the generation of dispathables to the infrastructing capacity of non-dispachable power plants
-    push!(cep.info,"0 ≤ GEN[tech, carrier t, k, node] ≤ Σ_{infrastruct}CAP[tech,infrastruct,node]*ts[tech-node,t,k] ∀ node, tech_generation{non_dispatchable}, t, k")
+    push!(cep.info,"0 ≤ GEN[tech, carrier, t, k, node] ≤ Σ_{infrastruct}CAP[tech,infrastruct,node]*ts[tech-node,t,k] ∀ node, tech_generation{non_dispatchable}, t, k")
     # Limit the generation of non-dispathable generation to the infrastructing capacity of non-dispachable power plants
     @constraint(cep.model, [tech=set["tech"]["non_dispatchable_generation"], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], 0 <=cep.model[:GEN][tech, techs[tech].output["carrier"], t, k, node])
     @constraint(cep.model, [tech=set["tech"]["non_dispatchable_generation"], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]],  cep.model[:GEN][tech, techs[tech].output["carrier"], t,k,node] <= sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]["all"])*ts[techs[tech].input["timeseries"]*"-"*node][t,k]*scale[:CAP]/scale[:GEN])
@@ -332,11 +332,11 @@ function setup_opt_conversion!(cep::OptModelCEP,
 
     ##CONVERSION GEN ##
     #Calculate the input generation
-    push!(cep.info,"0 ≥ GEN[carrier_input, tech, t, k, node] ≥ (-1) ⋅ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_conversion, t, k")
+    push!(cep.info,"0 ≥ GEN[tech, carrier_input, t, k, node] ≥ (-1) ⋅ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_conversion, t, k")
     @constraint(cep.model, [tech=set["tech"]["conversion"], carrier=[techs[tech].input["carrier"]], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], 0 >= cep.model[:GEN][tech,carrier,t,k,node])
     @constraint(cep.model, [tech=set["tech"]["conversion"], carrier=[techs[tech].input["carrier"]], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], cep.model[:GEN][tech,carrier,t,k,node]>= (-1)*sum(cep.model[:CAP][tech,infrastruct,node] for infrastruct=set["infrastruct"]["all"])*scale[:CAP]/scale[:GEN])
     #Calculate the output generation
-    push!(cep.info,"GEN[carrier_output,tech, t, k, node] = (-1) ⋅ η[carrier_output, tech] ⋅ GEN[carrier_input, tech, t, k, node] ∀ node, tech_storage_in, t, k")
+    push!(cep.info,"GEN[tech, carrier_output, t, k, node] = (-1) ⋅ η[carrier_output, tech] ⋅ GEN[tech, carrier_input, t, k, node] ∀ node, tech_storage_in, t, k")
     @constraint(cep.model, [tech=set["tech"]["conversion"], carrier_in=[techs[tech].input["carrier"]], carrier_out=[techs[tech].output["carrier"]], node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], cep.model[:GEN][tech,carrier_out,t,k,node] == (-1) * techs[tech].constraints["efficiency"] * cep.model[:GEN][tech,carrier_in,t,k,node])
     #TODO add multiple outputs and inputs
     return cep
@@ -403,7 +403,7 @@ function setup_opt_storage!(cep::OptModelCEP,
 
     ## STORAGE LEVEL ##
     # Connect the previous storage level and the integral of the flows with the new storage level
-    push!(cep.info,"INTRASTOR[carrier,tech, t, k, node] = INTRASTOR[carrier,tech, t-1, k, node] η[tech]^(ts_deltas[t,k]/732h) + ts_deltas[t,k] ⋅ (-1) ⋅ (GEN[tech, carrier t, k, node] ∀ carrier(tech), node, tech_storage, t, k")
+    push!(cep.info,"INTRASTOR[carrier,tech, t, k, node] = INTRASTOR[carrier,tech, t-1, k, node] η[tech]^(ts_deltas[t,k]/732h) + ts_deltas[t,k] ⋅ (-1) ⋅ (GEN[tech, carrier, t, k, node] ∀ carrier(tech), node, tech_storage, t, k")
     @constraint(cep.model, [node=set["nodes"]["all"], tech=set["tech"]["storage"], t in set["time_T_period"]["all"], k=set["time_K"]["all"]], cep.model[:INTRASTOR][tech, techs[tech].input["carrier"],t,k,node]==cep.model[:INTRASTOR][tech, techs[tech].input["carrier"],t-1,k,node]*(techs[tech].constraints["efficiency"])^(ts_deltas[t,k]/732) - ts_deltas[t,k] * (cep.model[:GEN][tech, techs[tech].input["carrier"], t,k,node])*scale[:GEN]/scale[:INTRASTOR])
 
     return cep
@@ -533,10 +533,10 @@ function setup_opt_energy_balance_transmission!(cep::OptModelCEP,
 
   ## ENERGY BALANCE ##
   # Force the demand and slack to match the generation either with transmission
-  push!(cep.info,"Σ_{tech}GEN[tech, carriert,k,node] + SLACK[carrier,t,k,node] = 0 ∀ node,t,k")
+  push!(cep.info,"Σ_{tech}GEN[tech, carrier, t,k,node] + SLACK[carrier,t,k,node] = 0 ∀ node,t,k")
   @constraint(cep.model, [carrier=intersect(set["carrier"]["all"],set["carrier"]["lost_load"]),node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], sum(cep.model[:GEN][tech,carrier,t,k,node] for tech=set["tech"][carrier]) + (cep.model[:SLACK][carrier,t,k,node]*scale[:SLACK])/scale[:GEN] ==0)
   # Force the demand without slack to match the generation either with transmission
-  push!(cep.info,"Σ_{tech}GEN[tech, carriert,k,node] = 0 ∀ node,t,k")
+  push!(cep.info,"Σ_{tech}GEN[tech, carrier, t,k,node] = 0 ∀ node,t,k")
   @constraint(cep.model, [carrier = setdiff(set["carrier"]["all"], set["carrier"]["lost_load"]), node=set["nodes"]["all"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], sum(cep.model[:GEN][tech,carrier,t,k,node] for tech=set["tech"][carrier]) == 0)
   return cep
 end
@@ -553,10 +553,10 @@ function setup_opt_energy_balance_copperplate!(cep::OptModelCEP,
   set=cep.set
 
   ## ENERGY BALANCE ##
-  push!(cep.info,"Σ_{tech,node}GEN[tech, carriert,k,node] + SLACK[carrier,t,k,node] = 0 ∀ t,k")
+  push!(cep.info,"Σ_{tech,node}GEN[tech, carrier, t,k,node] + SLACK[carrier,t,k,node] = 0 ∀ t,k")
   @constraint(cep.model, [carrier=intersect(set["carrier"]["all"],set["carrier"]["lost_load"]),t=set["time_T_period"]["all"], k=set["time_K"]["all"]], sum(cep.model[:GEN][tech,carrier,t,k,node] for node=set["nodes"]["all"], tech=set["tech"][carrier]) + sum(cep.model[:SLACK][carrier,t,k,node]*scale[:SLACK] for node=set["nodes"]["all"])/scale[:GEN] == 0)
   # or on copperplate
-  push!(cep.info,"Σ_{tech,node}GEN[tech, carriert,k,node] = 0 ∀ t,k")
+  push!(cep.info,"Σ_{tech,node}GEN[tech, carrier, t,k,node] = 0 ∀ t,k")
   @constraint(cep.model, [carrier=setdiff(set["carrier"]["all"],set["carrier"]["lost_load"]),t=set["time_T_period"]["all"], k=set["time_K"]["all"]], sum(cep.model[:GEN][tech,carrier,t,k,node] for node=set["nodes"]["all"], tech=set["tech"][carrier]) == 0)
   return cep
 end

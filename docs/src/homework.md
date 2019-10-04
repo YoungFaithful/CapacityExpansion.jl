@@ -2,7 +2,7 @@
 Copyright 2019, Patricia Levi, Elias Kuepper, and contributors
 
 !!! note
-        The corresponding holfiles can be found in the folder [`.../CapacityExpansion/teaching/`](https://github.com/YoungFaithful/CapacityExpansion.jl/tree/dev/teaching)
+        The corresponding files can be found in the folder [.../CapacityExpansion/teaching/](https://github.com/YoungFaithful/CapacityExpansion.jl/tree/dev/teaching)
 
 MS&E 394 Spring 2019
 

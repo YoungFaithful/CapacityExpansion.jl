@@ -3,7 +3,8 @@
 - Timestep (input data) - h
 - Power - MW
 - Energy - MWh
-- length - km
+- Length - km
+- Weight - kg
 
 ## Provided Data
 The package provides data for:
