@@ -90,7 +90,7 @@ A CapacityExpansion model can be run with or without the technology transmission
     If the technology `transmission` is not modeled (`transmission=false`), the transmission between nodes is not restricted, which is equivalent to a copperplate assumption.
 
 !!! note
-    Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission` and limit the total transmission `TRANS` to the values defined in the `lines.csv` file. If no new transmission should be setup, use the same values for existing transmission and the limit.
+    Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission`. This sets the existing transmission `TRANS` to the values defined in the `lines.csv` file in column `power_ex`, and limits the transmission by the values defined in `lines.csv` in the column `power_lim`. If no new transmission should be setup, use the same values for existing transmission(column `power_ex`) and the limit (column `power_lim`).
 ## Solver
 The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
 - `Clp` as an open source solver
