@@ -73,7 +73,7 @@ An overview is provided in the following table:
 | type of storage implementation                     | -                | `storage_type`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
 | allowing conversion (necessary for storage)        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
 | allowing demand                                    | -                | `demand`            | `true` or `false`                               | ::Bool         | true         |
-| allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | false         |
+| allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing non dispatchable generation               | -                | `non_dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing transmission                              | -                | `transmission`            | `true` or `false`                               | ::Bool         | false         |
 | fix. installed capacities to dispatch problem               | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
