@@ -361,8 +361,15 @@ function setup_opt_intertech_cap!(cep::OptModelCEP,
     #Check for specific constraint that bounds the installed capacity of one technology to another
     for tech in set["tech"]["all"]
       if haskey(techs[tech].constraints,"cap_eq")
-          push!(cep.info,"CAP[$tech, 'new', node] = CAP[$(techs[tech].constraints["cap_eq"]), 'new', node] ∀ node, tech_{EUR-Cap-Cost out/in==0}")
-          @constraint(cep.model, [node=set["nodes"]["all"]], cep.model[:CAP][tech,"new",node] == cep.model[:CAP][techs[tech].constraints["cap_eq"],"new",node])
+          # With 'cap_eq_multiply', one can define the relationship between two technologies. This is useful for setting fixed storage hours: For a system
+          # with 4 hours of storage, set this value for 'bat_e' to '4.0' (assuming hourly delta t).
+          if haskey(techs[tech].constraints,"cap_eq_multiply")
+            cap_eq_multiply =   techs[tech].constraints["cap_eq_multiply"]  #parse(Float64,techs[tech].constraints["cap_eq_multiply"])
+          else
+            cap_eq_multiply = 1.0
+          end
+          push!(cep.info,"CAP[$tech, 'new', node] = CAP[$(techs[tech].constraints["cap_eq"]), 'new', node] *$cap_eq_multiply ∀ node, tech_{EUR-Cap-Cost out/in==0}")
+          @constraint(cep.model, [node=set["nodes"]["all"]], cep.model[:CAP][tech,"new",node] == cap_eq_multiply * cep.model[:CAP][techs[tech].constraints["cap_eq"],"new",node])
       end
     end
     return cep
