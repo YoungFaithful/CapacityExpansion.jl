@@ -93,7 +93,7 @@ Required elements are:
 - `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
 What you can change in the `config`:
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
-- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
+- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 700), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
 """
 function run_opt(ts_data::ClustData,
                 opt_data::OptDataCEP,
