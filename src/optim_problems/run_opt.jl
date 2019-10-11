@@ -95,7 +95,7 @@ Required elements are:
 - `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
 What you can change in the `config`:
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
-- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
+- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (Suggestion: around 700), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
 """
 function run_opt(ts_data::ClustData,
                 opt_data::OptDataCEP,
@@ -143,8 +143,8 @@ Options to tweak the model are:
 - `conversion`: Bool `true` or `false` for technology-group
 - `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
 - `limit`: Dictionary with numbers limiting the kg.-emission-eq./MWh (e.g. `CO2` normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
-- `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
-- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
+- `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities). Example: lost_load_cost=Dict{String,Number}("electricity"=>1e6)
+- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (Suggestion: around 700), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities). Example: lost_emission_cost=Dict{String,Number}("CO2"=>700)
 - `infrastructure` : Dictionary with Arrays indicating which technology groups should have `existing` infrastructure (`"existing" => ["demand","dispatchable_generation"]`) and which technology groups should have infrastructure `limit`ed (`"limit" => ["non_dispatchable_generation"]`)
 - `scale`: Dict{Symbol,Int} with a number for each variable (like `:COST`) to scale the variables and equations to similar quantities. Try to acchieve that the numerical model only has to solve numerical variables in a scale of 0.01 and 100. The following equation is used as a relationship between the real value, which is provided in the solution (real-VAR), and the numerical variable, which is used within the model formulation (VAR): real-VAR [`EUR`, `MW` or `MWh`] = scale[:VAR] ⋅ VAR.
 - `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
