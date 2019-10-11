@@ -51,7 +51,7 @@ function get_cep_variables(opt_result::OptResult, variable_type::String)
       end
   end
   if isempty(variables)
-      throw(@error("$variable_type-Variable not provided in $(opt_result.descriptor)"))
+      error("$variable_type-Variable not provided in $(opt_result.config.descriptor)")
   else
       return variables
   end
