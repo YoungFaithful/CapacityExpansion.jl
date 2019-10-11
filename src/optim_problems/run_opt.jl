@@ -1,90 +1,88 @@
 """
-    run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::Dict{String,Any},optimizer::DataType)
+    run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::OptConfig)
 Organizing the actual setup and run of the CEP-Problem. This function shouldn't be called by a user, but from within the other `run_opt`-functions
 Required elements are:
 - `ts_data`: The time-series data.
 - `opt_data`: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.
 - `config`: This includes all the settings for the design optimization problem formulation.
-- `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
 """
 function run_opt(ts_data::ClustData,
                 opt_data::OptDataCEP,
-                config::Dict{String,Any},
-                optimizer::DataType)
+                config::OptConfig)
   #Check the consistency of the data provided
   check_opt_data_cep(opt_data)
   #Setup the basic elements
-  cep=setup_opt_basic(ts_data, opt_data, config, optimizer, config["optimizer_config"])
+  cep=setup_opt_basic(ts_data, opt_data, config, config.optimizer, config.optimizer_config)
   #Setup the basic variables
   setup_opt_basic_variables!(cep, ts_data, opt_data)
   # Setup the demand
-  if config["demand"]
-    setup_opt_demand!(cep, ts_data, opt_data, config["scale"])
+  if config.model["demand"]
+    setup_opt_demand!(cep, ts_data, opt_data, config.scale)
   end
   #Setup the non dispachable electricity generation
-  if config["non_dispatchable_generation"]
-    setup_opt_non_dispatchable_generation!(cep, ts_data, opt_data, config["scale"])
+  if config.model["non_dispatchable_generation"]
+    setup_opt_non_dispatchable_generation!(cep, ts_data, opt_data, config.scale)
   end
   #Setup the dispatchable electricity generation
-  if config["dispatchable_generation"]
-    setup_opt_dispatchable_generation!(cep, ts_data, opt_data, config["scale"])
+  if config.model["dispatchable_generation"]
+    setup_opt_dispatchable_generation!(cep, ts_data, opt_data, config.scale)
   end
   #Setup conversion
-  if config["conversion"]
-    setup_opt_conversion!(cep, ts_data, opt_data, config["scale"])
+  if config.model["conversion"]
+    setup_opt_conversion!(cep, ts_data, opt_data, config.scale)
   end
   #Setup storage
-  if config["storage"]
-    setup_opt_storage!(cep, ts_data, opt_data, config["scale"])
+  if config.model["storage"]
+    setup_opt_storage!(cep, ts_data, opt_data, config.scale)
   end
   #Setup seasonal storage
-  if config["seasonalstorage"]
-    setup_opt_seasonalstorage!(cep, ts_data, opt_data, config["scale"])
+  if config.model["seasonalstorage"]
+    setup_opt_seasonalstorage!(cep, ts_data, opt_data, config.scale)
   #Or intra-day storage (same level in first and last time step for each period)
-  elseif config["storage"] && !(config["seasonalstorage"])
-    setup_opt_simplestorage!(cep, ts_data, opt_data, config["scale"])
+  elseif config.model["storage"] && !(config.model["seasonalstorage"])
+    setup_opt_simplestorage!(cep, ts_data, opt_data, config.scale)
   end
   #Setup transmission
-  if config["transmission"]
-      setup_opt_transmission!(cep, ts_data, opt_data, config["scale"])
+  if config.model["transmission"]
+      setup_opt_transmission!(cep, ts_data, opt_data, config.scale)
   end
   #If lost load cost exist
-  if !isempty(config["lost_load_cost"])
-    setup_opt_lost_load!(cep, ts_data, opt_data, config["scale"])
+  if !isempty(config.lost_load_cost)
+    setup_opt_lost_load!(cep, ts_data, opt_data, config.scale)
   end
   #If lost emission exist
-  if !isempty(config["lost_emission_cost"])
+  if !isempty(config.lost_emission_cost)
     setup_opt_lost_emission!(cep, ts_data, opt_data)
   end
   #If limit of emissions
-  if !isempty(config["limit_emission"])
-    setup_opt_limit_emission!(cep, ts_data, opt_data, config["scale"]; limit_emission=config["limit_emission"],  lost_emission_cost=config["lost_emission_cost"])
+  if !isempty(config.limit_emission)
+    setup_opt_limit_emission!(cep, ts_data, opt_data, config.scale; limit_emission=config.limit_emission,  lost_emission_cost=config.lost_emission_cost)
   end
   #If fixed_design_variables are provided, fix the installed capacities to them
-  if haskey(config,"fixed_design_variables")
-    setup_opt_fix_design_variables!(cep, ts_data, opt_data, config["scale"], config["fixed_design_variables"])
+  if !isempty(config.fixed_design_variables)
+    setup_opt_fix_design_variables!(cep, ts_data, opt_data, config.scale, config.fixed_design_variables)
   end
   #Setup constraints that bind the capacities of different capacities with each other
-  setup_opt_intertech_cap!(cep, ts_data, opt_data, config["scale"])
+  setup_opt_intertech_cap!(cep, ts_data, opt_data, config.scale)
   # Add existing infrastructure to
-  setup_opt_existing_infrastructure!(cep, ts_data, opt_data, config["scale"])
+  setup_opt_existing_infrastructure!(cep, ts_data, opt_data, config.scale)
   # Limit the infrastructure expansion
-  setup_opt_limit_infrastructure!(cep, ts_data, opt_data, config["scale"])
-  if config["transmission"]
+  setup_opt_limit_infrastructure!(cep, ts_data, opt_data, config.scale)
+  if config.model["transmission"]
     # Setup the energy balences taking transmission into account
-    setup_opt_energy_balance_transmission!(cep, ts_data, opt_data, config["scale"])
+    setup_opt_energy_balance_transmission!(cep, ts_data, opt_data, config.scale)
   else
     # Setup the energy balences with a copperplate assumption without any transmission restrictions between nodes
-    setup_opt_energy_balance_copperplate!(cep, ts_data, opt_data, config["scale"])
+    setup_opt_energy_balance_copperplate!(cep, ts_data, opt_data, config.scale)
   end
   #Setup the objective
-  setup_opt_objective!(cep, ts_data, opt_data, config["scale"]; lost_load_cost=config["lost_load_cost"], lost_emission_cost=config["lost_emission_cost"])
+  setup_opt_objective!(cep, ts_data, opt_data, config.scale; lost_load_cost=config.lost_load_cost, lost_emission_cost=config.lost_emission_cost)
   # solve and return the CEP
   return solve_opt_cep(cep, ts_data, opt_data, config)
 end
 
 """
-     run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::Dict{String,Any},fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
+     run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::OptConfig,fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
 This problem runs the operational optimization problem only, with fixed design variables.
 provide the fixed design variables and the `config` of the previous step (design run or another opterational run)
 Required elements are:
@@ -99,14 +97,13 @@ What you can change in the `config`:
 """
 function run_opt(ts_data::ClustData,
                 opt_data::OptDataCEP,
-                config::Dict{String,Any},
+                config::OptConfig,
                 fixed_design_variables::Dict{String,Any},
                 optimizer::DataType;
                 lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
                 lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
   # Add the fixed_design_variables and new setting for slack costs to the existing config
-  set_config_cep!(config;fixed_design_variables=fixed_design_variables, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
-
+  OptConfig(config,fixed_design_variables; lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
   return run_opt(ts_data,opt_data,config,optimizer)
 end
 
@@ -155,41 +152,10 @@ Options to tweak the model are:
 function run_opt(ts_data::ClustData,
                  opt_data::OptDataCEP,
                  optimizer::DataType;
-                 descriptor::String="",
-                 storage_type::String="none",
-                 demand::Bool=true,
-                 dispatchable_generation::Bool=true,
-                 non_dispatchable_generation::Bool=true,
-                 conversion::Bool=false,
-                 transmission::Bool=false,
-                 lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
-                 lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
-                 limit_emission::Dict{String,Number}=Dict{String,Number}(),
-                 infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
-                 scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
-                 print_flag::Bool=true,
-                 optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
-                 round_sigdigits::Int=9,
-                 time_series_config::Dict{String,Any}=Dict{String,Any}())
-   # Activated seasonal or simple storage corresponds with storage
-   if storage_type=="seasonal"
-       storage=true
-       seasonalstorage=true
-   elseif storage_type=="simple"
-       storage=true
-       seasonalstorage=false
-   elseif storage_type =="none"
-       storage=false
-       seasonalstorage=false
-  else
-      storage=false
-      seasonalstorage=false
-      warn("String indicating `storage_type` not identified as 'none', 'seasonal' or 'simple' → no storage")
-   end
-  #The limit_dir is organized as two dictionaries in each other: limit_dir[impact][carrier]='impact/carrier' The first dictionary has the keys of the impacts, the second level dictionary has the keys of the carriers and value of the limit per carrier
-  limit_emission=get_limit_dir(limit_emission)
-  #Setup the config file based on the data input and
-  config=set_config_cep(opt_data; descriptor=descriptor, limit_emission=limit_emission, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost, infrastructure=infrastructure, demand=demand, non_dispatchable_generation=non_dispatchable_generation, dispatchable_generation=dispatchable_generation, storage=storage, conversion=conversion, seasonalstorage=seasonalstorage, transmission=transmission, scale=scale, print_flag=print_flag, optimizer_config=optimizer_config, round_sigdigits=round_sigdigits, region=opt_data.region, time_series=Dict{String,Any}("years" => ts_data.years, "K" => ts_data.K, "T"=> ts_data.T, "config" => time_series_config, "weights"=>ts_data.weights, "delta_t"=>ts_data.delta_t))
+                 kwargs...)
+  #Setup the OptConfig based on the data input and
+  config=OptConfig(ts_data, opt_data; optimizer=optimizer, kwargs...)
+
   #Run the optimization problem
-  run_opt(ts_data, opt_data, config, optimizer)
+  run_opt(ts_data, opt_data, config)
 end # run_opt

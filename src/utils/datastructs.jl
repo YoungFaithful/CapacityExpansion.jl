@@ -38,12 +38,42 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
 end
 
 """
+  OptConfig{tech::Dict{String,Bool}
+      model::Dict{String,Bool}
+      limit_emission::Dict{String,Number}
+      scale::Dict{Symbol,Int}
+      print_flag::Bool
+      optimizer::DataType
+      optimizer_config::Dict{Symbol,Any}
+      round_sigdigits::Int
+      time_series_config::OptConfig}
+
+contains the information that tweaks the model
+"""
+struct OptConfig
+    descriptor::String
+    region::String
+    model::Dict{String,Bool}
+    limit_emission::Dict{String,Dict{String,Number}}
+    infrastructure::Dict{String,Array}
+    scale::Dict{Symbol,Int}
+    optimizer::DataType
+    optimizer_config::Dict{Symbol,Any}
+    time_series::Dict{String,Any}
+    fixed_design_variables::Dict{String,Any}
+    lost_load_cost::Dict{String,Number}
+    lost_emission_cost::Dict{String,Number}
+    print_flag::Bool
+    round_sigdigits::Int
+end
+
+"""
       OptResult{status::Symbol,
                 objective::Float64,
                 variables::Dict{String,Any},
                 sets::Dict{String,Dict{String,Array}},
-                opt_config::Dict{String,Any},
-                opt_info::Dict{String,Any}}
+                config::OptConfig,
+                info::Dict{String,Any}}
 The result of an optimized model is organized as an `OptResult` struct:
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function
@@ -93,7 +123,7 @@ struct OptResult
  objective::Float64
  variables::Dict{String,Any}
  sets::Dict{String,Dict{String,Array}}
- config::Dict{String,Any}
+ config::OptConfig
  info::Dict{String,Any}
 end
 
@@ -243,7 +273,111 @@ A scenario is organized in a `Scenario` struct:
 -`opt_res::OptResult`
 """
 struct Scenario
- descriptor::String
- clust_res::AbstractClustResult
- opt_res::OptResult
+    descriptor::String
+    clust_res::AbstractClustResult
+    opt_res::OptResult
+end
+
+"""
+        OptConfig(ts_data::ClustData,
+                    opt_data::OptDataCEP;
+                    descriptor::String="",
+                    storage_type::String="none",
+                    limit_emission::Dict{String,Number}=Dict{String,Number}(),
+                    demand::Bool=true,
+                    dispatchable_generation::Bool=true,
+                    non_dispatchable_generation::Bool=true,
+                    conversion::Bool=false,
+                    transmission::Bool=false,
+                    lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                    lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
+                    limit_emission::Dict{String,Number}=Dict{String,Number}(),
+                    infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
+                    scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
+                    print_flag::Bool=true,
+                    optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
+                    round_sigdigits::Int=9,
+                    time_series::Dict{String,Any}=Dict{String,Any}())
+Setup the OptConfig that tweaks the model. Options to tweak the model are:
+- `descriptor`: A name for the model
+- `storage_type`: String `"none"` for no storage, `"simple"` to include simple (only intra-day storage), or `"seasonal"` to include seasonal storage (inter-day)
+- `demand`: Bool `true` or `false` for technology-group
+- `dispatchable_generation`: Bool `true` or `false` for technology-group
+- `non_dispatchable_generation`: Bool `true` or `false` for technology-group
+- `conversion`: Bool `true` or `false` for technology-group
+- `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
+- `limit`: Dictionary with numbers limiting the kg.-emission-eq./MWh (e.g. `CO2` normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
+- `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
+- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
+- `infrastructure` : Dictionary with Arrays indicating which technology groups should have `existing` infrastructure (`"existing" => ["demand","dispatchable_generation"]`) and which technology groups should have infrastructure `limit`ed (`"limit" => ["non_dispatchable_generation"]`)
+- `scale`: Dict{Symbol,Int} with a number for each variable (like `:COST`) to scale the variables and equations to similar quantities. Try to acchieve that the numerical model only has to solve numerical variables in a scale of 0.01 and 100. The following equation is used as a relationship between the real value, which is provided in the solution (real-VAR), and the numerical variable, which is used within the model formulation (VAR): real-VAR [`EUR`, `MW` or `MWh`] = scale[:VAR] ⋅ VAR.
+- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
+- `print_flag`: Bool to decide if a summary of the Optimization result should be printed.
+- `optimizer_config`: Each Symbol and the corresponding value in the Dictionary is passed on to the `with_optimizer` function in addition to the `optimizer`. For Gurobi an example Dictionary could look like `Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2)` more information can be found in the optimizer specific documentation.
+- `round_sigdigits`: Can be used to round the values of the result to a certain number of `sigdigits`.
+"""
+function OptConfig(ts_data::ClustData,
+                    opt_data::OptDataCEP;
+                    descriptor::String="",
+                    storage_type::String="none",
+                    demand::Bool=true,
+                    dispatchable_generation::Bool=true,
+                    non_dispatchable_generation::Bool=true,
+                    conversion::Bool=false,
+                    transmission::Bool=false,
+                    lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                    lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
+                    limit_emission::Dict{String,Number}=Dict{String,Number}(),
+                    infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
+                    scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
+                    print_flag::Bool=true,
+                    optimizer::DataType=DataType,
+                    optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
+                    round_sigdigits::Int=9,
+                    time_series_config::Dict{String,Any}=Dict{String,Any}())
+    # Activated seasonal or simple storage corresponds with storage
+    if storage_type=="seasonal"
+        storage=true
+        seasonalstorage=true
+    elseif storage_type=="simple"
+        storage=true
+        seasonalstorage=false
+    elseif storage_type =="none"
+        storage=false
+        seasonalstorage=false
+    else
+        storage=false
+        seasonalstorage=false
+        warn("String indicating `storage_type` not identified as 'none', 'seasonal' or 'simple' → no storage")
+     end
+    #The limit_dir is organized as two dictionaries in each other: limit_dir[impact][carrier]='impact/carrier' The first dictionary has the keys of the impacts, the second level dictionary has the keys of the carriers and value of the limit per carrier
+    limit_emission=get_limit_dir(limit_emission)
+
+    #Add the modular model configuration
+    model=get_model(opt_data; demand=demand, dispatchable_generation=dispatchable_generation, non_dispatchable_generation=non_dispatchable_generation, storage=storage, seasonalstorage=seasonalstorage, conversion=conversion, transmission=transmission)
+
+    #Add the information of the timeseries
+    time_series=Dict{String,Any}("years" => ts_data.years, "K" => ts_data.K, "T"=> ts_data.T, "config" => time_series_config, "weights"=>ts_data.weights, "delta_t"=>ts_data.delta_t)
+
+    # Return Directory with the information
+    return OptConfig(descriptor, opt_data.region, model, limit_emission, infrastructure, scale, optimizer, optimizer_config, time_series, Dict{String,Any}(), Dict{String,Number}(), Dict{String,Number}(), print_flag, round_sigdigits)
+end
+
+"""
+        OptConfig(config::OptConfig;
+                fixed_design_variables::Dict{String,Any},
+                optimizer::DataType;
+                lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
+`fixed_design_variables`: All the design variables that are determined by the previous design run.
+- `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
+What you can change in the `config`:
+- `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
+- `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
+"""
+function OptConfig(config::OptConfig,
+                fixed_design_variables::Dict{String,Any};
+                lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
+    return OptConfig(config.descriptor, config.region, config.model, config.limit_emission, config.infrastructure, config.scale, config.optimizer, config.optimizer_config, config.time_series, fixed_design_variables, lost_load_cost, lost_emission_cost, config.print_flag, config.round_sigdigits)
 end

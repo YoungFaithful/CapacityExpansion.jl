@@ -74,34 +74,18 @@ Returning Dictionary with the variables as entries
 """
 function set_config_cep(opt_data::OptDataCEP
                             ;kwargs...)
-  # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
-  config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
-  # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
-  for tech_group in unique(vcat(getfield.(opt_data.techs[:], :tech_group)...))
-    config[tech_group]=true
-  end
-  # Loop through the kwargs and write them into Dictionary
-  for kwarg in kwargs
-    # Check for false combination
-    if String(kwarg[1]) in keys(config)
-      if config[String(kwarg[1])]==false && kwarg[2]
-        throw(@error("Option "*String(kwarg[1])*" cannot be selected with input data provided for "*opt_data.region))
-      end
-    end
-    config[String(kwarg[1])]=kwarg[2]
-  end
 
-  # Return Directory with the information
-  return config
+
+
 end
 
 """
-    set_config_cep!(config::Dict{String,Any}; kwargs...)
+    set_config_cep!(config::OptConfig; kwargs...)
 add or replace items to an existing config:
 - `fixed_design_variables`: `Dict{String,OptVariable}``
 - `slack_cost`: Number
 """
-function set_config_cep!(config::Dict{String,Any}
+function set_config_cep!(config::OptConfig
                             ;kwargs...)
   # Loop through the kwargs and add them to Dictionary
   for kwarg in kwargs
@@ -284,10 +268,35 @@ function get_limit_dir(limit::Dict{String,Number})
 end
 
 """
+  get_model(opt_data::OptData; kwargs...)
+Return the dictionary of the elements to model based on the `opt_data` and `kwargs`
+Check if the modeling is possible based on the `OptData`
+"""
+function get_model(opt_data::OptData; kwargs...)
+  # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
+  model=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
+  # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
+  for tech_group in unique(vcat(getfield.(opt_data.techs[:], :tech_group)...))
+    model[tech_group]=true
+  end
+  # Loop through the kwargs and write them into Dictionary
+  for kwarg in kwargs
+    # Check for false combination
+    if String(kwarg[1]) in keys(model)
+      if model[String(kwarg[1])]==false && kwarg[2]
+        throw(@error("Option "*String(kwarg[1])*" cannot be selected with input data provided for "*opt_data.region))
+      end
+    end
+    model[String(kwarg[1])]=kwarg[2]
+  end
+  return model
+end
+
+"""
     text_limit_emission(limit_emission::Dict{String,Dict{String,Number}})
 Return text with the information of the `limit_emission` as a text
 """
-function text_limit_emission(limit_emission::Dict{String,Dict})
+function text_limit_emission(limit_emission::Dict{String,Dict{String,Number}})
   text_limit=""
   for (emission,carriers) in limit_emission
     for (carrier,value) in carriers

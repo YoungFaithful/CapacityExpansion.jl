@@ -21,7 +21,6 @@ optimizer=Clp.Optimizer
 
 # tweak the CO2 level
 co2_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emission=Dict{String,Number}("CO2/electricity"=>50)) #Within the example we limit the emitted carbon dioxide (in kg-CO2e) per electric energy consumed (in MWh). Generally values between 1250 kg-CO2e/MWh and 10 kg-CO2e/MWh are interesting
-
 # Include a Slack-Variable
 slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6), lost_emission_cost=Dict{String,Number}("CO2"=>700)) #We set costs for lost electric load of 1,000,000 EUR per MWh and costs for emissions exceeding our emissions limit of 700 EUR per kg-CO2e
 
@@ -49,7 +48,7 @@ design_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;limit_emissi
 design_variables=get_cep_design_variables(design_result)
 
 # Use the design variable results for the operational run
-operation_result = run_opt(ts_input_data,cep_data,design_result.opt_config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6),lost_emission_cost=Dict{String,Number}("CO2"=>700))
+operation_result = run_opt(ts_input_data,cep_data,design_result.config,design_variables,optimizer;lost_load_cost=Dict{String,Number}("electricity"=>1e6),lost_emission_cost=Dict{String,Number}("CO2"=>700))
 
 # Change scaling parameters
 # Changing the scaling parameters is useful if the data you use represents a much smaller or bigger energy system than the ones representing Germany and California provided in this package

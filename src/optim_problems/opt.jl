@@ -1,20 +1,20 @@
 # Functions to setup the CapacityExpansion optimization model
 """
-    setup_opt_basic(ts_data::ClustData,opt_data::CEPData,config::Dict{String,Any},optimizer::DataType,optimizer_config::Dict{Symbol,Any})
+    setup_opt_basic(ts_data::ClustData,opt_data::CEPData,config::OptConfig,optimizer::DataType,optimizer_config::Dict{Symbol,Any})
 setting up the basic core elements for a CEP-model
 - a JuMP Model is setup and the optimizer is configured. The optimizer itself is passed on as a `optimizer`. It's configuration with `optimizer_config` - Each Symbol and the corresponding value in the Dictionary is passed on to the `with_optimizer` function in addition to the optimizer. For Gurobi an example Dictionary could look like `Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2)`
 - the sets are setup
 """
 function setup_opt_basic(ts_data::ClustData,
                             opt_data::OptDataCEP,
-                            config::Dict{String,Any},
+                            config::OptConfig,
                             optimizer::DataType,
                             optimizer_config::Dict{Symbol,Any})
    ## MODEL CEP ##
    # Initialize model
    model =  JuMP.Model(with_optimizer(optimizer;optimizer_config...))
    # Initialize info
-   info=[config["descriptor"]]
+   info=[config.descriptor]
    # Setup set
    set=setup_opt_set(ts_data, opt_data, config)
    # Setup Model CEP
@@ -569,14 +569,14 @@ function setup_opt_energy_balance_copperplate!(cep::OptModelCEP,
 end
 
 """
-    setup_opt_limit_emission!(cep::OptModelCEP, ts_data::ClustData, opt_data::OptDataCEP, scale::Dict{Symbol,Int}; limit::Dict{String,Dict} = Dict{String,Dict}("CO2"=>Dict{String,Number}("electricity"=>Inf)), lost_emission_cost::Dict{String,Number} = Dict{String,Number}("CO2"=>Inf))
+    setup_opt_limit_emission!(cep::OptModelCEP, ts_data::ClustData, opt_data::OptDataCEP, scale::Dict{Symbol,Int}; limit_emission::Dict{String,Dict{String,Number}} = Dict{String,Dict{String,Number}}("CO2"=>Dict{String,Number}("electricity"=>Inf)), lost_emission_cost::Dict{String,Number} = Dict{String,Number}("CO2"=>Inf))
 Add emission limits constraints
 """
 function setup_opt_limit_emission!(cep::OptModelCEP,
                             ts_data::ClustData,
                             opt_data::OptDataCEP,
                             scale::Dict{Symbol,Int};
-                            limit_emission::Dict{String,Dict}=Dict{String,Dict}(),
+                            limit_emission::Dict{String,Dict{String,Number}}=Dict{String,Dict{String,Number}}(),
                             lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
   ## DATA ##
   set=cep.set
@@ -674,16 +674,16 @@ function setup_opt_objective!(cep::OptModelCEP,
 end
 
 """
-     solve_opt_cep(cep::OptModelCEP,ts_data::ClustData,opt_data::OptDataCEP,config::Dict{String,Any})
+     solve_opt_cep(cep::OptModelCEP,ts_data::ClustData,opt_data::OptDataCEP,config::OptConfig)
 solving the cep model and writing it's results and `limit` into an OptResult-Struct
 """
 function solve_opt_cep(cep::OptModelCEP,
                             ts_data::ClustData,
                             opt_data::OptDataCEP,
-                            config::Dict{String,Any})
+                            config::OptConfig)
   optimize!(cep.model)
   status=Symbol(termination_status(cep.model))
-  scale=config["scale"]
+  scale=config.scale
   objective=objective_value(cep.model)*scale[:COST]
   total_demand=get_total_demand(cep,ts_data)
   variables=Dict{String,Any}()
@@ -693,32 +693,32 @@ function solve_opt_cep(cep::OptModelCEP,
   variables["GEN"]=OptVariable(cep,:GEN,"ov",scale)
   lost_load=0
   lost_emission=0
-  if !isempty(config["lost_load_cost"])
+  if !isempty(config.lost_load_cost)
     variables["SLACK"]=OptVariable(cep,:SLACK,"sv",scale)
     variables["LL"]=OptVariable(cep,:LL,"sv",scale)
     lost_load=sum(variables["LL"].data)
   end
-  if !isempty(config["lost_emission_cost"])
+  if !isempty(config.lost_emission_cost)
     variables["LE"]=OptVariable(cep,:LE,"sv",scale)
     lost_emission=sum(variables["LE"].data)
   end
-  if config["storage"]
+  if config.model["storage"]
     variables["INTRASTOR"]=OptVariable(cep,:INTRASTOR,"ov",scale)
-    if config["seasonalstorage"]
+    if config.model["seasonalstorage"]
       variables["INTERSTOR"]=OptVariable(cep,:INTERSTOR,"ov",scale)
     end
   end
-  if config["transmission"]
+  if config.model["transmission"]
     variables["TRANS"]=OptVariable(cep,:TRANS,"dv",scale)
     variables["FLOW"]=OptVariable(cep,:FLOW,"ov",scale)
   end
   get_met_cap_limit(cep, opt_data, variables)
   currency=variables["COST"].axes[2][1]
   if lost_load==0 && lost_emission==0
-    config["print_flag"] && @info("Solved Scenario $(config["descriptor"]): "*String(status)*" min COST: $(round(objective,sigdigits=4)) [$currency] ⇨ $(round(objective/total_demand,sigdigits=4)) [$currency per MWh] s.t. $(text_limit_emission(config["limit_emission"]))")
+    config.print_flag && @info("Solved Scenario $(config.descriptor): "*String(status)*" min COST: $(round(objective,sigdigits=4)) [$currency] ⇨ $(round(objective/total_demand,sigdigits=4)) [$currency per MWh] s.t. $(text_limit_emission(config.limit_emission))")
   else
     cost=variables["COST"]
-    config["print_flag"] && @info("Solved Scenario $(config["descriptor"]): "*String(status)*" min COST: $(round(sum(cost[:,axes(cost,"impact")[1],:]),sigdigits=4)) [$currency] ⇨ $(round(sum(cost[:,axes(cost,"impact")[1],:])/total_demand,sigdigits=4)) [$currency per MWh] with LL: $lost_load [MWh] s.t. $(text_limit_emission(config["limit_emission"])) + $(round(lost_emission/total_demand,sigdigits=4)) (violation) [kg-CO₂-eq. per MWh]")
+    config.print_flag && @info("Solved Scenario $(config.descriptor): "*String(status)*" min COST: $(round(sum(cost[:,axes(cost,"impact")[1],:]),sigdigits=4)) [$currency] ⇨ $(round(sum(cost[:,axes(cost,"impact")[1],:])/total_demand,sigdigits=4)) [$currency per MWh] with LL: $lost_load [MWh] s.t. $(text_limit_emission(config.limit_emission)) + $(round(lost_emission/total_demand,sigdigits=4)) (violation) [kg-CO₂-eq. per MWh]")
   end
   info=Dict{String,Any}("total_demand"=>total_demand,"model"=>cep.info,)
   return OptResult(status,objective,variables,cep.set,config,info)
