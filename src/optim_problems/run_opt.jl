@@ -97,13 +97,13 @@ What you can change in the `config`:
 """
 function run_opt(ts_data::ClustData,
                 opt_data::OptDataCEP,
-                config::OptConfig,
+                old_config::OptConfig,
                 fixed_design_variables::Dict{String,Any},
                 optimizer::DataType;
                 lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
                 lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
   # Add the fixed_design_variables and new setting for slack costs to the existing config
-  OptConfig(config,fixed_design_variables; lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
+  config=OptConfig(old_config,fixed_design_variables; lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
   return run_opt(ts_data,opt_data,config)
 end
 

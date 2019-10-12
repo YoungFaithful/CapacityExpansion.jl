@@ -16,7 +16,8 @@ module CapacityExpansion
   @reexport using FileIO
   using JuMP
 
-  export OptDataCEP,
+  export  OptConfig,
+          OptDataCEP,
           OptDataCEPTech,
           OptDataCEPNode,
           OptDataCEPLine,
