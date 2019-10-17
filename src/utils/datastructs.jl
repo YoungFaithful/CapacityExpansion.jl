@@ -360,13 +360,12 @@ function OptConfig(ts_data::ClustData,
     time_series=Dict{String,Any}("years" => ts_data.years, "K" => ts_data.K, "T"=> ts_data.T, "config" => time_series_config, "weights"=>ts_data.weights, "delta_t"=>ts_data.delta_t)
 
     # Return Directory with the information
-    return OptConfig(descriptor, opt_data.region, model, limit_emission, infrastructure, scale, optimizer, optimizer_config, time_series, Dict{String,Any}(), Dict{String,Number}(), Dict{String,Number}(), print_flag, round_sigdigits)
+    return OptConfig(descriptor, opt_data.region, model, limit_emission, infrastructure, scale, optimizer, optimizer_config, time_series, Dict{String,Any}(), lost_load_cost, lost_emission_cost, print_flag, round_sigdigits)
 end
 
 """
         OptConfig(config::OptConfig;
-                fixed_design_variables::Dict{String,Any},
-                optimizer::DataType;
+                fixed_design_variables::Dict{String,Any};
                 lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
                 lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
 `fixed_design_variables`: All the design variables that are determined by the previous design run.
@@ -377,7 +376,7 @@ What you can change in the `config`:
 """
 function OptConfig(config::OptConfig,
                 fixed_design_variables::Dict{String,Any};
-                lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
-                lost_emission_cost::Dict{String,Number}=Dict{String,Number}())
+                lost_load_cost::Dict{String,Number}=Dict{String,Number}("electricity" => 1e6),
+                lost_emission_cost::Dict{String,Number}=Dict{String,Number}("CO2" => 700))
     return OptConfig(config.descriptor, config.region, config.model, config.limit_emission, config.infrastructure, config.scale, config.optimizer, config.optimizer_config, config.time_series, fixed_design_variables, lost_load_cost, lost_emission_cost, config.print_flag, config.round_sigdigits)
 end
