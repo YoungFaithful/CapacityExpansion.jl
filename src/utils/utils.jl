@@ -1,40 +1,4 @@
 """
-    find_val_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,value_to_return::Symbol)
-Take DataFrame(df) Look in Column (column_of_reference) for the reference value (reference) and return in same row the value in column (value_to_return)
-"""
-function find_val_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    value_to_return::Symbol
-                    )
-                    @warn "find_val_in_df deprecated"
-    return df[findfirst(df[column_of_reference].==reference),value_to_return]
-end
-
-"""
-    find_val_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,value_to_return::String)
-Take DataFrame(df) Look in Column (column_of_reference) for the reference value (reference) and return corresponding value in column (value_to_return)
-"""
-function find_val_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    value_to_return::String
-                    )
-                    @warn "find_val_in_df deprecated"
-    return find_val_in_df(df,column_of_reference,reference,Symbol(value_to_return))
-end
-
-#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found
-function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any})
-    return df[findall(df[col_and_val[1]].==col_and_val[2]), :]
-end
-
-#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found and the column `colon_ind`
-function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any}, colon_ind::Symbol)
-    return df[findall(df[col_and_val[1]].==col_and_val[2]), colon_ind]
-end
-
-"""
     check_column(df::DataFrame, names_array::Array{Symbol,1})
 check if the columns provided in `names_array` exist in the DataFrame `df`
 throw an error if they don't
@@ -46,78 +10,14 @@ function check_column(df::DataFrame, names_array::Array{Symbol,1})
     end
 end
 
-"""
-     map_set_in_df(df::DataFrame,column_of_reference::Symbol,reference::String,set_to_return::Symbol)
-  Take DataFrame(`df`) Look in Column (`column_of_reference`) for all cases that match the reference value (`reference`) and return the corresponding sets in Column (`set_to_return`)
-"""
-function map_set_in_df(df::DataFrame,
-                    column_of_reference::Symbol,
-                    reference::String,
-                    set_to_return::Symbol
-                    )
-                    @warn "mat_set_in_df deprecated"
-    return df[df[column_of_reference].==reference,set_to_return]
+#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found
+function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any})
+    return df[findall(df[!,col_and_val[1]].==col_and_val[2]), :]
 end
 
-"""
-    getindex(variable::OptVariable,index_set::Array)
-Get the variable data from the specific Scenario by indicating the `var_name` e.g. "COST" and the `index_set` like `[:;"EUR";"pv"]`
-"""
-function get_cep_variable_value(variable::OptVariable,
-                                index_set::Array
-                                )
-                                @warn "get_cep_variable_value deprecated"
-    index_num=[]
-    for i in  1:length(index_set)
-        if index_set[i]==Colon()
-            push!(index_num,Colon())
-        elseif typeof(index_set[i])==Int || typeof(index_set[i])==UnitRange{Int}
-            push!(index_num,index_set[i])
-        else
-            new_index_num=findfirst(variable.axes[i].==index_set[i])
-            if new_index_num==[]
-                throw(@error("$(index_set[i]) not in indexset #$i of Variable $var_name"))
-            else
-                push!(index_num,new_index_num)
-            end
-        end
-    end
-    return getindex(variable.data,Tuple(index_num)...)
-end
-
-"""
-    get_cep_variable_value(scenario::Scenario,var_name::String,index_set::Array)
-Get the variable data from the specific Scenario by indicating the `var_name` e.g. "COST" and the `index_set` like `[:;"EUR";"pv"]`
-"""
-function get_cep_variable_value(scenario::Scenario,
-                                var_name::String,
-                                index_set::Array
-                                )
-                                @warn "get_cep_variable_value deprecated"
-    return get_cep_variable_value(scenario.opt_res.variables[var_name], index_set)
-end
-
-"""
-    get_cep_variable_set(variable::OptVariable,num_index_set::Int)
-Get the variable set from the specific variable and the `num_index_set` like 1
-"""
-function get_cep_variable_set(variable::OptVariable,
-                              num_index_set::Int
-                              )
-                              @warn "get_cep_variable_set deprecated"
-    return variable.axes[num_index_set]
-end
-
-"""
-    get_cep_variable_set(scenario::Scenario,var_name::String,num_index_set::Int)
-Get the variable set from the specific Scenario by indicating the `var_name` e.g. "COST" and the `num_index_set` like 1
-"""
-function get_cep_variable_set(scenario::Scenario,
-                              var_name::String,
-                              num_index_set::Int
-                              )
-                              @warn "get_cep_variable_set deprecated"
-    return  get_cep_variable_set(scenario.opt_res.variables[var_name], num_index_set)
+#Use getindex to return all rows of the DataFrame fulfilling that in column `col` value `val` is found and the column `colon_ind`
+function Base.getindex(df::DataFrame, col_and_val::Tuple{Symbol,Any}, colon_ind::Symbol)
+    return df[findall(df[!,col_and_val[1]].==col_and_val[2]), colon_ind]
 end
 
 """
@@ -140,7 +40,8 @@ end
 
 """
     get_cep_variables(opt_result::OptResult, variable_type::String)
-Returns all variables which types match the String of `variable_type`
+The variables can be of different type. The different groups of variables can be extracted from the `OptResult` based on the `variable_type`:
+Returns all variables which types match the String `variable_type`
 """
 function get_cep_variables(opt_result::OptResult, variable_type::String)
   variables=Dict{String,Any}()
@@ -157,7 +58,7 @@ function get_cep_variables(opt_result::OptResult, variable_type::String)
 end
 
 """
-    set_opt_config_cep(opt_data::OptDataCEP; kwargs...)
+    set_config_cep(opt_data::OptDataCEP; kwargs...)
 kwargs can be whatever you need to run the run_opt
 it can hold
   -  `fixed_design_variables`: Dictionary{String,Any}
@@ -171,13 +72,13 @@ it can hold
 The function also checks if the provided data matches your kwargs options (e.g. it let's you know if you asked for transmission, but you have no tech with it in your data)
 Returning Dictionary with the variables as entries
 """
-function set_opt_config_cep(opt_data::OptDataCEP
+function set_config_cep(opt_data::OptDataCEP
                             ;kwargs...)
-  # Create new Dictionary and set possible unique categories to false to later check wrong setting
-  config=Dict{String,Any}("transmission"=>false, "storage_e"=>false, "storage_p"=>false, "generation"=>false)
-  # Check the existence of the categ (like generation or storage - see techs.csv) and write it into Dictionary
-  for categ in unique(getfield.(opt_data.techs[:], :categ))
-    config[categ]=true
+  # Create new Dictionary and set possible unique tech_groups to false to later check wrong setting
+  config=Dict{String,Any}("demand"=>false, "transmission"=>false, "storage"=>false, "conversion"=>false, "non_dispatchable_generation"=>false, "dispatchable_generation"=>false)
+  # Check the existence of the tech_group (like generation or storage - see techs.yml) and write it into Dictionary
+  for tech_group in unique(vcat(getfield.(opt_data.techs[:], :tech_group)...))
+    config[tech_group]=true
   end
   # Loop through the kwargs and write them into Dictionary
   for kwarg in kwargs
@@ -195,12 +96,12 @@ function set_opt_config_cep(opt_data::OptDataCEP
 end
 
 """
-    set_opt_config_cep!(config::Dict{String,Any}; kwargs...)
+    set_config_cep!(config::Dict{String,Any}; kwargs...)
 add or replace items to an existing config:
 - `fixed_design_variables`: `Dict{String,OptVariable}``
 - `slack_cost`: Number
 """
-function set_opt_config_cep!(config::Dict{String,Any}
+function set_config_cep!(config::Dict{String,Any}
                             ;kwargs...)
   # Loop through the kwargs and add them to Dictionary
   for kwarg in kwargs
@@ -245,10 +146,10 @@ function get_total_demand(cep::OptModelCEP,
   #ts_deltas:  t x k - Δt of each segment x period
   ts_deltas=ts_data.delta_t
   total_demand=0
-  for node in set["nodes"]
-    for t in set["time_T"]
-      for k in set["time_K"]
-        total_demand+=ts["el_demand-"*node][t,k]*ts_deltas[t,k]*ts_weights[k]
+  for node in set["nodes"]["all"]
+    for t in set["time_T_period"]["all"]
+      for k in set["time_K"]["all"]
+        total_demand+=ts["demand_electricity-"*node][t,k]*ts_deltas[t,k]*ts_weights[k]
       end
     end
   end
@@ -257,21 +158,25 @@ function get_total_demand(cep::OptModelCEP,
 end
 
 """
-    get_cost_series(cep_data::OptDataCEP,clust_res::ClustResultBest, opt_res::OptResult)
+        get_cost_series(nodes::DataFrame,
+                        var_costs::DataFrame,
+                       clust_res::ClustResult,
+                       set::Dict{String,Array},
+                       variables::Dict{String,OptVariable})
 Return an array for the time series of costs in all the impact dimensions and the set of impacts
 """
 function get_cost_series(nodes::DataFrame,
                         var_costs::DataFrame,
-                       clust_res::ClustResultBest,
+                       clust_res::ClustResult,
                        set::Dict{String,Array},
                        variables::Dict{String,OptVariable})
   ## DATA ##
   # ts_ids:   n_clustered periods
   ts_ids=clust_res.best_ids
   #ts_weights: k - weight of each period:
-  ts_weights=clust_res.best_results.weights
+  ts_weights=clust_res.clust_data.weights
   #ts_deltas:  t x k - Δt of each segment x period
-  ts_deltas=clust_res.best_results.delta_t
+  ts_deltas=clust_res.clust_data.delta_t
 
   #emision at each period-step
   cost_ts=zeros(length(ts_ids)+1,length(set["impact"]))
@@ -283,7 +188,7 @@ function get_cost_series(nodes::DataFrame,
         i=1
         for impact in set["impact"]
           for tech in set["tech"]
-            for node in set["nodes"]
+            for node in set["nodes"]["all"]
               var_cost[i] += find_cost_in_df(var_costs,nodes,tech,node,impact)*  sum(get_cep_variable_value(variables["GEN"],["el",tech,:,ts_ids[n],node])' * ts_deltas[:,ts_ids[n]])
             end
           end
@@ -295,11 +200,11 @@ function get_cost_series(nodes::DataFrame,
 end
 
 """
-    get_cost_series(cep_data::OptDataCEP,scenario::Scenario)
+    get_cost_series(opt_data::OptDataCEP,scenario::Scenario)
 Return an array for the time series of costs in all the impact dimensions and the set of impacts
 """
-function get_cost_series(cep_data::OptDataCEP,scenario::Scenario)
-  return get_cost_series(cep_data.nodes,cep_data.var_costs,scenario.clust_res, scenario.opt_res.model_set,scenario.opt_res.variables)
+function get_cost_series(opt_data::OptDataCEP,scenario::Scenario)
+  return get_cost_series(opt_data.nodes,opt_data.var_costs,scenario.clust_res, scenario.opt_res.model_set,scenario.opt_res.variables)
 end
 
 """
@@ -312,21 +217,82 @@ function get_met_cap_limit(cep::OptModelCEP, opt_data::OptDataCEP, variables::Di
   set=cep.set
   # nodes with limits
   nodes=opt_data.nodes
+  lines=opt_data.lines
 
   met_cap_limit=Array{String,1}()
-  for tech in set["tech_cap"]
-    for node in set["nodes"]
-      #Check if the limit is reached in any capacity at any node
-      if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim
-        #Add this technology and node to the met_cap_limit Array
-        push!(met_cap_limit,tech*"-"*node)
+  # For all
+  if haskey(set["tech"],"node")
+    for tech in set["tech"]["node"]
+      for node in set["nodes"]["all"]
+        #Check if the limit is reached in any capacity at any node
+        if sum(variables["CAP"][tech,:,node]) == nodes[tech,node].power_lim
+          #Add this technology and node to the met_cap_limit Array
+          push!(met_cap_limit,tech*"-"*node)
+        end
+      end
+    end
+  end
+  if haskey(set["tech"],"line")
+    for tech in set["tech"]["line"]
+      for line in set["lines"]["all"]
+        #Check if the limit is reached in any capacity at any line
+        if sum(variables["TRANS"][tech,:,line]) == lines[tech,line].power_lim
+          #Add this technology and line to the met_cap_limit Array
+          push!(met_cap_limit,tech*"-"*line)
+        end
       end
     end
   end
   # If the array isn't empty throw an error (as limits are only for numerical speedup)
   if !isempty(met_cap_limit)
     #TODO change to warning
-    throw( @error "Limit is reached for techs $met_cap_limit")
+    @warn("Limit is reached for techs $met_cap_limit")
   end
   return met_cap_limit
+end
+
+import Base.push!
+"""
+  push!(set::Dict{String,Array},key::String,value::Any)
+
+Push a `value` into the Array of `set[key]`. If no Array `set[key]` exists, setup new Array
+"""
+function push!(set::Dict{String,Array},key::String,value::Any)
+  if key in keys(set)
+    #If value not already in set[key]
+    if !(value in set[key])
+      push!(set[key],value)
+    end
+  else
+    set[key]=[value]
+  end
+end
+
+"""
+    get_limit_dir(limit::Dict{String,Number})
+The limit_dir is organized as two dictionaries in each other: limit_dir[impact][carrier]='impact/carrier' The first dictionary has the keys of the impacts, the second level dictionary has the keys of the carriers and value of the limit per carrier
+"""
+function get_limit_dir(limit::Dict{String,Number})
+    limit_dir=Dict{String,Dict}()
+    for (impact, carrier) in split.(keys(limit),"/")
+        if !haskey(limit_dir, impact)
+            limit_dir[impact]=Dict{String,Number}()
+        end
+        limit_dir[impact][String(carrier)]=limit[join([impact carrier], "/")]
+    end
+    return limit_dir
+end
+
+"""
+    text_limit_emission(limit_emission::Dict{String,Dict{String,Number}})
+Return text with the information of the `limit_emission` as a text
+"""
+function text_limit_emission(limit_emission::Dict{String,Dict})
+  text_limit=""
+  for (emission,carriers) in limit_emission
+    for (carrier,value) in carriers
+      text_limit*="$emission-Emission ≤ $value [kg-$emission-eq. per MWh-$carrier],"
+    end
+  end
+  return text_limit
 end

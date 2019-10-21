@@ -1,0 +1,170 @@
+tech_groups:
+    all:
+        discount_rate: 0.07 #[-]
+    demand:
+        structure: node
+        unit: power
+        tech_group: all
+    generation:
+        structure: node
+        unit: power
+        tech_group: all
+    dispatchable_generation:
+        tech_group: generation
+    non_dispatchable_generation:
+        tech_group: generation
+    storage:
+        structure: node
+        unit: energy
+        tech_group: all
+    conversion:
+        structure: node
+        unit: power
+        tech_group: all
+    transmission:
+        structure: line
+        unit: power
+        tech_group: all
+
+
+techs:
+    demand:
+        name: Electricity demand
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
+        tech_group: demand
+        input:
+            carrier: electricity
+        output:
+            timeseries: demand_electricity
+    pv:
+        name: Photo Voltaic
+        tech_group: non_dispatchable_generation
+        plant_lifetime: 25 #[a]
+        financial_lifetime: 25 #[a]
+        input:
+            timeseries: solar
+        output:
+            carrier: electricity
+    wind:
+        name: Onshore Wind
+        tech_group: non_dispatchable_generation
+        plant_lifetime: 25 #[a]
+        financial_lifetime: 25 #[a]
+        input:
+            timeseries: wind
+        output:
+            carrier: electricity
+    coal:
+        name: Coal Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 40 #[a]
+        input:
+            fuel: coal
+        output:
+            carrier: electricity
+        constraints:
+            max_gradient: 0.6 #1/h not yet funcional
+    oil:
+        name: Oil Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
+        input:
+            fuel: oil
+        output:
+            carrier: electricity
+        constraints:
+            max_gradient: 3 #not yet funcional
+    gas:
+        name: Gas Plant
+        tech_group: dispatchable_generation
+        plant_lifetime: 30 #[a]
+        financial_lifetime: 30 #[a]
+        input:
+            fuel: gas
+        output:
+            carrier: electricity
+        constraints:
+            max_gradient: 4.8 #[1/h] not yet funcional
+    bat_in:
+        name: Battery Charge
+        tech_group: conversion
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
+        input:
+            carrier: electricity
+        output:
+            carrier: electricity_bat
+        constraints:
+            efficiency: 0.93 #[-]
+    bat_out:
+        name: Battery Discharge
+        tech_group: conversion
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
+        input:
+            carrier: electricity_bat
+        output:
+            carrier: electricity
+        constraints:
+            efficiency: 0.93 #[-]
+            cap_eq: bat_in # Discharge capacity is same as charge capacity
+    bat_e:
+        name: Battery Storage
+        tech_group: storage
+        plant_lifetime: 10 #[a]
+        financial_lifetime: 10 #[a]
+        input:
+            carrier: electricity_bat
+        output:
+            carrier: electricity_bat
+        constraints:
+            efficiency: 0.93 #[-]
+    h2_in:
+        name: Hydrogen Storage Charge
+        tech_group: conversion
+        plant_lifetime: 15 #[a]
+        financial_lifetime: 20 #[a]
+        input:
+            carrier: electricity
+        output:
+            carrier: hydrogen
+        constraints:
+            efficiency: 0.83 #[-]
+    h2_out:
+        name: Hydrogen Storage Discharge
+        tech_group: conversion
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 20 #[a]
+        input:
+            carrier: hydrogen
+        output:
+            carrier: electricity
+        constraints:
+            efficiency: 0.53 #[-]
+            cap_eq: h2_in # Discharge capacity is same as charge capacity
+    h2_e:
+        name: Hydrogen Storage
+        tech_group: storage
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 20 #[a]
+        input:
+            carrier: hydrogen
+        output:
+            carrier: hydrogen
+        constraints:
+            efficiency: 0.99 #[-]
+
+    trans:
+        name: Transmission Line
+        tech_group: transmission
+        plant_lifetime: 40 #[a]
+        financial_lifetime: 40 #[a]
+        input:
+            carrier: electricity
+        output:
+            carrier: electricity
+        constraints:
+            efficiency: 0.9995 #[1/km]

@@ -5,9 +5,9 @@
  # Capacity Expansion Probelem formulation
  #
  #####################
-#using ClustForOpt
-include(joinpath("..","..","ClustForOpt","src","ClustForOpt_development.jl"))
+using TimeSeriesClustering
 using CSV
+using YAML
 using DataFrames
 using StatsBase
 using JLD2
@@ -20,4 +20,5 @@ include(joinpath("utils","optvariable.jl"))
 include(joinpath("utils","utils.jl"))
 include(joinpath("utils","load_data.jl"))
 include(joinpath("optim_problems","run_opt.jl"))
-include(joinpath("optim_problems","opt_cep.jl"))
+include(joinpath("optim_problems","set.jl"))
+include(joinpath("optim_problems","opt.jl"))
