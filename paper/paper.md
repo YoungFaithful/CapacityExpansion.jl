@@ -29,9 +29,21 @@ bibliography: paper.bib
 ``CapacityExpansion`` is a Julia implementation of an input-data-scaling capacity expansion modeling framework [@Bezanson:2017]. It provides an extensible, multi-carrier, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning and can be used to plan and validate energy systems at scales ranging from quarters to entire global regions.
 ``CapacityExpansion`` provides simple integration of (clustered) time-series, geographical, cost, and technology input data. The software features a modular model setup and an investment and dispatch optimization that uses the JUMP modeling language [@Dunning:2017]. An interface is provided between the optimization result and further analysis.
 
-## Package features
+# Infrastructure planning in the energy sector
 
-The model class of ``CapacityExpansion`` is capacity expansion planning and generation and transmission capacity expansion planning are combined. The model is setup as a linear optimization model that models energy systems based on the provided input data. Multiple energy carriers can be modeled, which makes the software it suitable for research of sector coupling technologies. Technologies can be defined that belong to dispathable or non-dispathable generation, conversion, storage, transmission, or demand. The decision variables of the model are investment and dispatch and the total system costs are minimized.
+Energy systems convert different energy resources to meet desired demands like electric and thermal energy demands. Political, economical, and technological changes require changing the infrastructure of energy systems. Changing the infrastructure has to balance multiple political, environmental, and economical objectives. Capacity expansion planning can be an important tool during the planning process [@Gacitua:2018].
+
+Capacity expansion planning is used to compute cost-optimal energy system designs under given sets of constraints. The resulting cost-optimal energy system design can be used to inform policy decisions that incentivize the industry to invest in this design [@Johnston:2013]. Similarly, cost-optimal energy system designs can be used by companies for their investment strategies.
+
+Aspects of the energy system design that capacity expansion planning aims to answer are what the optimal technology mix is in regards of location, time, and installed generation, conversion, storage, and transmission capacities. The design optimization is done while using an integrated dispatch formulation to ensure that supply can equal demand at all nodes and time steps. The model determines the costs, emissions, power generation, energy storage, and power flows based on the installed capacities.
+
+Capacity expansion planning is formulated as mathematical optimization problem. Like any optimization problem, capacity expansion planning has certain degrees of freedom, consists of constraints, and consists of an objective function that is minimized: Typical degrees of freedom (sometimes called decision variables) are installed capacities, power generation, energy storage, and power flows. We divide constraints into internal and external constraints: The internal constraints ensure that the model is physically consistent in itself and following the rules of thermodynamics, e.g. energy balances ensure energy conservation over time. External constraints restrict the solution space to external conditions like costs, demands, available energy resources as well as other political, environmental, economical, or technological constraints. The objective function to determine cost-optimal investment can be total system cost, the net present value, or another business-oriented cost measure.
+
+Dispatch planning formulations are very similar to capacity expansion formulations. However, the installed capacity is no degree of freedom, but introduced as an external constraint.
+
+# Package features
+
+The model class of ``CapacityExpansion`` is capacity expansion planning and generation and transmission capacity expansion planning are combined. The model is setup as a linear optimization model that models energy systems based on the provided input data. Multiple energy carriers can be modeled, which makes the software suitable for research of sector coupling technologies. Technologies can be defined that belong to dispathable or non-dispathable generation, conversion, storage, transmission, or demand. The decision variables of the model are investment and dispatch and the total system costs are minimized.
 
 The following key features are provided by ``CapacityExpansion``. The usage and mathematical formulation is explained in detail within the software's documentation.
 
@@ -41,13 +53,13 @@ The following key features are provided by ``CapacityExpansion``. The usage and 
 
 - *The generalized import of input data*: Modeling other energy systems is possible by adjusting the input data. The package extracts all information needed to model a specific energy system based on a few standardized input files. The time-series, geographic, and cost data can be edited as tables and integrated using the `.csv`-file format. The technology input data can be edited like a tree structure and integrated using the `.yml`-file format.
 
-- *Integrated aggregation*: Aggregating the time-series input data is commonly done to reduce the computational complexity of the optimization. ``CapacityExpansion`` is well integrated with the Julia package ``TimeSeriesClustering``. This integration allows easy use of the typical time-series aggregation methods and further allows the usage of feedback loops between the optimization result and time-series aggregation.
+- *Integration of ``TimeSeriesClustering``*: Time-series data like the demand, available solar factors, and available wind factors are used as an input to model the temporal variance of the energy system. Aggregating the time-series input data is commonly done to reduce the computational complexity of the optimization. ``CapacityExpansion`` is well integrated with the Julia package ``TimeSeriesClustering``. This integration allows using the typical time-series aggregation methods, integrated testing of the temporal resolution, and an integrated feedback loops between the optimization result and time-series aggregation.
 
 - *Seasonal storage*: A recent seasonal storage formulation from Kotzur is implemented to allow time-series aggregation and modeling of seasonal storage at the same time [@Kotzur:2018].
 
 - *Modular model setup*: The model setup is flexible and based on a modular setup. Depending on the configuration different technology groups can be activated or deactivated, a green or brown field study performed, emissions limits can be enforced, different storage models can be used, and an integrated investment and dispatch or pure dispatch optimization can be run.
 
-## ``CapacityExpansion`` within the broader ecosystem
+# ``CapacityExpansion`` within the broader ecosystem
 ``CapacityExpansion`` is the first package to provide capacity expansion planning in Julia [@Bezanson:2017].
 
 Multiple other software tools exist that support energy system planning both in Julia and other programming languages. We provide an overview of the broader ecosystem for orientation.
@@ -67,7 +79,7 @@ The model [``DIETER``](http://www.diw.de/dieter) package provides a framework fo
 # Applications
 ``CapacityExpansion`` can be applied to plan and validate a variety of energy systems. The focus on time-series aggregation, storage modeling, and integration of multiple energy carriers makes it especially valuable for the planning and validation of future energy systems with higher shares of non dispatchable generation and sector coupling technologies. The scale of the modeled energy system can range from quarters to entire global regions and is only restricted by the computational complexity of the model.
 
-``CapacityExpansion`` has been used as the base for academic research. It was used to analyze and improve the impact of time series aggregation methods on low emission energy systems [@Kuepper:2019].
+``CapacityExpansion`` has been used in academic research. It was used to analyze and improve the impact of time series aggregation methods on low emission energy systems [@Kuepper:2019].
 
 Furthermore, ``CapacityExpansion`` has been used as an educational tool. It is used for modeling exercises in the Stanford University course "Advanced Methods in Modeling for Climate and Energy Policy". The teaching material is also provided open-source in the package.
 
