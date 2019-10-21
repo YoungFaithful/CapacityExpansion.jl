@@ -175,9 +175,11 @@ function run_opt(ts_data::ClustData,
    if storage_type=="seasonal"
        storage=true
        seasonalstorage=true
+       conversion = true
    elseif storage_type=="simple"
        storage=true
        seasonalstorage=false
+       conversion = true
    elseif storage_type =="none"
        storage=false
        seasonalstorage=false
