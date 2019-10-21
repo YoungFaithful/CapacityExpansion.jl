@@ -18,6 +18,13 @@ TimeSeriesClustering = "61e8395a-c5b7-11e9-0bf6-872d3bc7175c"
 YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
 
 [compat]
+CSV = "^0.5.0"
+DataFrames = "^0.19.0"
+FileIO = "^1.0.0"
+JLD2 = "0.1.0"
 JuMP = "^0.19"
+Reexport = "^0.2.0"
+StatsBase = "^1.0"
 TimeSeriesClustering = "^0.5.0"
+YAML = "^0.3.2"
 julia = "^1.0"
