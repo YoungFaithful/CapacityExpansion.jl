@@ -43,6 +43,7 @@ function run_opt(ts_data::ClustData,
   #Or intra-day storage (same level in first and last time step for each period)
   elseif config["storage"] && !(config["seasonalstorage"])
     setup_opt_simplestorage!(cep, ts_data, opt_data, config["scale"])
+    setup_opt_fixedstartingSOC!(cep, ts_data, opt_data, config["scale"],0.5)
   end
   #Setup transmission
   if config["transmission"]

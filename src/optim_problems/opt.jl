@@ -444,6 +444,31 @@ function setup_opt_simplestorage!(cep::OptModelCEP,
 end
 
 """
+     setup_opt_simplestorage!(cep::OptModelCEP,ts_data::ClustData,opt_data::OptDataCEP, scale::Dict{Symbol,Int})
+Adding only intra-day storage:
+Looping constraint for each period (same start and end level for all periods) and limit storage to installed energy-capacity
+"""
+function setup_opt_fixedstartingSOC!(cep::OptModelCEP,
+                            ts_data::ClustData,
+                            opt_data::OptDataCEP,
+                            scale::Dict{Symbol,Int},
+                            starting_SOC::Float64)
+    if starting_SOC > 1.0 || starting_SOC < 0.0
+        error("Starting SOC is $starting_SOC, but should be between 0 and 1.")
+    end
+    ## DATA ##
+    set=cep.set
+    #`techs::OptVariable`: techs[tech][tech_group] - OptDataCEPTech
+    techs = opt_data.techs
+
+    ## INTRASTORAGE ##
+    # Set the storage level at the beginning of each representative day to the same
+    push!(cep.info,"INTRASTOR[carrier,tech, '0', k, node] = INTRASTOR[carrier,tech, '0', k, node] ∀ node, tech_storage, k")
+    @constraint(cep.model, [node=set["nodes"]["all"], tech=set["tech"]["storage"], k=set["time_K"]["all"]], cep.model[:INTRASTOR][tech, techs[tech].input["carrier"], 0, k, node]== sum(cep.model[:CAP][tech, infrastruct, node] for infrastruct=set["infrastruct"]["all"])*scale[:CAP]/scale[:INTRASTOR] * starting_SOC) #cep.model[:INTRASTOR][tech, techs[tech].input["carrier"], 0, 1, node])
+    return cep
+end
+
+"""
      setup_opt_seasonalstorage!(cep::OptModelCEP,ts_data::ClustData,opt_data::OptDataCEP, scale::Dict{Symbol,Int})
 Adding inter-day storage:
 add variable INTERSTOR, calculate seasonal-storage-level and limit total storage to installed energy-capacity
