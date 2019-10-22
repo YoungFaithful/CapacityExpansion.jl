@@ -71,7 +71,7 @@ An overview is provided in the following table:
 | enforce an emission-limit                          | kg-impact/MWh-carrier | `limit_emission`               | Dict{String,Number}(impact/carrier=>value)                                      | ::Dict{String,Number}       | Dict{String,Number}()           |
 | including existing infrastructure (no extra costs) and limit infrastructure   | -                | `infrastructure`| Dict{String,Array}("existing"=>[tech-groups...], "limit"=>[tech-groups...])                             | ::Dict{String,Array}       | Dict{String,Array}("existing"=>["demand"])         |
 | type of storage implementation                     | -                | `storage_type`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
-| allowing conversion (necessary for storage)        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
+| allowing conversion between energy carriers        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
 | allowing demand                                    | -                | `demand`            | `true` or `false`                               | ::Bool         | true         |
 | allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing non dispatchable generation               | -                | `non_dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
