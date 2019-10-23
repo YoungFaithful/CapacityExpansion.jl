@@ -66,7 +66,10 @@ function run_opt(ts_data::ClustData,
     setup_opt_fix_design_variables!(cep, ts_data, opt_data, config["scale"], config["fixed_design_variables"])
   end
   #Setup constraints that bind the capacities of different capacities with each other
-  setup_opt_intertech_cap!(cep, ts_data, opt_data, config["scale"])
+  #If design variables are provided, this is already done by the provided variables
+  if isempty(config["fixed_design_variables"])
+    setup_opt_intertech_cap!(cep, ts_data, opt_data, config["scale"])
+  end
   # Add existing infrastructure to
   setup_opt_existing_infrastructure!(cep, ts_data, opt_data, config["scale"])
   # Limit the infrastructure expansion
