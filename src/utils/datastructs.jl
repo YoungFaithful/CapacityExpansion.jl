@@ -2,7 +2,10 @@
 abstract type OptData <: InputData end
 
 """
-     OptModelCEP
+     OptModelCEP{
+     model::JuMP.Model
+     info::Array{String}
+     set::Dict{String,Dict{String,Array}}}
 The essential elements of a CapacityExpansionProblem are organized as a `OptModelCEP` struct:
 - `model`::JuMP.Model - contains the actual JuMP-Model
 - `info`::Array{String} - contains the information about the model setup in form of multiple lines of equations
@@ -42,8 +45,8 @@ end
                 objective::Float64,
                 variables::Dict{String,Any},
                 sets::Dict{String,Dict{String,Array}},
-                opt_config::Dict{String,Any},
-                opt_info::Dict{String,Any}}
+                config::Dict{String,Any},
+                info::Dict{String,Any}}
 The result of an optimized model is organized as an `OptResult` struct:
 - `status`: Symbol about the solution status of the model in normal cases `:OPTIMAL`
 - `objective`: Value of the objective function
@@ -139,14 +142,15 @@ Base.isapprox(ll1::LatLon, ll2::LatLon; atol = 1e-6, kwargs...) = isapprox(ll1.l
 
 """
      OptDataCEPNode{name::String,
-                    value::Number,
-                    lat::Number,
-                    lon::Number} <: OptData
+                   power_ex::Number
+                   power_lim::Number
+                   region::String
+                   latlon::LatLon} <: OptData
 The information about the nodes in stored in an `OptDataCEPNode` struct:
 - `name`
 - `power_ex` existing capacity [MW or MWh (tech_e)]
 - `power_lim` capacity limit [MW or MWh (tech_e)]
-- `region`
+- `region` name of the region
 - `latlon` hold geolocation information [°,°]
 """
 struct OptDataCEPNode <: OptData
@@ -158,15 +162,17 @@ struct OptDataCEPNode <: OptData
 end
 
 """
-     OptDataCEPLine{name::String,
-                    node_start::String,
-                    node_end::String,
-                    reactance::Number,
-                    resistance::Number,
-                    power::Number,
-                    circuits::Int,
-                    voltage::Number,
-                    length::Number} <: OptData
+     OptDataCEPLine{name::String
+                   node_start::String
+                   node_end::String
+                   reactance::Number
+                   resistance::Number
+                   power_ex::Number
+                   power_lim::Number
+                   circuits::Int
+                   voltage::Number
+                   length::Number
+                   eff::Number} <: OptData
 The information of the single lines is stored in an `OptDataCEPLine` struct:
 - `name`: Name of the line
 - `node_start` Node where line starts
@@ -208,14 +214,15 @@ end
                    constraints::Dict} <: OptData
 The information of the single tech is stored in an `OptDataCEPTech` struct:
 - `name`: A detailed name of the technology
+- `unit`: the unit that the capacity of the technology scales with. It can be `power`[MW] or `energy`[MWh]
 - `tech_group`: technology-groups that the technology belongs to. Groups can be: `all`, `demand`, `generation`, `dispatchable_generation`, `non_dispatchable_generation`, `storage`, `conversion`, `transmission`
 - `plant_lifetime`: the lifetime of this technologies plant [a]
 - `financial_lifetime`: financial time to break even [a]
 - `annuityfactor`: the annuityfactor is calculated based on the discount_rate and the plant_lifetime
 - `discount_rate`: discount rate for technology [a]
 - `structure`: `node` or `line` depending on the structure of the technology
-- `unit`: the unit that the capacity of the technology scales with. It can be `power`[MW] or `energy`[MWh]
-- `input`: the input can be a `carrier` like e.g. electricity `"carrier" => electricity, a `timeseries` like e.g. `"timeseries"=> demand_electricity`, or a `fuel` like e.g. `fuel: gas`
+- `input`: the input can be a `carrier` like e.g. electricity `"carrier" => "electricity", a `timeseries` like e.g. `"timeseries"=> "demand_electricity"`, or a `fuel` like e.g. `"fuel" => "gas"`
+- `output`: the output can be a `carrier` as well
 - `constraints`: a dictionary with information like an `efficiency` like e.g. `"efficiency"=> 0.53` or `cap_eq` (e.g. discharge capacity is same as charge capacity) `"cap_eq" => "bat_in"`
 returns `techs::OptVariable`    techs[tech] - OptDataCEPTech
 """
