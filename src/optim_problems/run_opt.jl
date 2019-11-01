@@ -140,7 +140,7 @@ Options to tweak the model are:
 - `demand`: Bool `true` or `false` for technology-group
 - `dispatchable_generation`: Bool `true` or `false` for technology-group
 - `non_dispatchable_generation`: Bool `true` or `false` for technology-group
-- `conversion`: Bool `true` or `false` for technology-group
+- `conversion`: Bool `true` or `false` for technology-group. Allows for conversion between different energy carriers. By default false, and by default true if storage is enabled. 
 - `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
 - `limit`: Dictionary with numbers limiting the kg.-emission-eq./MWh (e.g. `CO2` normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities). Example: lost_load_cost=Dict{String,Number}("electricity"=>1e6)
@@ -175,9 +175,11 @@ function run_opt(ts_data::ClustData,
    if storage_type=="seasonal"
        storage=true
        seasonalstorage=true
+       conversion = true
    elseif storage_type=="simple"
        storage=true
        seasonalstorage=false
+       conversion = true
    elseif storage_type =="none"
        storage=false
        seasonalstorage=false

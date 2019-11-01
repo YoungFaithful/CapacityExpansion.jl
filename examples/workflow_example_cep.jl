@@ -30,10 +30,10 @@ slack_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;lost_load_cos
 ex_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;infrastructure=Dict{String,Array}("existing"=>["all"])) #We add the existing infrastructure of all technologies (no greenfield any more)
 
 # Intraday storage (just within each period, same storage level at beginning and end)
-simplestor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="simple",conversion=true)
+simplestor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="simple")
 
 # Interday storage (within each period & between the periods)
-seasonalstor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="seasonal",conversion=true)
+seasonalstor_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;storage_type="seasonal")
 
 # Transmission: use "GER_18 to use transmission"
 # transmission_result = run_opt(ts_clust_data.clust_data,cep_data,optimizer;transmission=true)

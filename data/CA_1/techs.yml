@@ -121,7 +121,7 @@ techs:
         output:
             carrier: electricity_bat
         constraints:
-            efficiency: 0.93 #[-]
+            efficiency: 0.93 #[-] efficiency per month
     h2_in:
         name: Hydrogen Storage Charge
         tech_group: conversion
@@ -155,7 +155,7 @@ techs:
         output:
             carrier: hydrogen
         constraints:
-            efficiency: 0.99 #[-]
+            efficiency: 0.99 #[-] efficiency per month
 
     trans:
         name: Transmission Line
