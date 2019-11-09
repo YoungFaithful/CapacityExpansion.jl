@@ -1,5 +1,6 @@
 # To use this package
 using CapacityExpansion
+using CapacityExpansionData
 
 #########################
 #= Load Time Series Data

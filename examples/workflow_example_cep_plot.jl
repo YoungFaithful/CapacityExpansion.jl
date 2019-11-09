@@ -1,5 +1,6 @@
 # This file exemplifies the workflow from data input to optimization result generation
 using CapacityExpansion
+using CapacityExpansionData
 using Clp
 using Plots
 

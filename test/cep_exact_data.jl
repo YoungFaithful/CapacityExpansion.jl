@@ -1,4 +1,4 @@
-using CapacityExpansion
+using CapacityExpansionData
 using Clp
 exact_scenarios=Dict{String,OptResult}()
 for (state, years) in [["GER_1", [2016]],["CA_1", [2016]]]

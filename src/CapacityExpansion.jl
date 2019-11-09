@@ -25,8 +25,6 @@ module CapacityExpansion
           Scenario,
           run_opt,
           load_cep_data,
-          load_cep_data_provided,
-          load_timeseries_data_provided,
           get_cep_variables,
           get_cep_slack_variables,
           get_cep_design_variables

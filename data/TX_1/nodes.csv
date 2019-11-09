@@ -1,2 +1,0 @@
-node,region,infrastruct,lat,lon,|,pv,wind,coal,gas,nuc,bat_in,bat_out,bat_e,demand
-node61,TX,ex,0,0,|,0,0,0,0,0,0,0,0,1
