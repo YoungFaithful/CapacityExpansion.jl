@@ -43,24 +43,24 @@ Dispatch planning formulations are very similar to capacity expansion formulatio
 
 # Package features
 
-The model class of ``CapacityExpansion`` is capacity expansion planning and generation and transmission capacity expansion planning are combined. The model is setup as a linear optimization model that models energy systems based on the provided input data. Multiple energy carriers can be modeled, which makes the software suitable for research of sector coupling technologies. Technologies can be defined that belong to dispathable or non-dispathable generation, conversion, storage, transmission, or demand. The decision variables of the model are investment and dispatch and the total system costs are minimized.
+The model class of ``CapacityExpansion`` is capacity expansion planning and it combines generation and transmission capacity expansion planning. The model is setup as a linear optimization model that models energy systems based on the provided input data. Multiple energy carriers can be modeled, which makes the software suitable for research of sector coupling technologies. Technologies can be defined that belong to dispatchable or non-dispatchable generation, conversion, storage, transmission, or demand. The decision variables of the model are investment and dispatch and the total system costs are minimized.
 
 The following key features are provided by ``CapacityExpansion``. The usage and mathematical formulation is explained in detail within the software's documentation.
 
-- *Modeling language*: The implementation in Julia enables the usage of a high-level programming language, and short times for data handling at the same time. The implementation in Julia also allows the usage of the mathematical optimization language JUMP, which enables the optimization formulation close to mathematical writing. The integration into the Julia ecosystem further allows to handle the process from data preparation to figure export within one programming language and software.
+- *Modeling language*: The implementation in Julia enables the usage of a high-level programming language, and short times for data handling at the same time. The implementation in Julia also allows the usage of the mathematical optimization language JUMP, which enables the optimization formulation close to mathematical writing [@Dunning:2017]. The integration into the Julia ecosystem further allows to handle the process from data preparation to figure export within one programming language and software.
 
 - *Provided input data*: The input data for single and multi-node representations of electricity systems are provided for California (USA) and Germany (EU). The input data provides hourly time-series input data for multiple years, aggregated geographic information about existing generation and transmission, cost information including the monetary and life cycle assessment costs, and necessary technology data. This input data can be used to address many research questions.
 
 - *The generalized import of input data*: Modeling other energy systems is possible by adjusting the input data. The package extracts all information needed to model a specific energy system based on a few standardized input files. The time-series, geographic, and cost data can be edited as tables and integrated using the `.csv`-file format. The technology input data can be edited like a tree structure and integrated using the `.yml`-file format.
 
-- *Integration of ``TimeSeriesClustering``*: Time-series data like the demand, available solar factors, and available wind factors are used as an input to model the temporal variance of the energy system. Aggregating the time-series input data is commonly done to reduce the computational complexity of the optimization. ``CapacityExpansion`` is well integrated with the Julia package ``TimeSeriesClustering``. This integration allows using the typical time-series aggregation methods, integrated testing of the temporal resolution, and an integrated feedback loops between the optimization result and time-series aggregation.
+- *Integration of ``TimeSeriesClustering``*: Time-series data like the demand, available solar factors, and available wind factors are used as an input to model the temporal variance of the energy system. Aggregating the time-series input data is commonly done to reduce the computational complexity of the optimization. ``CapacityExpansion`` is well integrated with the Julia package ``TimeSeriesClustering`` [@Teichgraeber:2019]. This integration allows using the typical time-series aggregation methods [@Teichgraeber:2018], integrated testing of the temporal resolution, and an integrated feedback loops between the optimization result and time-series aggregation.
 
 - *Seasonal storage*: A recent seasonal storage formulation from Kotzur is implemented to allow time-series aggregation and modeling of seasonal storage at the same time [@Kotzur:2018].
 
 - *Modular model setup*: The model setup is flexible and based on a modular setup. Depending on the configuration different technology groups can be activated or deactivated, a green or brown field study performed, emissions limits can be enforced, different storage models can be used, and an integrated investment and dispatch or pure dispatch optimization can be run.
 
 # ``CapacityExpansion`` within the broader ecosystem
-``CapacityExpansion`` is the first package to provide capacity expansion planning in Julia [@Bezanson:2017].
+``CapacityExpansion`` is the first package to provide capacity expansion planning in Julia.
 
 Multiple other software tools exist that support energy system planning both in Julia and other programming languages. We provide an overview of the broader ecosystem for orientation.
 
