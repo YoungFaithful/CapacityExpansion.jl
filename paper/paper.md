@@ -33,7 +33,7 @@ bibliography: paper.bib
 
 Energy systems convert different energy resources to meet desired demands like electric and thermal energy demands. Political, economical, and technological changes require expansions of the infrastructure of energy systems. Expanding the infrastructure has to balance multiple political, environmental, and economical objectives. Capacity expansion planning can be an important tool during the planning process [@Gacitua:2018].
 
-Capacity expansion planning is used to compute cost-optimal energy system designs under given sets of constraints. The resulting cost-optimal energy system design can be used to inform policy decisions that incentivize the industry to invest in this design [@Johnston:2013]. Similarly, cost-optimal energy system designs can be used by companies for their investment strategies.
+Capacity expansion planning is used to compute cost-optimal energy system designs under given sets of constraints from the perspective of a central planner. The resulting cost-optimal energy system design can be used to inform policy decisions that incentivize the industry to invest in this design [@Johnston:2013]. Similarly, cost-optimal energy system designs can be used by companies for their investment strategies.
 
 Aspects of the energy system design that capacity expansion planning aims to answer are what the optimal technology mix is in regards of location, time, and installed generation, conversion, storage, and transmission capacities. The design optimization is done while using an integrated dispatch formulation to ensure that supply can equal demand at all nodes and time steps. The model determines the costs, emissions, power generation, energy storage, and power flows based on the installed capacities.
 
