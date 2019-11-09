@@ -31,7 +31,7 @@ bibliography: paper.bib
 
 # Infrastructure planning in the energy sector
 
-Energy systems convert different energy resources to meet desired demands like electric and thermal energy demands. Political, economical, and technological changes require changing the infrastructure of energy systems. Changing the infrastructure has to balance multiple political, environmental, and economical objectives. Capacity expansion planning can be an important tool during the planning process [@Gacitua:2018].
+Energy systems convert different energy resources to meet desired demands like electric and thermal energy demands. Political, economical, and technological changes require expansions of the infrastructure of energy systems. Expanding the infrastructure has to balance multiple political, environmental, and economical objectives. Capacity expansion planning can be an important tool during the planning process [@Gacitua:2018].
 
 Capacity expansion planning is used to compute cost-optimal energy system designs under given sets of constraints. The resulting cost-optimal energy system design can be used to inform policy decisions that incentivize the industry to invest in this design [@Johnston:2013]. Similarly, cost-optimal energy system designs can be used by companies for their investment strategies.
 
