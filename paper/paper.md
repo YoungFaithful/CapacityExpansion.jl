@@ -66,7 +66,7 @@ Multiple other software tools exist that support energy system planning both in 
 
 The [``Joulia``](https://github.com/JuliaEnergy/Joulia.jl/) package in Julia provides a modeling framework for electricity systems that optimizes dispatch [@Weibezahn:2019]. The generation, storage, and transmission capacities have to be provided as exogenous parameters.
 
-The [``anyMOD``](https://github.com/leonardgoeke/anyMOD.jl/) package in Julia provides a modeling framework energy system models with a focus on multi-period capacity expansion. Each energy carrier can be modeled on separate geospacial and temporal sets.
+The [``anyMOD``](https://github.com/leonardgoeke/anyMOD.jl/) package in Julia provides a modeling framework for energy system models with a focus on multi-period capacity expansion. Each energy carrier can be modeled on separate geospacial and temporal sets.
 
 The [``InfrastructureModels``](https://github.com/lanl-ansi/InfrastructureModels.jl) package in Julia is a combination of multiple steady-state network optimization models to model electricity, gas, and water networks.
 
