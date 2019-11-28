@@ -38,15 +38,20 @@ struct OptVariable{T,N,Ax,L<:NTuple{N,Dict}} <: AbstractArray{T,N}
 end
 
 """
-  OptConfig{tech::Dict{String,Bool}
+  OptConfig{descriptor::String
+      region::String
       model::Dict{String,Bool}
-      limit_emission::Dict{String,Number}
+      limit_emission::Dict{String,Dict{String,Number}}
+      infrastructure::Dict{String,Array}
       scale::Dict{Symbol,Int}
-      print_flag::Bool
       optimizer::DataType
       optimizer_config::Dict{Symbol,Any}
-      round_sigdigits::Int
-      time_series_config::OptConfig}
+      time_series::Dict{String,Any}
+      fixed_design_variables::Dict{String,Any}
+      lost_load_cost::Dict{String,Number}
+      lost_emission_cost::Dict{String,Number}
+      print_flag::Bool
+      round_sigdigits::Int}
 
 contains the information that tweaks the model
 """
@@ -280,44 +285,44 @@ end
 
 """
         OptConfig(ts_data::ClustData,
-                    opt_data::OptDataCEP;
-                    descriptor::String="",
-                    storage_type::String="none",
-                    limit_emission::Dict{String,Number}=Dict{String,Number}(),
-                    demand::Bool=true,
-                    dispatchable_generation::Bool=true,
-                    non_dispatchable_generation::Bool=true,
-                    conversion::Bool=false,
-                    transmission::Bool=false,
-                    lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
-                    lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
-                    limit_emission::Dict{String,Number}=Dict{String,Number}(),
-                    infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
-                    scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
-                    print_flag::Bool=true,
-                    optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
-                    round_sigdigits::Int=9,
-                    time_series::Dict{String,Any}=Dict{String,Any}())
+                opt_data::OptDataCEP,
+                optimizer::DataType;
+                descriptor::String="",
+                storage_type::String="none",
+                demand::Bool=true,
+                dispatchable_generation::Bool=true,
+                non_dispatchable_generation::Bool=true,
+                conversion::Bool=false,
+                transmission::Bool=false,
+                lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
+                limit_emission::Dict{String,Number}=Dict{String,Number}(),
+                infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
+                scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
+                print_flag::Bool=true,
+                optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
+                round_sigdigits::Int=9,
+                time_series_config::Dict{String,Any}=Dict{String,Any}())
 Setup the OptConfig that tweaks the model. Options to tweak the model are:
-- `descriptor`: A name for the model
+- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
 - `storage_type`: String `"none"` for no storage, `"simple"` to include simple (only intra-day storage), or `"seasonal"` to include seasonal storage (inter-day)
 - `demand`: Bool `true` or `false` for technology-group
 - `dispatchable_generation`: Bool `true` or `false` for technology-group
 - `non_dispatchable_generation`: Bool `true` or `false` for technology-group
 - `conversion`: Bool `true` or `false` for technology-group
 - `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
-- `limit`: Dictionary with numbers limiting the kg.-emission-eq./MWh (e.g. `CO2` normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
 - `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
 - `infrastructure` : Dictionary with Arrays indicating which technology groups should have `existing` infrastructure (`"existing" => ["demand","dispatchable_generation"]`) and which technology groups should have infrastructure `limit`ed (`"limit" => ["non_dispatchable_generation"]`)
 - `scale`: Dict{Symbol,Int} with a number for each variable (like `:COST`) to scale the variables and equations to similar quantities. Try to acchieve that the numerical model only has to solve numerical variables in a scale of 0.01 and 100. The following equation is used as a relationship between the real value, which is provided in the solution (real-VAR), and the numerical variable, which is used within the model formulation (VAR): real-VAR [`EUR`, `MW` or `MWh`] = scale[:VAR] ⋅ VAR.
-- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
 - `print_flag`: Bool to decide if a summary of the Optimization result should be printed.
 - `optimizer_config`: Each Symbol and the corresponding value in the Dictionary is passed on to the `with_optimizer` function in addition to the `optimizer`. For Gurobi an example Dictionary could look like `Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2)` more information can be found in the optimizer specific documentation.
 - `round_sigdigits`: Can be used to round the values of the result to a certain number of `sigdigits`.
+- `time_series_config`: The configuration used to obtain the clustering result.
 """
 function OptConfig(ts_data::ClustData,
-                    opt_data::OptDataCEP;
+                    opt_data::OptDataCEP,
+                    optimizer::DataType;
                     descriptor::String="",
                     storage_type::String="none",
                     demand::Bool=true,
@@ -331,7 +336,6 @@ function OptConfig(ts_data::ClustData,
                     infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
                     scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
                     print_flag::Bool=true,
-                    optimizer::DataType=DataType,
                     optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
                     round_sigdigits::Int=9,
                     time_series_config::Dict{String,Any}=Dict{String,Any}())

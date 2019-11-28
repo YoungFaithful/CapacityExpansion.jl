@@ -1,6 +1,6 @@
 """
     run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::OptConfig)
-Organizing the actual setup and run of the CEP-Problem. This function shouldn't be called by a user, but from within the other `run_opt`-functions
+Organizing the actual setup and run of the CEP-Problem.
 Required elements are:
 - `ts_data`: The time-series data.
 - `opt_data`: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.
@@ -83,8 +83,11 @@ end
 
 """
      run_opt(ts_data::ClustData,opt_data::OptDataCEP,config::OptConfig,fixed_design_variables::Dict{String,Any},optimizer::DataTyple;lost_el_load_cost::Number=Inf,lost_CO2_emission_cost::Number)
-This problem runs the operational optimization problem only, with fixed design variables.
-provide the fixed design variables and the `config` of the previous step (design run or another opterational run)
+This problem runs the operational optimization problem only, with fixed design variables. Provide the fixed design variables and the `config` of the previous step (design run or another opterational run). We recommend to alternatively run OptConfig and the optimization in two steps:
+```julia
+opt_config = OptConfig(old_config,fixed_design_variables; lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost)
+run_opt(ts_data, opt_data, opt_config)
+```
 Required elements are:
 - `ts_data`: The time-series data, which should be be the original time-series data for this operational run. The `keys(ts_data.data)` need to match the `[time_series_name]-[node]`
 - `opt_data`: In this case the OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines. - Should be the same as in the design run.
@@ -125,36 +128,40 @@ end
            scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
            print_flag::Bool=true,
            optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
-           round_sigdigits::Int=9)
-Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem).
+           round_sigdigits::Int=9,
+           time_series_config::Dict{String,Any}=Dict{String,Any}())
+Wrapper function for type of optimization problem for the CEP-Problem (NOTE: identifier is the type of `opt_data` - in this case OptDataCEP - so identification as CEP problem). We recommend to alternatively run OptConfig and the optimization in two steps to get more information about the kwargs:
+```julia
+opt_config = OptConfig(ts_data, opt_data, optimizer; [options to tweak the model] )
+run_opt(ts_data, opt_data, opt_config)
+```
 Required elements are:
 - `ts_data`: The time-series data, which could either be the original input data or some aggregated time-series data. The `keys(ts_data.data)` need to match the `[time_series_name]-[node]`
 - `opt_data`: The OptDataCEP that contains information on costs, nodes, techs and for transmission also on lines.
 - `optimizer`: The used optimizer, which could e.g. be Clp: `using Clp` `optimizer=Clp.Optimizer` or Gurobi: `using Gurobi` `optimizer=Gurobi.Optimizer`.
-Options to tweak the model are:
-- `descriptor`: A name for the model
+Options to tweak the model are used to configure the `OptConfig`:
+- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
 - `storage_type`: String `"none"` for no storage, `"simple"` to include simple (only intra-day storage), or `"seasonal"` to include seasonal storage (inter-day)
 - `demand`: Bool `true` or `false` for technology-group
 - `dispatchable_generation`: Bool `true` or `false` for technology-group
 - `non_dispatchable_generation`: Bool `true` or `false` for technology-group
 - `conversion`: Bool `true` or `false` for technology-group
 - `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
-- `limit`: Dictionary with numbers limiting the kg.-emission-eq./MWh (e.g. `CO2` normally in a range from 5-1250 kg-CO2-eq/MWh), give Inf or no kw if unlimited
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
 - `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
 - `infrastructure` : Dictionary with Arrays indicating which technology groups should have `existing` infrastructure (`"existing" => ["demand","dispatchable_generation"]`) and which technology groups should have infrastructure `limit`ed (`"limit" => ["non_dispatchable_generation"]`)
 - `scale`: Dict{Symbol,Int} with a number for each variable (like `:COST`) to scale the variables and equations to similar quantities. Try to acchieve that the numerical model only has to solve numerical variables in a scale of 0.01 and 100. The following equation is used as a relationship between the real value, which is provided in the solution (real-VAR), and the numerical variable, which is used within the model formulation (VAR): real-VAR [`EUR`, `MW` or `MWh`] = scale[:VAR] ⋅ VAR.
-- `descriptor`: String with the name of this paricular model like "kmeans-10-co2-500"
 - `print_flag`: Bool to decide if a summary of the Optimization result should be printed.
 - `optimizer_config`: Each Symbol and the corresponding value in the Dictionary is passed on to the `with_optimizer` function in addition to the `optimizer`. For Gurobi an example Dictionary could look like `Dict{Symbol,Any}(:Method => 2, :OutputFlag => 0, :Threads => 2)` more information can be found in the optimizer specific documentation.
 - `round_sigdigits`: Can be used to round the values of the result to a certain number of `sigdigits`.
+- `time_series_config`: The configuration used to obtain the clustering result.
 """
 function run_opt(ts_data::ClustData,
                  opt_data::OptDataCEP,
                  optimizer::DataType;
                  kwargs...)
   #Setup the OptConfig based on the data input and
-  config=OptConfig(ts_data, opt_data; optimizer=optimizer, kwargs...)
+  config=OptConfig(ts_data, opt_data, optimizer; kwargs...)
 
   #Run the optimization problem
   run_opt(ts_data, opt_data, config)

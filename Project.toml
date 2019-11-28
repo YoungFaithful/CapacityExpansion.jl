@@ -4,7 +4,7 @@ keywords = ["energy", "capacity", "JuMP", "optimization"]
 license = "MIT"
 desc = "Capacity Expansion Problem Formulation for Julia"
 author = ["Elias Kuepper <elias.kuepper@rwth-aachen.de>"]
-version = "0.1.7"
+version = "0.1.8"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

@@ -109,9 +109,10 @@ ts_clust_result_2 = run_clust(ts_input_data; method="kmedoids", representation="
 using Clp
 optimizer=Clp.Optimizer
 # Some extra data for nodes, costs and so on:
-cep_data = load_cep_data_provided(ts_clust_data.region)
+opt_data = load_cep_data_provided(ts_clust_data.region)
 # Running a simple CEP with a co2-limit of 1000 kg/MWh
-co2_result = run_opt(ts_clust_data,cep_data,optimizer;descriptor="co2",limit_emission=Dict{String,Number}("CO2/electricity"=>200))
+opt_config = OptConfig(ts_clust_data,opt_data,optimizer;descriptor="co2",limit_emission=Dict{String,Number}("CO2/electricity"=>200))
+co2_result = run_opt(ts_clust_data, opt_data, opt_config)
 # co2_result.
 gen_var=co2_result.variables["GEN"]
 # get all operating decision variables (GEN)
