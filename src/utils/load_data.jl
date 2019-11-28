@@ -273,11 +273,11 @@ end
     load_cep_data_provided(region::String)
 Loading from .csv files in a the folder `../CEP/data/{region}/`
 Follow instructions preparing your own data:
--`region::String`: name of state or region data belongs to
--`costs::OptVariable`: `costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
--`techs::OptVariable`: `techs[tech] - OptDataCEPTech`
--`nodes::OptVariable`: `nodes[tech,node] - OptDataCEPNode`
--`lines::OptVarible`: `lines[tech,line] - OptDataCEPLine`
+- `region::String`: name of state or region data belongs to
+- `costs::OptVariable`: `costs[tech,node,year,account,impact] - annulized costs [USD in USD/MW_el, CO2 in kg-CO₂-eq./MW_el]`
+- `techs::OptVariable`: `techs[tech] - OptDataCEPTech`
+- `nodes::OptVariable`: `nodes[tech,node] - OptDataCEPNode`
+- `lines::OptVarible`: `lines[tech,line] - OptDataCEPLine`
 for regions:
 - `"GER_1"`: Germany 1 node
 - `"GER_18"`: Germany 18 nodes

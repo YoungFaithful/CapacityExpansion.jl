@@ -431,7 +431,7 @@ function setup_opt_simplestorage!(cep::OptModelCEP,
     techs = opt_data.techs
 
     ## INTRASTORAGE ##
-    # Limit the storage of the energy part of the battery to its installed power
+    # Limit the stored energy of the battery to its energy capacity
     push!(cep.info,"INTRASTOR[carrier,tech, t, k, node] ≤ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_storage, t, k")
     @constraint(cep.model, [node=set["nodes"]["all"], tech=set["tech"]["storage"], t=set["time_T_period"]["all"], k=set["time_K"]["all"]], cep.model[:INTRASTOR][tech, techs[tech].input["carrier"], t,k,node]<=sum(cep.model[:CAP][tech, infrastruct, node] for infrastruct=set["infrastruct"]["all"])*scale[:CAP]/scale[:INTRASTOR])
     # Set storage level at beginning and end of day equal

@@ -71,9 +71,9 @@ An overview is provided in the following table:
 | enforce an emission-limit                          | kg-impact/MWh-carrier | `limit_emission`               | Dict{String,Number}(impact/carrier=>value)                                      | ::Dict{String,Number}       | Dict{String,Number}()           |
 | including existing infrastructure (no extra costs) and limit infrastructure   | -                | `infrastructure`| Dict{String,Array}("existing"=>[tech-groups...], "limit"=>[tech-groups...])                             | ::Dict{String,Array}       | Dict{String,Array}("existing"=>["demand"])         |
 | type of storage implementation                     | -                | `storage_type`                 | "none", "simple" or "seasonal"              | ::String       | "none"        |
-| allowing conversion (necessary for storage)        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
+| allowing conversion between energy carriers        | -                | `conversion`            | `true` or `false`                               | ::Bool         | false         |
 | allowing demand                                    | -                | `demand`            | `true` or `false`                               | ::Bool         | true         |
-| allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | false         |
+| allowing dispatchable generation                   | -                | `dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing non dispatchable generation               | -                | `non_dispatchable_generation`            | `true` or `false`                               | ::Bool         | true         |
 | allowing transmission                              | -                | `transmission`            | `true` or `false`                               | ::Bool         | false         |
 | fix. installed capacities to dispatch problem               | -                | `fixed_design_variables`  | design variables from design run or nothing | ::OptVariables | nothing       |
@@ -90,7 +90,7 @@ A CapacityExpansion model can be run with or without the technology transmission
     If the technology `transmission` is not modeled (`transmission=false`), the transmission between nodes is not restricted, which is equivalent to a copperplate assumption.
 
 !!! note
-    Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission` and limit the total transmission `TRANS` to the values defined in the `lines.csv` file. If no new transmission should be setup, use the same values for existing transmission and the limit.
+    Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission`. This sets the existing transmission `TRANS` to the values defined in the `lines.csv` file in column `power_ex`, and limits the transmission by the values defined in `lines.csv` in the column `power_lim`. If no new transmission should be setup, use the same values for existing transmission(column `power_ex`) and the limit (column `power_lim`).
 ## Solver
 The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
 - `Clp` as an open source solver

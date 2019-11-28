@@ -145,7 +145,7 @@ Options to tweak the model are used to configure the `OptConfig`:
 - `demand`: Bool `true` or `false` for technology-group
 - `dispatchable_generation`: Bool `true` or `false` for technology-group
 - `non_dispatchable_generation`: Bool `true` or `false` for technology-group
-- `conversion`: Bool `true` or `false` for technology-group
+- `conversion`: Bool `true` or `false` for technology-group. Allows for conversion between different energy carriers. By default false, and by default true if storage is enabled.
 - `transmission`:Bool `true` or `false` for technology-group. If no transmission should be modeled, a 'copperplate' is assumed with no transmission restrictions between the nodes
 - `lost_load_cost`: Dictionary with numbers indicating the lost load price per carrier (e.g. `electricity` in price/MWh should be greater than 1e6), give Inf for no SLACK and LL (Lost Load - a variable for unmet demand by the installed capacities)
 - `lost_emission_cost`: Dictionary with numbers indicating the emission price/kg-emission (should be greater than 1e6), give Inf for no LE (Lost Emissions - a variable for emissions that will exceed the limit in order to provide the demand with the installed capacities)
@@ -159,10 +159,50 @@ Options to tweak the model are used to configure the `OptConfig`:
 function run_opt(ts_data::ClustData,
                  opt_data::OptDataCEP,
                  optimizer::DataType;
+<<<<<<< HEAD
                  kwargs...)
   #Setup the OptConfig based on the data input and
   config=OptConfig(ts_data, opt_data, optimizer; kwargs...)
 
+=======
+                 descriptor::String="",
+                 storage_type::String="none",
+                 demand::Bool=true,
+                 dispatchable_generation::Bool=true,
+                 non_dispatchable_generation::Bool=true,
+                 conversion::Bool=false,
+                 transmission::Bool=false,
+                 lost_load_cost::Dict{String,Number}=Dict{String,Number}(),
+                 lost_emission_cost::Dict{String,Number}=Dict{String,Number}(),
+                 limit_emission::Dict{String,Number}=Dict{String,Number}(),
+                 infrastructure::Dict{String,Array}=Dict{String,Array}("existing"=>["demand"],"limit"=>Array{String,1}()),
+                 scale::Dict{Symbol,Int}=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9),
+                 print_flag::Bool=true,
+                 optimizer_config::Dict{Symbol,Any}=Dict{Symbol,Any}(),
+                 round_sigdigits::Int=9,
+                 time_series_config::Dict{String,Any}=Dict{String,Any}())
+   # Activated seasonal or simple storage corresponds with storage
+   if storage_type=="seasonal"
+       storage=true
+       seasonalstorage=true
+       conversion = true
+   elseif storage_type=="simple"
+       storage=true
+       seasonalstorage=false
+       conversion = true
+   elseif storage_type =="none"
+       storage=false
+       seasonalstorage=false
+  else
+      storage=false
+      seasonalstorage=false
+      warn("String indicating `storage_type` not identified as 'none', 'seasonal' or 'simple' → no storage")
+   end
+  #The limit_dir is organized as two dictionaries in each other: limit_dir[impact][carrier]='impact/carrier' The first dictionary has the keys of the impacts, the second level dictionary has the keys of the carriers and value of the limit per carrier
+  limit_emission=get_limit_dir(limit_emission)
+  #Setup the config file based on the data input and
+  config=set_config_cep(opt_data; descriptor=descriptor, limit_emission=limit_emission, lost_load_cost=lost_load_cost, lost_emission_cost=lost_emission_cost, infrastructure=infrastructure, demand=demand, non_dispatchable_generation=non_dispatchable_generation, dispatchable_generation=dispatchable_generation, storage=storage, conversion=conversion, seasonalstorage=seasonalstorage, transmission=transmission, scale=scale, print_flag=print_flag, optimizer_config=optimizer_config, round_sigdigits=round_sigdigits, region=opt_data.region, time_series=Dict{String,Any}("years" => ts_data.years, "K" => ts_data.K, "T"=> ts_data.T, "config" => time_series_config, "weights"=>ts_data.weights, "delta_t"=>ts_data.delta_t))
+>>>>>>> 256d29f7c265cd138f3e952ba834998de00412fe
   #Run the optimization problem
   run_opt(ts_data, opt_data, config)
 end # run_opt
