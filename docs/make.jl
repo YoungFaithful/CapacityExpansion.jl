@@ -13,7 +13,7 @@ makedocs(sitename="CapacityExpansion.jl",
         "Teaching" => ["teaching.md", "homework.md"],
         ],
     format = Documenter.HTML(assets = [
-        "assets/clust_for_opt_text.svg",
+        "assets/cep_text.svg",
         "assets/opt_cep.svg",
         "assets/workflow.svg",
         "assets/GER_1.svg",
