@@ -121,7 +121,8 @@ function load_cep_data_nodes(data_path::String,
             #name
             name=node
             #value
-            power_ex=tab[(:node,node)][(:infrastruct,"ex"),Symbol(tech)][1]
+            data=tab[(:node,node)][(:infrastruct,"ex"),Symbol(tech)]
+            power_ex= isempty(data) ? 0 : data[1]
             data=tab[(:node,node)][(:infrastruct,"lim"),Symbol(tech)]
             power_lim= isempty(data) ? Inf : data[1]
             #region
