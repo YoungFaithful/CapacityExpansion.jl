@@ -1,0 +1,3 @@
+node,region,infrastruct,lat,lon,|,pv,wind,coal,oil,gas,bat_e,bat_in,bat_out,h2_e,h2_in,h2_out,trans,demand
+california,CA,ex,36.782142,-119.415653,|,9857,5741,101,539,45321,115,98,98,0,0,0,0,1
+california,CA,lim,36.782142,-119.415653,|,1000000,1000000,100000,100000,100000,1000000,1000000,100000,10000000000,1000000,1000000,0,1

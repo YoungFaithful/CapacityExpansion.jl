@@ -1,0 +1,3 @@
+node,infrastruct,region,lat,lon,|,pv,wind,coal,gas,oil,bat_e,bat_in,bat_out,h2_e,h2_in,h2_out,trans,demand
+germany,ex,GER,51.167261,10.450738,|,32312,31827,45027,22370,7004,0,0,0,0,0,0,0,1
+germany,lim,GER,51.167261,10.450738,|,1000000,1000000,100000,100000,100000,1000000,1000000,1000000,10000000000,1000000,1000000,0,1
