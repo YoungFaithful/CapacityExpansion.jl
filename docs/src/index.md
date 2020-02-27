@@ -54,3 +54,8 @@ Install e.g.:
 using Pkg
 Pkg.add("Clp")
 ```
+
+## Links
+- [Documentation of the stable version](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
+- [Documentation of the development version](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
+- [Contributing guidelines](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/CONTRIBUTING.md)

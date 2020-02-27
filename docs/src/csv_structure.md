@@ -70,7 +70,7 @@ The package provides data for:
 `techs.yml` needs to have the following structure:
 - `tech_groups`: defines parent groups for techs or other tech_groups
 - `techs`: defines the technologies, the elements are used to declare the dimension `tech`
-We allow technologies to have parents to reduce unnecessary and mistake enabling repitions within the `techs.yml`-file. The information of the single techs is combined with the information provided from their parent tech_groups. One technology can have multiple tech_groups, if the parant has a parant. The combined information must contain:
+We allow technologies to have parents to reduce unnecessary and mistake enabling repetitions within the `techs.yml`-file. The information of the single techs is combined with the information provided from their parent tech_groups. One technology can have multiple tech_groups, if the parent has a parent. The combined information must contain:
 - `name`: A detailed description of the technology
 - `tech_group`: a technology-group that the technology belongs to. Groups can be: `demand`, `generation`, `dispatchable_generation`, `non_dispatchable_generation`, `storage`, `conversion`, `transmission`
 - `plant_lifetime`: the physical expected lifetime of this technologies plant [a]
@@ -78,8 +78,8 @@ We allow technologies to have parents to reduce unnecessary and mistake enabling
 - `discount_rate`: discount rate for technology [a]
 - `structure`: `node` or `line` depending on the structure of the technology
 - `unit`: the unit that the capacity of the technology scales with. It can be `power`[MW] or `energy`[MWh]
-- `input`: the input can be a `carrier` like e.g. electricity `carrier: electricity, a `timeseries` like e.g. `timeseries: demand_electricity`, or a `fuel` like e.g. `fuel: gas`
-The information can conatin:
+- `input`: the input can be a `carrier` like e.g. electricity, a `timeseries` like e.g. `timeseries: demand_electricity`, or a `fuel` like e.g. `fuel: gas`
+The information can contain:
 - `constraints`: like an `efficiency` like e.g. `efficiency: 0.53` or `cap_eq` (e.g. discharge capacity is same as charge capacity) `cap_eq: bat_in`
 
 ### lines.csv
@@ -91,5 +91,5 @@ The information can conatin:
 
 |`line`|`node_start`|`node_end`|`reactance`|`resistance`|`power_ex`|`power_lim`|`voltage`|`circuits`|`length`|
 |-------|------------|----------|-----------|------------|----------|-----------|---------|----------|--------|
-|[line...]|`node` - line starts| `node` - line ends| reactance| resistance| exisitng capacity in MW | capacity limit in MW| voltage or description| number of circuits included| length in km|
+|[line...]|`node` - line starts| `node` - line ends| reactance| resistance| existing capacity in MW | capacity limit in MW| voltage or description| number of circuits included| length in km|
 |...| ...| ...|...| ...|...| ...| ...|...| ...|

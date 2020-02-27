@@ -1,6 +1,6 @@
 Optimization Problem Formulation
 =========
-Here, we describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the datatypes within the `OptDataCEP` and how to access it.
+First, we describe how to load provided or your own non time-series dependent data as `OptDataCEP`. Second, we describe the data types within the `OptDataCEP` and how to access it.
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -34,7 +34,7 @@ The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=
 | time K           | numeration of the representative periods                              |
 | time T period    | numeration of the time intervals within a period                      |
 | time T point     | numeration of the time points within a period                          |
-| time I period    | numeration of the time invervals of the full input data periods       |
+| time I period    | numeration of the time intervals of the full input data periods       |
 | time I point     | numeration of the time points of the full input data periods           |
 | dir transmission | direction of the flow uniform with or opposite to the lines direction |
 

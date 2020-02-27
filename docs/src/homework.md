@@ -25,31 +25,9 @@ Due: May 6, 2019, at 10pm
 
 Julia is a relatively new programming language that is quickly being adopted for a variety of uses due to its fast run times with large operations. It has a robust set of optimization packages that make it ideal for electricity optimization problems. Elias Kuepper and Holger Teichgraeber have developed a package for Julia that runs a classic capacity expansion model, which we will be using for this problem set.
 
-In order to run julia-code you can choose from one of the two options:
-- use a local julia installation on your computer
-- use the julia installation on [Farmshare](https://web.stanford.edu/group/farmshare/cgi-bin/wiki/index.php/FarmShare_2):
+In order to run julia-code you can use a local julia installation on your computer.
 
 ## Part 1: Getting Set Up
-### Option A: Farmshare
-For those that do not wish to deal with setting it up on their own computer, this homework contains instructions for running this problem set on [Farmshare](https://web.stanford.edu/group/farmshare/cgi-bin/wiki/index.php/FarmShare_2), Stanford's shared free computing resource. You will need a command line interface (Terminal is the default on Mac; PuTTY, SecureCRT or equivalents on Windows). To view plots interactively, you will need XQuartz installed on Mac, or Xming (or MobaXterm or equivalent) on Windows. The order to get started is:
-1. Download and install your command line interface if you have a Windows computer (Terminal comes installed on Mac).
-2. Download and install an X-windows server (XQuartz on Mac, Xming on Windows)
-  1. You may need to re-login or restart your computer for it to work.
-3. Connect to farmshare
-  1. Launch your command line interface
-  2. Type `ssh -Y _YOURSUNETID_@rice.stanford.edu`  and follow the prompts
-4. Load and launch Julia by typing the following at the command line
-```
-module load julia
-julia
-```
-5. You can now copy-paste code from the `.jl` files provided into the Julia command line and they will run. When you call a plotting function, the plot should pop up on your computer.
-6. To upload or download files (e.g. the plots and csv files saved by the plotting functions) from farmshare it is easiest to have a SFTP client.
-  - Mac: Download and install `Fetch`
-  - Windows: Download and install `WinSCP`
-  - These will allow you to view your files on farmshare, as well as upload and download them. The SFTP client will have you login to Farmshare using the same credentials you used from the command line interface.
-
-### Option B: Your own computer
 1. Install julia via [these instructions](http://docs.junolab.org/latest/man/installation/) on your computer. This problem set is designed to run with a julia version 1.0 or higher. We also recommend to install the [Juno-IDE](https://junolab.org/).
 2. Open Atom
 3. File/Open Folder... (Ctr+Shift+O) and select your homework directory

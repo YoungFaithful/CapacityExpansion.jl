@@ -70,3 +70,8 @@ cep_data = load_cep_data_provided("GER_1")
 # run a simple
 run_opt(ts_input_data,cep_data,optimizer)
 ```
+
+## Links
+- [Documentation of the stable version](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
+- [Documentation of the development version](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
+- [Contributing guidelines](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/CONTRIBUTING.md)
