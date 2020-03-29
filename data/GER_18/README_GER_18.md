@@ -29,10 +29,21 @@ Germany 18 (dena) nodes, with existing infrastructure of year 2015, no nuclear
 - `h2`: Glenk, "Shared Capacity and Levelized Cost with Application to Power-to-Gas Technology", Glenk, 2019
 - `bat`: assumption of minimal var costs to avoid charge and discharge in same hour in case of energy excess
 
-## LCIA Recipe H Midpoint, GWP 100a
-- `pv, wind, trans, coal, gas, oil`: Ecoinvent v3.3
-- `bat_e`: "battery cell production, Li-ion, CN", 5.4933 kg CO2-Eq per 0.106 kWh, Ecoinvent v3.5
-- `h2_in`: "fuel cell CH future 2kW", Ecoinvent v3.3
+## CO2 - LCIA Recipe H Midpoint, GWP 100a
+cap - construction
+- `pv`: Jungbluth Niels, ESU-services, photovoltaic plant construction, 570kWp, multi-Si, on open ground, GLO, cut-off by classification, ecoinvent database version 3.3
+- `wind`: Christian Bauer, Paul Scherrer Institute, wind power plant, 800kW, fixed parts [unit], GLO, cut-off by classification, ecoinvent database version 3.3, Christian Bauer, Paul Scherrer Institute, wind power plant, 800kW, moving parts [unit], GLO, cut-off by classification, ecoinvent database version 3.3
+- `trans`: R. Jorge, T. Hawkins, und E. Hertwich. Life cycle assessment of electricity transmission and distribution—part 1: Power lines and cables. The International Journal of Life Cycle Assessment, 17(1):9–15, 2012. DOI: 10.1007/s11367-011-0335-1.
+- `coal`: Christian Bauer, Paul Scherrer Institute, hard coal power plant construction, 500MW, GLO, cut-off by classification, ecoinvent database version 3.3; Karin Treyer, Paul Scherrer Institute, electricity production, lignite, DE, cut-off by classification, ecoinvent database version 3.3
+- `gas`: Thomas Heck, Paul Scherrer Institute, gas power plant construction, 300MW electrical, GLO, cut-off by classification, ecoinvent database version 3.3
+- `oil`: Niels Jungbluth, ESU-services, oil power plant construction, 500MW, RER (Europe), cut-off by classification, ecoinvent database version 3.3
+- `bat_e`: Dominic Notter, Eidgenössische Materialprüf- und -forschungsanstalt, battery cell production, Li-ion, CN (China), cut-off by classification, ecoinvent database version 3.4 ;5.4933 kg CO2-Eq per 0.106 kWh
+- `h2_in`: Alex Primas, ETH Zürich, fuel cell production, polymer electrolyte membrane, 2kW electrical, future, CH, cut-off by classification, ecoinvent database version 3.3
+
+var - Electric power generation, transmission and distribution
+- `coal`: Karin Treyer, Paul Scherrer Institute, electricity production, lignite, DE, cut-off by classification, ecoinvent database version 3.3
+- `gas`: Karin Treyer, Paul Scherrer Institute, electricity production, natural gas, conventional power plant, DE, cut-off by classification, ecoinvent database version 3.3
+- `oil`: Karin Treyer, Paul Scherrer Institute, electricity production, oil, DE, cut-off by classification, ecoinvent database version 3.3
 
 ## Other
 - `trans`: efficiency is 0.9995 per km
