@@ -10,5 +10,5 @@ Testing is defined in the `/test/` directory:
 In order to run the test:
 ```julia
 using CapacityExpansion
-include(joinpath(CapacityExpansion.DIR),"test","cep.jl")
+include(joinpath(CapacityExpansion.DIR,"test","cep.jl"))
 ```
