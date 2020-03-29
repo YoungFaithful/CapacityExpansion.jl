@@ -26,7 +26,7 @@ bibliography: paper.bib
 
 # Summary
 
-``CapacityExpansion`` is a Julia [@Bezanson:2017] implementation of an input-data-scaling capacity expansion modeling framework. It provides an extensible, multi-carrier, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning and can be used to plan and validate energy systems at scales ranging from districts to entire global regions.
+``CapacityExpansion`` is a Julia [@Bezanson:2017] implementation of an scale-independent capacity expansion modeling framework. It provides an extensible, multi-carrier, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning and can be used to plan and validate energy systems at scales ranging from districts to entire global regions.
 ``CapacityExpansion`` provides simple integration of (clustered) time-series, geographical, cost, and technology input data. The software features a modular model setup and an investment and dispatch optimization that uses the JUMP modeling language [@Dunning:2017]. An interface is provided between the optimization result and further analysis.
 
 # Infrastructure planning in the energy sector
@@ -80,7 +80,7 @@ The [``PyPSA``](https://github.com/PyPSA/PyPSA) package in Python provides a fra
 
 The model [``DIETER``](http://www.diw.de/dieter) package provides a framework for capacity expansion planning using the proprietary GAMS software for optimization and `.xlsx`-files for data import and export.
 
-In combination ``TimeSeriesClustering`` and ``CapacityExpansion`` are the only packages written in Julia to intertwine aggregation methods of the input data and capacity expansion planning. E.g. time-series aggregation is gaining importance designing future energy systems with high shares of non-dispatchable generation. ``CapacityExpansion`` is the only package restricting the investment and dispatch of energy systems to meet policy targets like a CO2 or NOx target.  
+In combination ``TimeSeriesClustering`` and ``CapacityExpansion`` are the only packages written in Julia to intertwine aggregation methods of the input data and capacity expansion planning. E.g. time-series aggregation is gaining importance designing future energy systems with high shares of non-dispatchable generation.
 
 # Applications
 ``CapacityExpansion`` can be applied to plan and validate a variety of energy systems. The focus on time-series aggregation, storage modeling, and integration of multiple energy carriers makes it especially valuable for the planning and validation of future energy systems with higher shares of non-dispatchable generation and sector coupling technologies. The scale of the modeled energy system can range from districts to entire global regions and is only restricted by the computational complexity of the model.

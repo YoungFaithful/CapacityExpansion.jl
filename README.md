@@ -71,6 +71,10 @@ cep_data = load_cep_data_provided("GER_1")
 run_opt(ts_input_data,cep_data,optimizer)
 ```
 
+## Testing
+The model is being tested against a capacity expansion model presented in the paper [`On representation of temporal variability in electricity capacity
+planning models` by Merrick 2016](http://dx.doi.org/10.1016/j.eneco.2016.08.001). The model additionally tests itself against previously calculated data to detect new errors.
+
 ## Links
 - [Documentation of the stable version](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
 - [Documentation of the development version](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
