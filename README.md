@@ -11,6 +11,8 @@ The main purpose of the package is providing an extensible, simple-to-use genera
 2) Providing a model configuration, a modular model setup and model optimization.
 3) Providing an interface between the optimization result and further analysis.
 
+Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpansion.jl/stable) for details on how to use this software.
+
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
 |Model class          |	Capacity Expansion Problem                                                        |
