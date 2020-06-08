@@ -4,7 +4,7 @@
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
 [![Build Status](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
 
-[CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of a input-data-scaling capacity expansion modeling framework.
+[CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of an input-data-scaling capacity expansion modeling framework.
 
 The main purpose of the package is providing an extensible, simple-to-use generation and transmission capacity extension model that allows to address a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
 1) Providing a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
@@ -16,9 +16,9 @@ Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpa
 |Model Information		|  																																									|
 |---------------------|-----------------------------------------------------------------------------------|
 |Model class          |	Capacity Expansion Problem                                                        |
-|Model type						 | Optimization, Linear optimization model input-data depending energy system 				|
-|Carriers         | Electricity, Hydrogen, ...                                                           |
-|Technologies         |	dispathable and non-dispathable Generation, Conversion, Storage (seasonal), Transmission      |
+|Model type						| Optimization, Linear optimization model input-data depending energy system 				|
+|Carriers             | Electricity, Hydrogen, ...                                                           |
+|Technologies         |	dispatchable and non-dispatchable Generation, Conversion, Storage (seasonal), Transmission      |
 |Decisions 	          | investment and dispatch                                                           |
 |Objective						| Total system cost																																	|
 |Variables 						| Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions									|
