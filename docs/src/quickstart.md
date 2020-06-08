@@ -33,8 +33,8 @@ cep_data = load_cep_data_provided("GER_1")
 ```
 The `cep` is a `OptDataCEP` data struct.
 ```@repl workflow
-cep.region # the region of the input-data
-cep.costs # the information of costs as an `OptVariable` with 5 dimensions
+cep_data.region # the region of the input-data
+cep_data.costs # the information of costs as an `OptVariable` with 5 dimensions
 ```
 
 The third step is to setup the model and run the optimization.
