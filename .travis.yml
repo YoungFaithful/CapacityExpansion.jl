@@ -13,12 +13,19 @@ after_success:
 
 jobs:
   include:
-    - stage: "Testing"
+    - stage: "Testing version 1.0"
       julia: 1.0
       os: linux
       script:
         - julia --project=test/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));  Pkg.instantiate()'
-        - julia --project=test/ test/cep.jl
+        - julia --project=test/ test/runtests.jl
+      after_success:
+    - stage: "Testing version dev"
+      julia: dev
+      os: linux
+      script:
+        - julia --project=test/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));  Pkg.instantiate()'
+        - julia --project=test/ test/runtests.jl
       after_success:
     - stage: "Documentation"
       julia: 1.0
