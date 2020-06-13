@@ -4,14 +4,30 @@
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
 [![Build Status](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
 
+<<<<<<< HEAD
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://julialang.org/) implementation of an input-data-scaling capacity expansion modeling framework.
+=======
+[CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://www.juliaopt.com) implementation of an input-data-scaling capacity expansion modeling framework.
+>>>>>>> origin/paper
 
 The main purpose of the package is providing an extensible, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
 1) Providing a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
 2) Providing a model configuration, a modular model setup and model optimization.
 3) Providing an interface between the optimization result and further analysis.
 
+<<<<<<< HEAD
 Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpansion.jl/stable) for details on how to use this software.
+=======
+|Model Information		|  																																									|
+|---------------------|-----------------------------------------------------------------------------------|
+|Model class          |	Capacity Expansion Planning                                                        |
+|Model type						 | Optimization, Linear optimization model input-data depending energy system 				|
+|Carriers         | Electricity, Hydrogen, ...                                                           |
+|Technologies         |	dispathable and non-dispathable Generation, Conversion, Storage (seasonal), Transmission, Demand     |
+|Decisions 	          | investment and dispatch                                                           |
+|Objective						| Total system cost																																	|
+|Variables 						| Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions									|
+>>>>>>> origin/paper
 
 | Model Information |                                                                                            |
 | ----------------- | ------------------------------------------------------------------------------------------ |
@@ -83,3 +99,12 @@ cep_data = load_cep_data_provided("GER_1")
 # run a simple
 run_opt(ts_input_data,cep_data,optimizer)
 ```
+
+## Testing
+The model is being tested against a capacity expansion model presented in the paper [`On representation of temporal variability in electricity capacity
+planning models` by Merrick 2016](http://dx.doi.org/10.1016/j.eneco.2016.08.001). The model additionally tests itself against previously calculated data to detect new errors.
+
+## Links
+- [Documentation of the stable version](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
+- [Documentation of the development version](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
+- [Contributing guidelines](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/CONTRIBUTING.md)

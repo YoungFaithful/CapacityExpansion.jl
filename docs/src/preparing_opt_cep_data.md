@@ -1,6 +1,6 @@
 Preparing OptDataCEP
 =========
-Here, we first describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the datatypes within the `OptDataCEP` and how to access it.
+Here, we first describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the data types within the `OptDataCEP` and how to access it.
 
 ## Loading Provided Data
 `load_cep_data_provided` loads the non time-series dependent data for the `CEP` and can take the following regions:

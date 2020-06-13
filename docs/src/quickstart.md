@@ -39,7 +39,7 @@ cep_data.costs # the information of costs as an `OptVariable` with 5 dimensions
 
 The third step is to setup the model and run the optimization.
 ```@repl workflow
-result = run_opt(ts_input_data,cep_data,optimizer)
+result = run_opt(ts_input_data,cep_data,optimizer;optimizer_config=Dict{Symbol,Any}(:LogLevel => 0));
 ```
 
 The `result` is a `OptResult` data struct and contains the information of the optimization result.

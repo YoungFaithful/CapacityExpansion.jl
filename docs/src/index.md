@@ -11,17 +11,15 @@ The main purpose of the package is providing an extensible, simple-to-use genera
 2) Providing a model configuration, a modular model setup and model optimization.
 3) Providing an interface between the optimization result and further analysis.
 
-Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpansion.jl/stable) for details on how to use this software.
-
-| Model Information |                                                                                            |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| Model class       | Capacity Expansion Problem                                                                 |
-| Model type        | Optimization, Linear optimization model input-data depending energy system                 |
-| Carriers          | Electricity, Hydrogen, ...                                                                 |
-| Technologies      | dispatchable and non-dispatchable Generation, Conversion, Storage (seasonal), Transmission |
-| Decisions         | investment and dispatch                                                                    |
-| Objective         | Total system cost                                                                          |
-| Variables         | Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions                           |
+| Model Information |                                                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------ |
+| Model class       | Capacity Expansion Planning                                                                      |
+| Model type        | Optimization, Linear optimization model input-data depending energy system                       |
+| Carriers          | Electricity, Hydrogen, ...                                                                       |
+| Technologies      | dispathable and non-dispathable Generation, Conversion, Storage (seasonal), Transmission, Demand |
+| Decisions         | investment and dispatch                                                                          |
+| Objective         | Total system cost                                                                                |
+| Variables         | Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions                                 |
 
 | Input Data Depending  | Provided Input Data                                                                 |
 | --------------------- | ----------------------------------------------------------------------------------- |
@@ -29,6 +27,7 @@ Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpa
 | Geographic Resolution | aggregated regions                                                                  |
 | Time resolution       | hourly                                                                              |
 | Network coverage      | transmission, DCOPF load flow                                                       |
+
 
 The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for its time-series aggregation.
 
@@ -67,3 +66,8 @@ or using the `Pkg.add` function:
 using Pkg
 Pkg.add("Clp")
 ```
+
+## Links
+- [Documentation of the stable version](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
+- [Documentation of the development version](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
+- [Contributing guidelines](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/CONTRIBUTING.md)

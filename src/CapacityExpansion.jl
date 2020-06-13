@@ -31,6 +31,8 @@ module CapacityExpansion
           get_cep_slack_variables,
           get_cep_design_variables
 
+  const DIR = dirname(@__DIR__)
+  
   include(joinpath("utils","datastructs.jl"))
   include(joinpath("utils","optvariable.jl"))
   include(joinpath("utils","utils.jl"))

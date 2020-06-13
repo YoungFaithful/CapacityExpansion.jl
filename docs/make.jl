@@ -21,6 +21,7 @@ makedocs(
         ],
         "Optimization" => ["opt_cep.md", "results_opt.md", "opt_cep_examples.md"],
         "Teaching" => ["teaching.md", "homework.md"],
+        "Testing" => "testing.md",
     ],
     format = Documenter.HTML(
         assets = [
