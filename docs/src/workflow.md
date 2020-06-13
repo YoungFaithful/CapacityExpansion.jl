@@ -1,6 +1,20 @@
 Workflow
 =========
-Here, we describe the general workflow in more detail.
+Here, we describe the terminology and the general workflow in more detail.
+
+# Terminology
+
+We define the terminology used within this documentation, the code, and input data:
+- Technology: a technology that produces, consumes, converts or transports energy
+- Node: a site which can contain multiple technologies
+- Line: a link between two sites that can carry energy between those sites
+- Carrier: an energy carrier that groups technologies together into the same network, for example electricity or heat
+- Parameter: a fixed coefficient that enters into model equations
+- Variable: a variable coefficient (decision variable) that enters into model equations
+- Set: an index in the algebraic formulation of the equations
+- Constraint: an equality or inequality expression that constrains one or several variables
+
+# Workflow
 
 The workflow for this package can be broken down to:
 - Data Preparation

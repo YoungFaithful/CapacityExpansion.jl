@@ -1,6 +1,6 @@
 Optimization Problem Formulation
 =========
-Here, we describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the datatypes within the `OptDataCEP` and how to access it.
+First, we describe how to load provided or your own non time-series dependent data as `OptDataCEP`. Second, we describe the data types within the `OptDataCEP` and how to access it.
 
 ## General
 The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
@@ -34,7 +34,7 @@ The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=
 | time K           | numeration of the representative periods                              |
 | time T period    | numeration of the time intervals within a period                      |
 | time T point     | numeration of the time points within a period                          |
-| time I period    | numeration of the time invervals of the full input data periods       |
+| time I period    | numeration of the time intervals of the full input data periods       |
 | time I point     | numeration of the time points of the full input data periods           |
 | dir transmission | direction of the flow uniform with or opposite to the lines direction |
 
@@ -48,7 +48,7 @@ An overview of the variables used in the CEP is provided in the table:
 
 | name      | type | dimensions                 | unit                       | description   |
 |-----------|------|----------------------------|----------------------------|------------------|
-| COST      | `cv` | [account,impact,tech]      | EUR or USD, LCA-categories | Costs            |
+| COST      | `cv` | [account,impact,tech]      | EUR or USD, kg-LCA-categories| Costs            |
 | CAP       | `dv` | [tech,infrastruct,node]    | MW                         | Capacity         |
 | GEN       | `ov`  | [tech,carrier,t,k,node]   | MW                         | Generation     |
 | SLACK     | `sv`  | [carrier,t,k,node]        | MW                         | Power gap, not provided by installed CAP  |
@@ -58,6 +58,28 @@ An overview of the variables used in the CEP is provided in the table:
 | INTERSTOR | `ov` | [tech,carrier,i,node]      | MWh                        | Storage level between periods of the full time series  |
 | FLOW      | `ov` | [tech,carrier,dir,t,k,line]| MW                         | Flow over transmission line   |
 | TRANS     | `ov` | [tech,infrastruct,lines]   | MW                         | maximum capacity of transmission lines    |
+
+## Mathematical formulation
+!!! note
+    The mathematical formulation depends on the specific model configuration. The different configurations are introduced in [Running the Capacity Expansion Problem](@ref). The specific equations, which are applied are tracked by the model itself and can be viewed as explained in [Equations](@ref)
+
+We explain the equations used for of a simple optimization model with dispatchable generation, non-dispatchable generation, and a given demand:
+```math
+\text{min }&\sum_{acc,tech}COST_{acc,imp_{money},tech}  + \sum_{n} \left( LL_{n} \cdot c_{ll} \right) +\sum_{imp} \left(LE_{imp} \cdot c_{le,imp}\right)\\
+\text{s.t. }&\\
+COST_{acc, imp, tech} &= \sum_{t,k,n}GEN_{tech,car(tech),t,k,n}\cdot  w_{k} \cdot  \Delta  t_{t,k} \cdot  c_{acc,tech,imp}  \forall\ acc \in \{var\}\\
+COST_{acc,imp,tech} &= yf \cdot \sum_{n}CAP_{tech,'new', n} \cdot \left(c_{acc,tech,imp}\right)\quad \forall\  \ acc \in \{fix\},\\
+yf &= \frac{\sum_{t,k}\Delta t_{t,k}\cdot w_{k}}{8760h}\\
+CAP_{tech,'ex',n} &= existing{tech,n}\\
+0 &\leq GEN_{tech, car(tech), t, k, n} \leq \sum_{infr} CAP_{tech,infr,n} \quad\forall\  tech \in \mathbf{tech}_{disp}\\
+0 &\leq GEN_{tech, car(tech), t, k, n} \leq \sum_{infr} CAP_{tech,infr,n}*z_{tech,n,t,k} \quad\forall\  tech \in \mathbf{tech}_{nondisp}\\
+GEN_{tech, car(tech), t, k, n} = - \sum_{infr} CAP_{tech,infr,n} * z_{demand,n,t,k} \quad\forall\  tech \in \mathbf{tech}_{demand}\\
+\sum_{acc,tech} COST_{acc,imp,tech} &\leq LE_{imp} + lim_{imp}\cdot\sum_{n,t,k}\left(w_{k}\cdot \Delta t_{t,k} \cdot z_{demand,n,t,k}\right) \forall imp \in \mathbf{imp}_{lca}\\
+LL_{n} &= \sum_{t,k} \left( SLACK_{t,k,n}\cdot w_{k} \cdot \Delta t_{t,k}\right)\\
+0 &= \sum_{tech,n}GEN_{tech,t,k,n} + SLACK_{t,k,n}\\
+```
+
+The Objective Function minimizes total system costs, where `COST` is cost of different technologies, `LL` is lost load, `c_{ll}` the variable costs for lost load, `LE` is lost emissions, and `c_{le}` is the variable costs for lost emissions. The variable costs are calculated, where `GEN` is the generation, `\Delta t` is the time step length and `c_{acc,tech,imp}` is the variable cost per electric energy. The fixed costs are calculated, where `CAP` is the installed capacity and `yf` is the year factor, calculating how many years are represented by the original time series. The generation is limited for dispatchable and non dispatchable technologies by the installed capacities and an availability factor `z` for the non-dispatchable generation. The existing capacity is fixed to the provided input values. The demand is multiplied with the installed demand-capacity and fixed as a negative generation. The emissions are limited to the emission constraints, which can be exceeded by the lost emissions. The sum of generation and slack is fixed to zero. The slack is positive, if the dispatchable and non-dispatchable generation can not meet the demand.
 
 ## Running the Capacity Expansion Problem
 
