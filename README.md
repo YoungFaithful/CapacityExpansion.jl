@@ -50,7 +50,7 @@ using Pkg
 Pkg.add("CapacityExpansion")
 ```
 
-A solver is required to run an optimization as explained in section [Solver](@ref).
+A solver is required to run an optimization as explained in section [Solver](https://youngfaithful.github.io/CapacityExpansion.jl/stable/opt_cep/#Solver-1).
 Install e.g.:
 ```julia
 using Pkg
