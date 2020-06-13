@@ -6,4 +6,4 @@ Clp = "e2554f3b-3117-50c0-817c-e040a3ddf72d"
 [compat]
 Documenter = "^0.24.0"
 Plots = "^0.27.0"
-Clp = "^0.7.0"
+Clp = "^0.8.0"
