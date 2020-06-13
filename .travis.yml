@@ -20,8 +20,8 @@ jobs:
         - julia --project=test/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));  Pkg.instantiate()'
         - julia --project=test/ test/runtests.jl
       after_success:
-    - stage: "Testing version dev"
-      julia: dev
+    - stage: "Testing version 1.4"
+      julia: 1.4
       os: linux
       script:
         - julia --project=test/ -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd()));  Pkg.instantiate()'
