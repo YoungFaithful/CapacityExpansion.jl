@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Quickstart · CapacityExpansion.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link href="../assets/cep_text.svg" rel="icon" type="image/x-icon"/><link href="../assets/opt_cep.svg" rel="icon" type="image/x-icon"/><link href="../assets/workflow.svg" rel="icon" type="image/x-icon"/><link href="../assets/GER_1.svg" rel="icon" type="image/x-icon"/><link href="../assets/GER_18.svg" rel="icon" type="image/x-icon"/><link href="../assets/CA_1.svg" rel="icon" type="image/x-icon"/><link href="../assets/CA_14.svg" rel="icon" type="image/x-icon"/><link href="../assets/opt_cep_cap_plot.svg" rel="icon" type="image/x-icon"/><link href="../assets/preparing_clust_data_load.svg" rel="icon" type="image/x-icon"/><link href="../assets/preparing_clust_data_agg.svg" rel="icon" type="image/x-icon"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.png" alt="CapacityExpansion.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">CapacityExpansion.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Introduction</a></li><li class="is-active"><a class="tocitem" href>Quickstart</a><ul class="internal"><li><a class="tocitem" href="#Example-Workflow-1"><span>Example Workflow</span></a></li></ul></li><li><a class="tocitem" href="../workflow/">Workflow</a></li><li><span class="tocitem">Data</span><ul><li><a class="tocitem" href="../preparing_clust_data/">Preparing ClustData</a></li><li><a class="tocitem" href="../preparing_opt_cep_data/">Preparing OptDataCEP</a></li><li><a class="tocitem" href="../csv_structure/">Provided Data &amp; Personal Data Setup</a></li><li><a class="tocitem" href="../README_GER_18/">GER-18</a></li><li><a class="tocitem" href="../README_GER_1/">GER-1</a></li><li><a class="tocitem" href="../README_CA_14/">CA-14</a></li><li><a class="tocitem" href="../README_CA_1/">CA-1</a></li><li><a class="tocitem" href="../README_TX_1/">TX-1</a></li></ul></li><li><span class="tocitem">Optimization</span><ul><li><a class="tocitem" href="../opt_cep/">Optimization Problem Formulation</a></li><li><a class="tocitem" href="../results_opt/">Result</a></li><li><a class="tocitem" href="../opt_cep_examples/">Examples</a></li></ul></li><li><span class="tocitem">Teaching</span><ul><li><a class="tocitem" href="../teaching/">Teaching</a></li><li><a class="tocitem" href="../homework/">Homework: Modeling Exercise</a></li></ul></li><li><a class="tocitem" href="../testing/">Testing</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Quickstart</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quickstart</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/docs/src/quickstart.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Quick-Start-Guide-1"><a class="docs-heading-anchor" href="#Quick-Start-Guide-1">Quick Start Guide</a><a class="docs-heading-anchor-permalink" href="#Quick-Start-Guide-1" title="Permalink"></a></h1><p>This quick start guide introduces the main concepts of using CapacityExpansion. For more detail on the different functionalities that CapacityExpansion provides, please refer to the subsequent chapters of the documentation or the examples in the <a href="https://github.com/YoungFaithful/CapacityExpansion.jl/tree/master/examples">examples</a> folder.</p><p>Generally, the workflow consists of three steps:</p><ul><li>Data preparation of <code>ClustData</code></li><li>Data preparation of <code>OptDataCEP</code></li><li>Optimization</li></ul><h2 id="Example-Workflow-1"><a class="docs-heading-anchor" href="#Example-Workflow-1">Example Workflow</a><a class="docs-heading-anchor-permalink" href="#Example-Workflow-1" title="Permalink"></a></h2><p>After <code>CapacityExpansion</code> and a <a href="@ref">Solver</a> like, e.g. <code>Clp</code> are installed, you can use them by saying:</p><pre><code class="language-julia-repl">julia&gt; using CapacityExpansion
+
+julia&gt; using Clp
+
+julia&gt; optimizer=Clp.Optimizer # defines the optimizer used by CapacityExpansion
+Clp.Optimizer</code></pre><p>The first step is to load the time-series input data. The following example loads hourly wind, solar, and demand data for Germany (1 region) for the year <code>2016</code>. The hourly input-data is split into periods with 24 elements, which equals days.</p><pre><code class="language-julia-repl">julia&gt; ts_input_data = load_timeseries_data_provided(&quot;GER_1&quot;; T=24, years=[2016])
+┌ Warning: `getindex(df::DataFrame, col_ind::ColumnIndex)` is deprecated, use `df[!, col_ind]` instead.
+│   caller = #add_timeseries_data!#12(::Int64, ::Int64, ::Array{Int64,1}, ::Function, ::Dict{String,Array}, ::SubString{String}, ::DataFrames.DataFrame) at load_data.jl:132
+└ @ TimeSeriesClustering ~/.julia/packages/TimeSeriesClustering/3T6SG/src/utils/load_data.jl:132
+ClustData(&quot;GER_1&quot;, [2016], 366, 24, Dict{String,Array}(&quot;solar-germany&quot;=&gt;[0.0 0.0 … 0.0 0.0; 0.0 0.0 … 0.0 0.0; … ; 0.0 0.0 … 0.0 0.0; 0.0 0.0 … 0.0 0.0],&quot;wind-germany&quot;=&gt;[0.1429 0.1453 … 0.1329 0.1832; 0.1368 0.1758 … 0.1312 0.1802; … ; 0.1098 0.4955 … 0.1904 0.3122; 0.1254 0.4875 … 0.1865 0.3187],&quot;demand_electricity-germany&quot;=&gt;[41913.0 39121.0 … 45343.0 45600.0; 40331.0 38271.0 … 44402.0 44332.0; … ; 44439.0 48859.0 … 50278.0 48988.0; 41257.0 45600.0 … 47534.0 47641.0]), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], Dict{String,Array}(&quot;solar-germany&quot;=&gt;[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],&quot;wind-germany&quot;=&gt;[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],&quot;demand_electricity-germany&quot;=&gt;[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]), Dict{String,Array}(&quot;solar-germany&quot;=&gt;[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],&quot;wind-germany&quot;=&gt;[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],&quot;demand_electricity-germany&quot;=&gt;[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0  …  1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), [1.0 1.0 … 1.0 1.0; 1.0 1.0 … 1.0 1.0; … ; 1.0 1.0 … 1.0 1.0; 1.0 1.0 … 1.0 1.0], [1, 2, 3, 4, 5, 6, 7, 8, 9, 10  …  357, 358, 359, 360, 361, 362, 363, 364, 365, 366])</code></pre><p>The output <code>ts_input_data</code> is a <code>ClustData</code> data struct that contains the data and additional information about the data.</p><pre><code class="language-julia-repl">julia&gt; ts_input_data.data # a dictionary with the data.
+Dict{String,Array} with 3 entries:
+  &quot;solar-germany&quot;              =&gt; [0.0 0.0 … 0.0 0.0; 0.0 0.0 … 0.0 0.0; … ; 0.…
+  &quot;wind-germany&quot;               =&gt; [0.1429 0.1453 … 0.1329 0.1832; 0.1368 0.1758…
+  &quot;demand_electricity-germany&quot; =&gt; [41913.0 39121.0 … 45343.0 45600.0; 40331.0 3…
+
+julia&gt; ts_input_data.data[&quot;wind-germany&quot;] # the wind data (choose solar, `demand_electricity` as other options in this example)
+24×366 Array{Float64,2}:
+ 0.1429  0.1453  0.4843  0.4279  0.248   …  0.3359  0.0793  0.1329  0.1832
+ 0.1368  0.1758  0.4819  0.4186  0.2574     0.318   0.0803  0.1312  0.1802
+ 0.1232  0.2135  0.4792  0.407   0.2682     0.2949  0.0791  0.1337  0.1779
+ 0.1096  0.2466  0.4838  0.3976  0.2764     0.2739  0.0775  0.1363  0.1796
+ 0.0964  0.2818  0.4917  0.3873  0.2784     0.2688  0.0774  0.1382  0.1872
+ 0.082   0.3209  0.4862  0.3776  0.2797  …  0.2638  0.0781  0.1387  0.1971
+ 0.0706  0.3548  0.4784  0.3655  0.2796     0.2419  0.08    0.1401  0.2072
+ 0.0593  0.3921  0.471   0.3528  0.2828     0.2151  0.0818  0.1416  0.2151
+ 0.0438  0.422   0.4786  0.3432  0.2878     0.1813  0.0777  0.1347  0.2067
+ 0.0317  0.4536  0.475   0.3259  0.2823     0.1494  0.0653  0.1177  0.1981
+ ⋮                                       ⋱                          ⋮
+ 0.0116  0.5288  0.4637  0.248   0.2738  …  0.1112  0.1266  0.2099  0.2792
+ 0.0222  0.542   0.4832  0.262   0.2733     0.1005  0.1458  0.233   0.2855
+ 0.0346  0.5416  0.4879  0.2673  0.2672     0.0811  0.1578  0.2339  0.2864
+ 0.0497  0.5316  0.4804  0.2629  0.2585     0.0636  0.1626  0.2217  0.2926
+ 0.0669  0.521   0.4651  0.2549  0.2511     0.0521  0.1627  0.2086  0.2974
+ 0.0817  0.5103  0.4526  0.2448  0.2453  …  0.0472  0.1576  0.2014  0.2987
+ 0.0948  0.5017  0.446   0.2379  0.2403     0.0517  0.1493  0.1961  0.3033
+ 0.1098  0.4955  0.4387  0.2395  0.2356     0.0617  0.1431  0.1904  0.3122
+ 0.1254  0.4875  0.4349  0.2433  0.2316     0.0725  0.1376  0.1865  0.3187
+
+julia&gt; ts_input_data.K # number of periods
+366</code></pre><p>The second step is to include the optimization data, which is not time-series depending.</p><pre><code class="language-julia-repl">julia&gt; cep_data = load_cep_data_provided(&quot;GER_1&quot;)
+┌ Warning: `getindex(df::DataFrame, col_ind::ColumnIndex)` is deprecated, use `df[!, col_ind]` instead.
+│   caller = load_cep_data_nodes(::String, ::OptVariable{OptDataCEPTech,1,Tuple{Array{Any,1}},Tuple{Dict{Any,Int64}}}) at load_data.jl:118
+└ @ CapacityExpansion ~/build/YoungFaithful/CapacityExpansion.jl/src/utils/load_data.jl:118
+┌ Warning: `getindex(df::DataFrame, col_ind::ColumnIndex)` is deprecated, use `df[!, col_ind]` instead.
+│   caller = load_cep_data_costs(::String, ::OptVariable{OptDataCEPTech,1,Tuple{Array{Any,1}},Tuple{Dict{Any,Int64}}}, ::OptVariable{OptDataCEPNode,2,Tuple{Array{Any,1},Array{String,1}},Tuple{Dict{Any,Int64},Dict{String,Int64}}}) at load_data.jl:241
+└ @ CapacityExpansion ~/build/YoungFaithful/CapacityExpansion.jl/src/utils/load_data.jl:241
+OptDataCEP(&quot;GER_1&quot;, 5-dimensional OptVariable{Number,5,...} of type fv with index sets:
+    Dimension 1 - tech, Any[&quot;bat_in&quot;, &quot;bat_out&quot;, &quot;bat_e&quot;, &quot;h2_in&quot;, &quot;pv&quot;, &quot;trans&quot;, &quot;coal&quot;, &quot;gas&quot;, &quot;demand&quot;, &quot;wind&quot;, &quot;oil&quot;, &quot;h2_e&quot;, &quot;h2_out&quot;]
+    Dimension 2 - node, [&quot;germany&quot;]
+    Dimension 3 - year, [2015]
+    Dimension 4 - account, [&quot;cap_fix&quot;, &quot;var&quot;]
+    Dimension 5 - impact, [&quot;EUR&quot;, &quot;CO2&quot;]
+And data, a 13×1×1×2×2 Array{Number,5}:
+[:, :, 2015, &quot;cap_fix&quot;, &quot;EUR&quot;] =
+   8961.67479
+      0.0
+  25653.7085
+ 479782.071
+ 136926.376
+     51.0061474
+ 153702.673
+  29964.5882
+      0.0
+ 168417.541
+  38429.5834
+     68.4962783
+      0.0
+
+[:, :, 2015, &quot;var&quot;, &quot;EUR&quot;] =
+   0.01
+   0.0
+   0.0
+   1.9
+   0.0
+   0.0
+  10.708
+  86.564
+   0.0
+   0.0
+ 153.586
+   0.0
+   0.0
+
+[:, :, 2015, &quot;cap_fix&quot;, &quot;CO2&quot;] =
+     0.0
+     0.0
+  1658.35472
+ 96666.6667
+   160.233933
+     3.3275
+    13.8595556
+     1.2334
+     0.0
+    36.75
+     8.25
+     0.0
+     0.0
+
+[:, :, 2015, &quot;var&quot;, &quot;CO2&quot;] =
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+ 1217.49
+  728.71
+    0.0
+    0.0
+  874.6
+    0.0
+    0.0 , 1-dimensional OptVariable{OptDataCEPTech,1,...} of type fv with index sets:
+    Dimension 1 - tech, Any[&quot;bat_in&quot;, &quot;bat_out&quot;, &quot;bat_e&quot;, &quot;h2_in&quot;, &quot;pv&quot;, &quot;trans&quot;, &quot;coal&quot;, &quot;gas&quot;, &quot;demand&quot;, &quot;wind&quot;, &quot;oil&quot;, &quot;h2_e&quot;, &quot;h2_out&quot;]
+And data, a 13-element Array{OptDataCEPTech,1}:
+ OptDataCEPTech(&quot;Battery Charge&quot;, [&quot;conversion&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 25, 30, 0.04, 0.0640119628, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity_bat&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.97))
+ OptDataCEPTech(&quot;Battery Discharge&quot;, [&quot;conversion&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 25, 30, 0.04, 0.0640119628, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity_bat&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.97,&quot;cap_eq&quot;=&gt;&quot;bat_in&quot;))
+ OptDataCEPTech(&quot;Battery Storage&quot;, [&quot;storage&quot;, &quot;all&quot;], &quot;energy&quot;, &quot;node&quot;, 25, 30, 0.04, 0.0640119628, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity_bat&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity_bat&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.93))
+ OptDataCEPTech(&quot;Hydrogen Storage Charge&quot;, [&quot;conversion&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 15, 30, 0.04, 0.0899411004, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;hydrogen&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.83))
+ OptDataCEPTech(&quot;Photo Voltaic&quot;, [&quot;non_dispatchable_generation&quot;, &quot;generation&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 15, 30, 0.04, 0.0899411004, Dict{Any,Any}(&quot;timeseries&quot;=&gt;&quot;solar&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Transmission Line&quot;, [&quot;transmission&quot;, &quot;all&quot;], &quot;power&quot;, &quot;line&quot;, 80, 30, 0.04, 0.0578300991, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.9995))
+ OptDataCEPTech(&quot;Coal Plant&quot;, [&quot;dispatchable_generation&quot;, &quot;generation&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 45, 30, 0.04, 0.0578300991, Dict{Any,Any}(&quot;fuel&quot;=&gt;&quot;coal&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Gas Plant&quot;, [&quot;dispatchable_generation&quot;, &quot;generation&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 50, 30, 0.04, 0.0578300991, Dict{Any,Any}(&quot;fuel&quot;=&gt;&quot;gas&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Electricity demand&quot;, [&quot;demand&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 15, 30, 0.04, 0.0899411004, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;timeseries&quot;=&gt;&quot;demand_electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Onshore Wind&quot;, [&quot;non_dispatchable_generation&quot;, &quot;generation&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 15, 30, 0.04, 0.0899411004, Dict{Any,Any}(&quot;timeseries&quot;=&gt;&quot;wind&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Oil Plant&quot;, [&quot;dispatchable_generation&quot;, &quot;generation&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 40, 30, 0.04, 0.0578300991, Dict{Any,Any}(&quot;fuel&quot;=&gt;&quot;oil&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}())
+ OptDataCEPTech(&quot;Hydrogen Storage&quot;, [&quot;storage&quot;, &quot;all&quot;], &quot;energy&quot;, &quot;node&quot;, 25, 30, 0.04, 0.0640119628, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;hydrogen&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;hydrogen&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.99))
+ OptDataCEPTech(&quot;Hydrogen Storage Discharge&quot;, [&quot;conversion&quot;, &quot;all&quot;], &quot;power&quot;, &quot;node&quot;, 40, 30, 0.04, 0.0578300991, Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;hydrogen&quot;), Dict{Any,Any}(&quot;carrier&quot;=&gt;&quot;electricity&quot;), Dict{Any,Any}(&quot;efficiency&quot;=&gt;0.53,&quot;cap_eq&quot;=&gt;&quot;h2_in&quot;)), 2-dimensional OptVariable{OptDataCEPNode,2,...} of type fv with index sets:
+    Dimension 1 - tech, Any[&quot;bat_in&quot;, &quot;bat_out&quot;, &quot;bat_e&quot;, &quot;h2_in&quot;, &quot;pv&quot;, &quot;trans&quot;, &quot;coal&quot;, &quot;gas&quot;, &quot;demand&quot;, &quot;wind&quot;, &quot;oil&quot;, &quot;h2_e&quot;, &quot;h2_out&quot;]
+    Dimension 2 - node, [&quot;germany&quot;]
+And data, a 13×1 Array{OptDataCEPNode,2}:
+ OptDataCEPNode(&quot;germany&quot;, 0, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 32312, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 0, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 45027, 100000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 22370, 100000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 1, 1, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 31827, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 7004, 100000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 10000000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))
+ OptDataCEPNode(&quot;germany&quot;, 0, 1000000, &quot;GER&quot;, LatLon(lat=51.167261°, lon=10.450738°))    , 2-dimensional OptVariable{OptDataCEPLine,2,...} of type fv with index sets:
+    Dimension 1 - tech, String[]
+    Dimension 2 - line, String[]
+And data, a 0×0 Array{OptDataCEPLine,2})</code></pre><p>The <code>cep</code> is a <code>OptDataCEP</code> data struct.</p><pre><code class="language-julia-repl">julia&gt; cep_data.region # the region of the input-data
+&quot;GER_1&quot;
+
+julia&gt; cep_data.costs # the information of costs as an `OptVariable` with 5 dimensions
+5-dimensional OptVariable{Number,5,...} of type fv with index sets:
+    Dimension 1 - tech, Any[&quot;bat_in&quot;, &quot;bat_out&quot;, &quot;bat_e&quot;, &quot;h2_in&quot;, &quot;pv&quot;, &quot;trans&quot;, &quot;coal&quot;, &quot;gas&quot;, &quot;demand&quot;, &quot;wind&quot;, &quot;oil&quot;, &quot;h2_e&quot;, &quot;h2_out&quot;]
+    Dimension 2 - node, [&quot;germany&quot;]
+    Dimension 3 - year, [2015]
+    Dimension 4 - account, [&quot;cap_fix&quot;, &quot;var&quot;]
+    Dimension 5 - impact, [&quot;EUR&quot;, &quot;CO2&quot;]
+And data, a 13×1×1×2×2 Array{Number,5}:
+[:, :, 2015, &quot;cap_fix&quot;, &quot;EUR&quot;] =
+   8961.67479
+      0.0
+  25653.7085
+ 479782.071
+ 136926.376
+     51.0061474
+ 153702.673
+  29964.5882
+      0.0
+ 168417.541
+  38429.5834
+     68.4962783
+      0.0
+
+[:, :, 2015, &quot;var&quot;, &quot;EUR&quot;] =
+   0.01
+   0.0
+   0.0
+   1.9
+   0.0
+   0.0
+  10.708
+  86.564
+   0.0
+   0.0
+ 153.586
+   0.0
+   0.0
+
+[:, :, 2015, &quot;cap_fix&quot;, &quot;CO2&quot;] =
+     0.0
+     0.0
+  1658.35472
+ 96666.6667
+   160.233933
+     3.3275
+    13.8595556
+     1.2334
+     0.0
+    36.75
+     8.25
+     0.0
+     0.0
+
+[:, :, 2015, &quot;var&quot;, &quot;CO2&quot;] =
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+    0.0
+ 1217.49
+  728.71
+    0.0
+    0.0
+  874.6
+    0.0
+    0.0</code></pre><p>The third step is to setup the model and run the optimization.</p><pre><code class="language-julia-repl">julia&gt; result = run_opt(ts_input_data,cep_data,optimizer;optimizer_config=Dict{Symbol,Any}(:LogLevel =&gt; 0));
+┌ Warning: Limit is reached for techs [&quot;demand-germany&quot;]
+└ @ CapacityExpansion ~/build/YoungFaithful/CapacityExpansion.jl/src/utils/utils.jl:249
+[ Info: Solved Scenario : OPTIMAL min COST: 1.671e10 [EUR] ⇨ 33.03 [EUR per MWh] s.t.</code></pre><p>The <code>result</code> is a <code>OptResult</code> data struct and contains the information of the optimization result.</p><pre><code class="language-julia-repl">julia&gt; result.info[&quot;model&quot;] # the equations of the setup model
+19-element Array{String,1}:
+ &quot;&quot;
+ &quot;Variable COST[account, impact, tech] in EUR CO2 &quot;
+ &quot;Variable CAP[tech_n, infrastruct, nodes] ≥ 0 in MW&quot;
+ &quot;Variable GEN[tech_power, carrier, t, k, node] in MW&quot;
+ &quot;COST[&#39;var&#39;,impact,tech] = (1) ⋅ Σ_{t,k,node}GEN[tech, carrier_input, t, k, node]⋅ ts_weights[k] ⋅ ts_deltas[t,k]⋅ var_costs[tech,impact] ∀ impact, tech_demand&quot;
+ &quot;COST[&#39;cap_fix&#39;,impact,tech] = Σ_{t,k}(ts_weights ⋅ ts_deltas[t,k])/8760h ⋅ Σ_{node}CAP[tech,&#39;new&#39;,node] ⋅ cap_costs[tech,impact] ∀ impact, tech_demand&quot;
+ &quot;GEN[tech, carrier, t, k, node] = (-1) ⋅ Σ_{infrastruct} CAP[tech,infrastruct,node] * ts[tech-node,t,k] ∀ node, tech_demand, t, k&quot;
+ &quot;COST[&#39;var&#39;,impact,tech] = (1) ⋅ Σ_{t,k,node}GEN[tech, carrier_output, t, k, node]⋅ ts_weights[k] ⋅ ts_deltas[t,k]⋅ var_costs[tech,impact] ∀ impact, tech_non_dispatchable_generation&quot;
+ &quot;COST[&#39;cap_fix&#39;,impact,tech] = Σ_{t,k}(ts_weights ⋅ ts_deltas[t,k])/8760h ⋅ Σ_{node}CAP[tech,&#39;new&#39;,node] ⋅ cap_costs[tech,impact] ∀ impact, tech_non_dispatchable_generation&quot;
+ &quot;0 ≤ GEN[tech, carrier, t, k, node] ≤ Σ_{infrastruct}CAP[tech,infrastruct,node]*ts[tech-node,t,k] ∀ node, tech_generation{non_dispatchable}, t, k&quot;
+ &quot;COST[&#39;var&#39;,impact,tech] = (1) ⋅ Σ_{t,k,node}GEN[tech, carrier_output, t, k, node]⋅ ts_weights[k] ⋅ ts_deltas[t,k]⋅ var_costs[tech,impact] ∀ impact, tech_dispatchable_generation&quot;
+ &quot;COST[&#39;cap_fix&#39;,impact,tech] = Σ_{t,k}(ts_weights ⋅ ts_deltas[t,k])/8760h ⋅ Σ_{node}CAP[tech,&#39;new&#39;,node] ⋅ cap_costs[tech,impact] ∀ impact, tech_dispatchable_generation&quot;
+ &quot;0 ≤ GEN[tech, carrier, t, k, node] ≤ Σ_{infrastruct} CAP[tech,infrastruct,node] ∀ node, tech_dispatchable_generation, t, k&quot;
+ &quot;CAP[tech, &#39;ex&#39;, node] = existing infrastructure ∀ node, tech ∈ tech_group_ex&quot;
+ &quot;CAP[tech, &#39;ex&#39;, node] = 0  ∀ node, tech ∉ tech_group_ex&quot;
+ &quot;∑_{infrastuct} CAP[tech, infrastruct, node] &lt;= limit infrastructure ∀ tech_n, node&quot;
+ &quot;Σ_{tech,node}GEN[tech, carrier, t,k,node] + SLACK[carrier,t,k,node] = 0 ∀ t,k&quot;
+ &quot;Σ_{tech,node}GEN[tech, carrier, t,k,node] = 0 ∀ t,k&quot;
+ &quot;min Σ_{account,tech}COST[account,&#39;EUR&#39;,tech] + Σ_{node,carrier_ll} LL[carrier,node] ⋅ lost_load_cost[carrier]) +  Σ_{impact_le} LE[impact] ⋅ lost_emission_cost[impact] st. above&quot;
+
+julia&gt; result.status # the status of the optimization
+:OPTIMAL
+
+julia&gt; result.objective # the value of the objective
+1.6708870355646713e10
+
+julia&gt; result.variables[&quot;CAP&quot;] # the newly installed and existing capacities of the different technologies along the nodes. Other options are &quot;COST&quot; (the costs) and &quot;GEN&quot; (the generation)
+3-dimensional OptVariable{Float64,3,...} of type dv with index sets:
+    Dimension 1 - tech, [&quot;pv&quot;, &quot;coal&quot;, &quot;gas&quot;, &quot;demand&quot;, &quot;wind&quot;, &quot;oil&quot;]
+    Dimension 2 - infrastruct, [&quot;new&quot;, &quot;ex&quot;]
+    Dimension 3 - nodes, [&quot;germany&quot;]
+And data, a 6×2×1 Array{Float64,3}:
+[:, :, &quot;germany&quot;] =
+     0.0  0.0
+ 68521.0  0.0
+ 10966.0  0.0
+     0.0  1.0
+     0.0  0.0
+     0.0  0.0
+
+julia&gt; result.sets[&quot;tech&quot;][&quot;generation&quot;] # a `&quot;tech&quot;` (dimension) set of all `&quot;generation&quot;` (tech-group) within the model
+5-element Array{String,1}:
+ &quot;pv&quot;
+ &quot;coal&quot;
+ &quot;gas&quot;
+ &quot;wind&quot;
+ &quot;oil&quot;
+
+julia&gt; result.config[&quot;generation&quot;] # Detailed model configuration
+true</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Introduction</a><a class="docs-footer-nextpage" href="../workflow/">Workflow »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Thursday 27 August 2020 09:05">Thursday 27 August 2020</span>. Using Julia version 1.0.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
