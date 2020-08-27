@@ -1,0 +1,38 @@
+{
+    "description": "Code release for the publication in JOSS", 
+    "license": "MIT", 
+    "title": "CapacityExpansion: A capacity expansion modeling framework in Julia", 
+    "version": "v0.2.1", 
+    "upload_type": "software", 
+    "publication_date": "2020-08-27", 
+    "creators": [
+        {
+            "name": "Lucas Elias Kuepper",
+            "orcid": "0000-0002-1992-310X",
+            "affiliation": "Department of Energy Resources Engineering, Stanford University", 
+        }, 
+        {
+            "affiliation": "Department of Energy Resources Engineering, Stanford University", 
+            "name": "Holger Teichgraeber",
+            "orcid": "0000-0002-4061-2226"
+        }, 
+        {
+            "name": "Adam R. Brandt",
+            "orcid": "0000-0002-2528-1473",
+            "affiliation": "Department of Energy Resources Engineering, Stanford University", 
+        }
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/YoungFaithful/CapacityExpansion.jl/tree/v0.2.1", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.4003528", 
+            "relation": "isVersionOf"
+        }
+    ]
+}
