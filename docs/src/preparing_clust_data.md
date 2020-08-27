@@ -1,6 +1,6 @@
 Preparing ClustData
 =========
-Here, we first describe how to load provided time-series input data or your own time-series input data as `ClustData`. We second describe how to aggregate the loaded time-sereis input data.
+Here, we first describe how to load provided time-series input data or your own time-series input data as `ClustData`. We second describe how to aggregate the loaded time-series input data.
 
 ## Provided Data
 `load_timeseries_data_provided()` loads the data for a given `region` for which data is provided in this package.
@@ -19,7 +19,7 @@ For details refer to [TimeSeriesClustering](https://github.com/holgerteichgraebe
 load_timeseries_data
 ```
 ## Aggregation
-Time series aggregation can be applied to reduce the temporal dimension while (if done problem specific correctly) keeping output precise.
+Time series aggregation can be applied to reduce the temporal dimension while (if done problem-specific correctly) keeping output precise.
 Aggregation methods are explained in [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl)
 High encouragement to run a second stage validation step if you use aggregation on your model. [Second stage operational validation step](@ref)
 

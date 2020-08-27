@@ -8,11 +8,11 @@ We define the terminology used within this documentation, the code, and input da
 - Technology: a technology that produces, consumes, converts or transports energy
 - Node: a site which can contain multiple technologies
 - Line: a link between two sites that can carry energy between those sites
-- Carrier: an energy carrier that groups technologies together into the same network, for example electricity or heat
+- Carrier: an energy carrier that groups technologies together into the same network, for example, electricity or heat
 - Parameter: a fixed coefficient that enters into model equations
 - Variable: a variable coefficient (decision variable) that enters into model equations
 - Set: an index in the algebraic formulation of the equations
-- Constraint: an equality or inequality expression that constrains one or several variables
+- Constraint: equality or inequality expression that constrains one or several variables
 
 # Workflow
 
@@ -21,7 +21,7 @@ The workflow for this package can be broken down to:
 - Optimization
 
 ## Data Preparation
-The CEP needs two types of data
+CEP needs two types of data:
 - Time series data in the type `ClustData` - [Preparing ClustData](@ref)
 - Cost, node, (line), and technology data in the type `OptDataCEP` - [Preparing OptDataCEP](@ref)
 They are kept separate as just the time series dependent data is used to determine representative periods (clustering).

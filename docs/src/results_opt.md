@@ -10,7 +10,7 @@ OptResult
 
 ## Equations
 !!! note
-    The model tracks how it is setup and which equations are used. This can help you to understand the models exact configuration without looking up the source code.
+    The model tracks how it is set up and which equations are used. This can help you to understand the model's exact configuration without looking up the source code.
 
 The information of the model setup can be checked out the following way:
 ```@setup 4
@@ -35,10 +35,10 @@ get_cep_variables
 get_cep_slack_variables
 get_cep_design_variables
 ```
-The extraction of design variables is e.g. necessary for a [Second stage operational validation step](@ref), which validates the energy system design on a different time series.
+The extraction of design variables is, e.g. necessary for a [Second stage operational validation step](@ref), which validates the energy system design on a different time series.
 
 ## Printing information about the result
-The function `text_limit_emission` allows to print an information about all the emission limits applied:
+The function `text_limit_emission` allows to print information about all the emission limits applied:
 
 ```@docs
 CapacityExpansion.text_limit_emission

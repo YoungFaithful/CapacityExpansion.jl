@@ -6,7 +6,7 @@
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://julialang.org/) implementation of an input-data-scaling capacity expansion modeling framework.
 
-The main purpose of the package is providing an extensible, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
+The primary purpose of the package is providing an extensible, simple-to-use generation and transmission capacity expansion model that allows addressing a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
 1) Providing a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
 2) Providing a model configuration, a modular model setup and model optimization.
 3) Providing an interface between the optimization result and further analysis.
@@ -15,8 +15,8 @@ The main purpose of the package is providing an extensible, simple-to-use genera
 | ----------------- | ------------------------------------------------------------------------------------------------ |
 | Model class       | Capacity Expansion Planning                                                                      |
 | Model type        | Optimization, Linear optimization model input-data depending energy system                       |
-| Carriers          | Electricity, Hydrogen, ...                                                                       |
-| Technologies      | dispathable and non-dispathable Generation, Conversion, Storage (seasonal), Transmission, Demand |
+| Carriers          | Electricity, Hydrogen,...                                                                       |
+| Technologies      | dispatchable and non-dispatchable Generation, Conversion, Storage (seasonal), Transmission, Demand |
 | Decisions         | investment and dispatch                                                                          |
 | Objective         | Total system cost                                                                                |
 | Variables         | Cost, Capacities, Generation, Storage, Lost-Load, Lost-Emissions                                 |
@@ -55,8 +55,8 @@ using Pkg
 Pkg.add("CapacityExpansion")
 ```
 
-A solver is required to run an optimization as explained in section [Solver](@ref).
-Install e.g. `Clp` using the package mode:
+A solver is required to run an optimization, as explained in section [Solver](@ref).
+Install, e.g. `Clp` using the package mode:
 ```julia
 ]
 add Clp

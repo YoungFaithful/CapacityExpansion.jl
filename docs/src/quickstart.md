@@ -9,7 +9,7 @@ Generally, the workflow consists of three steps:
 - Optimization
 
 ## Example Workflow
-After `CapacityExpansion` and a [Solver](@ref) like e.g. `Clp` are installed, you can use them by saying:
+After `CapacityExpansion` and a [Solver](@ref) like, e.g. `Clp` are installed, you can use them by saying:
 ```@repl workflow
 using CapacityExpansion
 using Clp

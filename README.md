@@ -6,7 +6,7 @@
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://julialang.org/) implementation of an input-data-scaling capacity expansion modeling framework.
 
-The main purpose of the package is providing an extensible, simple-to-use generation and transmission capacity expansion model that allows to address a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
+The primary purpose of the package is providing an extensible, simple-to-use generation and transmission capacity expansion model that allows addressing a diverse set of research questions in the area of energy systems planning. The secondary purposes are:
 1) Providing a simple process to integrate (clustered) time-series input data, geographical input data, cost input data, and technology input data.
 2) Providing a model configuration, a modular model setup and model optimization.
 3) Providing an interface between the optimization result and further analysis.
@@ -17,7 +17,7 @@ Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpa
 | ----------------- | ------------------------------------------------------------------------------------------ |
 | Model class       | Capacity Expansion Problem                                                                 |
 | Model type        | Optimization, Linear optimization model input-data depending energy system                 |
-| Carriers          | Electricity, Hydrogen, ...                                                                 |
+| Carriers          | Electricity, Hydrogen,...                                                                 |
 | Technologies      | dispatchable and non-dispatchable Generation, Conversion, Storage (seasonal), Transmission |
 | Decisions         | investment and dispatch                                                                    |
 | Objective         | Total system cost                                                                          |
@@ -32,11 +32,11 @@ Please refer to the [documentation](https://YoungFaithful.github.io/CapacityExpa
 
 The package uses [TimeSeriesClustering](https://github.com/holgerteichgraeber/TimeSeriesClustering.jl) as a basis for its time-series aggregation.
 
-This package is developed by Elias Kuepper [@YoungFaithful](https://github.com/youngfaithful) and Holger Teichgraeber [@holgerteichgraeber](https://github.com/holgerteichgraeber).
+Elias Kuepper [@YoungFaithful](https://github.com/youngfaithful) and Holger Teichgraeber [@holgerteichgraeber](https://github.com/holgerteichgraeber) developed this package.
 
 ## Installation
 This package runs under julia v1.0 and higher.
-It depends on multiple packages, which are also listed in the [`Project.toml`](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/Project.toml). The packages are automatically installed by the julia package manager:
+It depends on multiple packages, which are also listed in the [`Project.toml`](https://github.com/YoungFaithful/CapacityExpansion.jl/blob/master/Project.toml). The julia package manager automatically installs the packages:
 - `JuMP.jl` - for the modeling environment
 - `CSV.jl` - for handling of `.csv`-Files
 - `DataFrames.jl` - for handling of tables
@@ -45,7 +45,7 @@ It depends on multiple packages, which are also listed in the [`Project.toml`](h
 - `FileIO` - for file accessing
 - `TimeSeriesClustering.jl` - for time-series data
 
-You can install `CapacityExpansion` using the package mode:
+Install `CapacityExpansion` using the package mode:
 ```julia
 ]
 add CapacityExpansion
@@ -56,7 +56,7 @@ using Pkg
 Pkg.add("CapacityExpansion")
 ```
 
-A solver is required to run an optimization as explained in section [Solver](https://youngfaithful.github.io/CapacityExpansion.jl/stable/opt_cep/#Solver-1).
+A solver is required to run an optimization, as explained in section [Solver](https://youngfaithful.github.io/CapacityExpansion.jl/stable/opt_cep/#Solver-1).
 Install e.g. `Clp` using the package mode:
 ```julia
 ]

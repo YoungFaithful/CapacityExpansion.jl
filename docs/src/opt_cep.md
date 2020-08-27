@@ -1,25 +1,25 @@
 Optimization Problem Formulation
 =========
-First, we describe how to load provided or your own non time-series dependent data as `OptDataCEP`. Second, we describe the data types within the `OptDataCEP` and how to access it.
+First, we describe how to load provided or your own non-time-series dependent data as `OptDataCEP`. Second, we describe the data types within the `OptDataCEP` and how to access it.
 
 ## General
-The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modeling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result analysis and diagram export in one open source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
+The capacity expansion problem (CEP) is designed as a linear optimization model. It is implemented in the algebraic modelling language [JUMP](http://www.juliaopt.org/JuMP.jl/latest/). The implementation within JuMP allows to optimize multiple models in parallel and handle the steps from data input to result-analysis and diagram export in one open-source programming language. The coding of the model enables scalability based on the provided data input, single command based configuration of the setup model, result and configuration collection for further analysis and the opportunity to run design and operation in different optimizations.
 
 ![Plot](assets/opt_cep.svg)
 
-The basic idea for the energy system is to have a spacial resolution of the energy system in discrete nodes. Each node has demand, non-dispatchable generation, dispatachable generation and storage capacities of varying technologies connected to itself. The different energy system nodes are interconnected with each other by transmission lines.
+The basic idea for the energy system is to have a spatial resolution of the energy system in discrete nodes. Each node has demand, non-dispatchable generation, dispatchable generation and storage capacities of varying technologies connected to itself. The different energy system nodes are interconnected with each other by transmission lines.
 The model is designed to minimize social costs by minimizing the following objective function:
 
 ```math
 min \sum_{account,tech}COST_{account,'EUR/USD',tech} + \sum LL \cdot  cost_{LL} + LE \cdot  cos_{LE}
-```
+`"
 
 ## Sets
-The models scalability is relying on the usage of sets. The elements of the sets are extracted from the input data and scale the different variables. An overview of the sets is provided in the table. Depending on the models configuration the necessary sets are initialized.
+The model's scalability is relying on the usage of sets. The elements of the sets are extracted from the input data and scale the different variables. An overview of the sets is provided in the table. Depending on the model's configuration the necessary sets are initialized.
 
 The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=[elements...]`, where:
 - `tech_name` is the name of the dimension like e.g. `tech`, or `node`
-- `tech_group` is the name of a group of elements within each dimension like e.g. `["all", "generation"]`. The group `'all'` always contains all elements of the dimension
+- `tech_group` is the name of a group of elements within each dimension like e.g. `["all", "generation"]`. The group "all" always contains all elements of the dimension
 - `[elements...]` is the Array with the different elements like `["pv", "wind", "gas"]`
 
 | name             | description                                                           |
@@ -36,7 +36,7 @@ The sets are setup as a dictionary and organized as `set[tech_name][tech_group]=
 | time T point     | numeration of the time points within a period                          |
 | time I period    | numeration of the time intervals of the full input data periods       |
 | time I point     | numeration of the time points of the full input data periods           |
-| dir transmission | direction of the flow uniform with or opposite to the lines direction |
+| dir transmission | direction of the flow uniform with or opposite to the direction of the line |
 
 ## Variables
 The variables can have different types:
@@ -77,14 +77,14 @@ GEN_{tech, car(tech), t, k, n} = - \sum_{infr} CAP_{tech,infr,n} * z_{demand,n,t
 \sum_{acc,tech} COST_{acc,imp,tech} &\leq LE_{imp} + lim_{imp}\cdot\sum_{n,t,k}\left(w_{k}\cdot \Delta t_{t,k} \cdot z_{demand,n,t,k}\right) \forall imp \in \mathbf{imp}_{lca}\\
 LL_{n} &= \sum_{t,k} \left( SLACK_{t,k,n}\cdot w_{k} \cdot \Delta t_{t,k}\right)\\
 0 &= \sum_{tech,n}GEN_{tech,t,k,n} + SLACK_{t,k,n}\\
-```
+`"
 
-The Objective Function minimizes total system costs, where `COST` is cost of different technologies, `LL` is lost load, `c_{ll}` the variable costs for lost load, `LE` is lost emissions, and `c_{le}` is the variable costs for lost emissions. The variable costs are calculated, where `GEN` is the generation, `\Delta t` is the time step length and `c_{acc,tech,imp}` is the variable cost per electric energy. The fixed costs are calculated, where `CAP` is the installed capacity and `yf` is the year factor, calculating how many years are represented by the original time series. The generation is limited for dispatchable and non dispatchable technologies by the installed capacities and an availability factor `z` for the non-dispatchable generation. The existing capacity is fixed to the provided input values. The demand is multiplied with the installed demand-capacity and fixed as a negative generation. The emissions are limited to the emission constraints, which can be exceeded by the lost emissions. The sum of generation and slack is fixed to zero. The slack is positive, if the dispatchable and non-dispatchable generation can not meet the demand.
+The Objective Function minimizes total system costs, where `COST` is the cost of different technologies, 'LL` is lost load, `c_{ll}` the variable costs for lost load, `LE` is lost emissions, and `c_{le}` is the variable costs for lost emissions. The variable costs are calculated, where `GEN` is the generation, `\Delta t` is the time step length and `c_{acc,tech,imp}` is the variable cost per electric energy. The fixed costs are calculated, where `CAP` is the installed capacity and `yf` is the year factor, calculating how many years are represented by the original time series. The generation is limited for dispatchable and non-dispatchable technologies by the installed capacities and an availability factor `z` for the non-dispatchable generation. The existing capacity is fixed to the provided input values. The demand is multiplied with the installed demand-capacity and fixed as a negative generation. The emissions are limited to the emission constraints, which can be exceeded by the lost emissions. The sum of generation and slack is fixed to zero. The slack is positive if the dispatchable and non-dispatchable generation can not meet the demand.
 
 ## Running the Capacity Expansion Problem
 
 !!! note
-    The CEP model can be run with many configurations. The configurations themselves don't mess with each other though the provided input data must fulfill the ability to have e.g. lines in order for transmission to work.
+    The CEP model can be run with many configurations. The configurations themselves don't mess with each other through the provided input data must fulfil the ability to have, e.g. lines in order for transmission to work.
 
 An overview is provided in the following table:
 
@@ -105,18 +105,18 @@ An overview is provided in the following table:
 They can be applied in the following way:
 ```@docs
 run_opt
-```
+`"
 ## Transmission
-A CapacityExpansion model can be run with or without the technology transmission.
+A CapacityExpansion model can be run with or without technology transmission.
 !!! note
-    If the technology `transmission` is not modeled (`transmission=false`), the transmission between nodes is not restricted, which is equivalent to a copperplate assumption.
+    If the technology `transmission` is not modelled (`transmission=false`), the transmission between nodes is not restricted, which is equivalent to a copperplate assumption.
 
 !!! note
     Include `transmission=true` and `infrastructure = Dict{String,Array}("existing"=>[...,"transmission"], "limit"=>[...,"transmission"])` to model existing `transmission`. This sets the existing transmission `TRANS` to the values defined in the `lines.csv` file in column `power_ex`, and limits the transmission by the values defined in `lines.csv` in the column `power_lim`. If no new transmission should be setup, use the same values for existing transmission(column `power_ex`) and the limit (column `power_lim`).
 ## Solver
-The package provides no `optimizer` and a solver has to be added separately. For the linear optimization problem suggestions are:
-- `Clp` as an open source solver
-- `Gurobi` as a proprietary solver with free academic licenses. Gurobi is faster than Clp and we prefer it in the academic setting.
+The package provides no `optimizer`, and a solver has to be added separately. For the linear optimization problem suggestions are:
+- `Clp` as an open-source solver
+- `Gurobi` as a proprietary solver with free academic licenses. Gurobi is faster than Clp, and we prefer it in the academic setting.
 - `CPLEX` as an alternative proprietary solver
 
 Install the corresponding julia-package for the solver and call its `optimizer` like e.g.:
@@ -125,15 +125,15 @@ using Pkg
 Pkg.add("Clp")
 using Clp
 optimizer=Clp.Optimizer
-```
+`"
 
 ## Solver Configuration
-Depending on the Solver different solver configurations are possible. The information is always provided as `Dict{Symbol,Any}`. The keys of the dictionary are the parameters and the values of the dictionary are the values passed to the solver.
+Depending on the Solver, different solver configurations are possible. The information is always provided as `Dict{Symbol,Any}`. The keys of the dictionary are the parameters and the values of the dictionary are the values passed to the solver.
 
-For example the `Gurobi` solver can be configured to have no OutputFlag and run on two threads (per julia thread) the following way:
+For example, the `Gurobi` solver can be configured to have no OutputFlag and run on two threads (per julia thread) the following way:
 ```julia
 optimizer_config=Dict{Symbol,Any}(:OutputFlag => 0, :Threads => 2)
-```
+`"
 Further information on possible keys for Gurobi can be found at [Gurobi parameter description](https://www.gurobi.com/documentation/8.1/refman/parameter_descriptions.html).
 
 ## Scaling
@@ -155,7 +155,7 @@ Create a dictionary with the new scaling parameters for EACH variable and includ
 ```julia
 scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
 scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
-```
+`"
 
 ### Adding another variable
 - Extend the default `scale`-dictionary in the `src/optim_problems/run_opt`-file to include the new variable as well.

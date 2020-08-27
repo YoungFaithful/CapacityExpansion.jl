@@ -1,9 +1,9 @@
 Preparing OptDataCEP
 =========
-Here, we first describe how to load provided non time-series dependent data or your non time-series dependent data as `OptDataCEP`. We second describe the data types within the `OptDataCEP` and how to access it.
+Here, we first describe how to load provided non-time-series dependent data or your non-time-series dependent data as `OptDataCEP`. We second describe the data types within the `OptDataCEP` and how to access it.
 
 ## Loading Provided Data
-`load_cep_data_provided` loads the non time-series dependent data for the `CEP` and can take the following regions:
+`load_cep_data_provided` loads the non-time-series dependent data for the `CEP` and can take the following regions:
 - `GER`: Germany
 - `CA`: California
 - `TX`: Texas
@@ -40,7 +40,7 @@ Indexing is provided similar to Arrays:
 ```@example 2
 cep_data.costs["pv","germany",2015,"cap_fix","EUR"]
 ```
-The axes are named and the axes can be called using the basic axes function and providing the sets name:
+The axes are named, and the axes can be called using the basic axes function and providing the sets name:
 ```@example 2
 axes(cep_data.costs,"tech")
 ```

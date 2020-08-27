@@ -58,19 +58,19 @@ The package provides data for:
 !!! note
     The currently supported technology-groups are
     - `demand`: For example the electricity demand
-    - `non_dispatchable_generation`: For generation technologies like e.g. PV, wind
+    - `non_dispatchable_generation`: For generation technologies like, e.g. PV, wind
     - `dispatchable_generation`: For generation technologies like gas
-    - `storage`: A technology that stores e.g. electricity or hydrogen
+    - `storage`: A technology that stores, e.g. electricity or hydrogen
     - `conversion`: A technology that converts from one carrier to another
     - `transmission`: For transmission technologies that have no capacity (`CAP`) per `node`, but capacities (`TRANS`)  per `line`
 
 !!! note
-    The implementation of storage typically needs the conversion from one carrier like electricity to another carrier like hydrogen. The integration of a carrier technology allows more complex energy systems. A single storage technology like hydrogen can be connected with one technology that converts electricity to hydrogen and another technology that runs a solar powered electrolysis.
+    The implementation of storage typically needs the conversion from one carrier like electricity to another carrier like hydrogen. The integration of a carrier technology allows more complex energy systems. A single storage technology like hydrogen can be connected with one technology that converts electricity to hydrogen and another technology that runs solar-powered electrolysis.
 
 `techs.yml` needs to have the following structure:
 - `tech_groups`: defines parent groups for techs or other tech_groups
 - `techs`: defines the technologies, the elements are used to declare the dimension `tech`
-We allow technologies to have parents to reduce unnecessary and mistake enabling repetitions within the `techs.yml`-file. The information of the single techs is combined with the information provided from their parent tech_groups. One technology can have multiple tech_groups, if the parent has a parent. The combined information must contain:
+We allow technologies to have parents to reduce unnecessary and mistake, enabling repetitions within the `techs.yml`-file. The information of the single techs is combined with the information provided from their parent tech_groups. One technology can have multiple tech_groups, if the parent has a parent. The combined information must contain:
 - `name`: A detailed description of the technology
 - `tech_group`: a technology-group that the technology belongs to. Groups can be: `demand`, `generation`, `dispatchable_generation`, `non_dispatchable_generation`, `storage`, `conversion`, `transmission`
 - `plant_lifetime`: the physical expected lifetime of this technologies plant [a]
@@ -78,7 +78,7 @@ We allow technologies to have parents to reduce unnecessary and mistake enabling
 - `discount_rate`: discount rate for technology [a]
 - `structure`: `node` or `line` depending on the structure of the technology
 - `unit`: the unit that the capacity of the technology scales with. It can be `power`[MW] or `energy`[MWh]
-- `input`: the input can be a `carrier` like e.g. electricity, a `timeseries` like e.g. `timeseries: demand_electricity`, or a `fuel` like e.g. `fuel: gas`
+- `input`: the input can be a `carrier` like e.g. electricity, a `timeseries` like e.g. `timeseries: demand_electricity`, or a `fuel` like, e.g. `fuel: gas`
 The information can contain:
 - `constraints`: like an `efficiency` like e.g. `efficiency: 0.53` or `cap_eq` (e.g. discharge capacity is same as charge capacity) `cap_eq: bat_in`
 
