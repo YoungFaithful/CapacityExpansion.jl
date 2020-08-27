@@ -3,6 +3,7 @@
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/stable)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://YoungFaithful.github.io/CapacityExpansion.jl/dev)
 [![Build Status](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl.svg?branch=master)](https://travis-ci.com/YoungFaithful/CapacityExpansion.jl)
+[![DOI](https://zenodo.org/badge/178281868.svg)](https://zenodo.org/badge/latestdoi/178281868)
 
 [CapacityExpansion](https://github.com/YoungFaithful/CapacityExpansion.jl) is a [julia](https://julialang.org/) implementation of an input-data-scaling capacity expansion modeling framework.
 
