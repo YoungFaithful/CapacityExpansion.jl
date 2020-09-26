@@ -12,7 +12,7 @@ The model is designed to minimize social costs by minimizing the following objec
 
 ```math
 min \sum_{account,tech}COST_{account,'EUR/USD',tech} + \sum LL \cdot  cost_{LL} + LE \cdot  cos_{LE}
-`"
+```
 
 ## Sets
 The model's scalability is relying on the usage of sets. The elements of the sets are extracted from the input data and scale the different variables. An overview of the sets is provided in the table. Depending on the model's configuration the necessary sets are initialized.
@@ -77,7 +77,7 @@ GEN_{tech, car(tech), t, k, n} = - \sum_{infr} CAP_{tech,infr,n} * z_{demand,n,t
 \sum_{acc,tech} COST_{acc,imp,tech} &\leq LE_{imp} + lim_{imp}\cdot\sum_{n,t,k}\left(w_{k}\cdot \Delta t_{t,k} \cdot z_{demand,n,t,k}\right) \forall imp \in \mathbf{imp}_{lca}\\
 LL_{n} &= \sum_{t,k} \left( SLACK_{t,k,n}\cdot w_{k} \cdot \Delta t_{t,k}\right)\\
 0 &= \sum_{tech,n}GEN_{tech,t,k,n} + SLACK_{t,k,n}\\
-`"
+```
 
 The Objective Function minimizes total system costs, where `COST` is the cost of different technologies, 'LL` is lost load, `c_{ll}` the variable costs for lost load, `LE` is lost emissions, and `c_{le}` is the variable costs for lost emissions. The variable costs are calculated, where `GEN` is the generation, `\Delta t` is the time step length and `c_{acc,tech,imp}` is the variable cost per electric energy. The fixed costs are calculated, where `CAP` is the installed capacity and `yf` is the year factor, calculating how many years are represented by the original time series. The generation is limited for dispatchable and non-dispatchable technologies by the installed capacities and an availability factor `z` for the non-dispatchable generation. The existing capacity is fixed to the provided input values. The demand is multiplied with the installed demand-capacity and fixed as a negative generation. The emissions are limited to the emission constraints, which can be exceeded by the lost emissions. The sum of generation and slack is fixed to zero. The slack is positive if the dispatchable and non-dispatchable generation can not meet the demand.
 
@@ -105,7 +105,7 @@ An overview is provided in the following table:
 They can be applied in the following way:
 ```@docs
 run_opt
-`"
+```
 ## Transmission
 A CapacityExpansion model can be run with or without technology transmission.
 !!! note
@@ -125,7 +125,7 @@ using Pkg
 Pkg.add("Clp")
 using Clp
 optimizer=Clp.Optimizer
-`"
+```
 
 ## Solver Configuration
 Depending on the Solver, different solver configurations are possible. The information is always provided as `Dict{Symbol,Any}`. The keys of the dictionary are the parameters and the values of the dictionary are the values passed to the solver.
@@ -133,7 +133,7 @@ Depending on the Solver, different solver configurations are possible. The infor
 For example, the `Gurobi` solver can be configured to have no OutputFlag and run on two threads (per julia thread) the following way:
 ```julia
 optimizer_config=Dict{Symbol,Any}(:OutputFlag => 0, :Threads => 2)
-`"
+```
 Further information on possible keys for Gurobi can be found at [Gurobi parameter description](https://www.gurobi.com/documentation/8.1/refman/parameter_descriptions.html).
 
 ## Scaling
@@ -155,7 +155,7 @@ Create a dictionary with the new scaling parameters for EACH variable and includ
 ```julia
 scale=Dict{Symbol,Int}(:COST => 1e9, :CAP => 1e3, :GEN => 1e3, :SLACK => 1e3, :INTRASTOR => 1e3, :INTERSTOR => 1e6, :FLOW => 1e3, :TRANS =>1e3, :LL => 1e6, :LE => 1e9)
 scale_result = run_opt(ts_clust_data,cep_data,optimizer;scale=scale)
-`"
+```
 
 ### Adding another variable
 - Extend the default `scale`-dictionary in the `src/optim_problems/run_opt`-file to include the new variable as well.
