@@ -51,7 +51,7 @@ using Clp
    @testset "exact $k" for (k,v) in scenarios begin
             #Test for each variable within this scenario
             @testset "variable $kv" for (kv,vv) in v.variables begin
-                    @test sum((round.(round.(exact_scenarios[k].variables[kv].data; digits=4); sigdigits=4).== round.(round.(vv.data;digits=4); sigdigits=4)).== false) == 0
+                    @test sum((round.(round.(exact_scenarios[k].variables[kv].data; digits=3); sigdigits=3).== round.(round.(vv.data;digits=3); sigdigits=3)).== false) == 0
                 end
             end
         end
