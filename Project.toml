@@ -4,7 +4,7 @@ keywords = ["energy", "capacity", "JuMP", "optimization"]
 license = "MIT"
 desc = "Capacity Expansion Problem Formulation for Julia"
 author = ["Elias Kuepper <elias.kuepper@rwth-aachen.de>"]
-version = "0.2.2"
+version = "0.2.3"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
@@ -22,7 +22,7 @@ CSV = "^0.5.0"
 DataFrames = "^0.19.0"
 FileIO = "^1.0.0"
 JLD2 = "0.1.0"
-JuMP = "^0.19"
+JuMP = "^0.20"
 Reexport = "^0.2.0"
 StatsBase = "^0.32.0"
 TimeSeriesClustering = "^0.5.0"
